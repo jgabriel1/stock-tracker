@@ -1,8 +1,6 @@
 from fastapi import FastAPI
+from .api import auth
 
 app = FastAPI()
 
-
-@app.get('/')
-async def index():
-    return {'hello': 'world'}
+app.include_router(auth.router)
