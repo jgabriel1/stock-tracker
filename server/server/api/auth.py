@@ -4,16 +4,16 @@ from pymongo.client_session import ClientSession
 from starlette.status import HTTP_201_CREATED, HTTP_401_UNAUTHORIZED
 
 from ..crud import crud_users
-from ..models.user import UserInDB, UserStocks
+from ..models.user import UserInDB
 from ..security.token import Token, create_access_token
-from .dependencies import get_current_user, get_db
+from .dependencies import get_db
 
 router = APIRouter()
 
 
 @router.post('/register', status_code=HTTP_201_CREATED, response_model=Token)
 def register(user: UserInDB, session: ClientSession = Depends(get_db)):
-    crud_users.register(user, session=session)
+    crud_users.create(user, session=session)
 
     access_token = create_access_token(data={'sub': user.username})
     return {'access_token': access_token, 'token_type': 'bearer'}
@@ -33,8 +33,3 @@ def get_access_token(
         )
     access_token = create_access_token(data={'sub': user.username})
     return {'access_token': access_token, 'token_type': 'bearer'}
-
-
-@router.get('/users/me')
-def current_user(user: UserStocks = Depends(get_current_user)):
-    return user.dict()

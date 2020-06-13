@@ -10,9 +10,13 @@ class User(BaseModel):
     email: EmailStr
 
 
+class UserPublic(User):
+    stocks: List[Stock] = []
+
+
 class UserInDB(User):
     password: str
 
 
-class UserStocks(User):
+class UserOutDB(UserInDB):
     stocks: List[Stock] = []
