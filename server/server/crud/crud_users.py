@@ -5,6 +5,7 @@ from pymongo.client_session import ClientSession
 
 from ..database.collections import get_users_collection
 from ..security.hash import hash_password, verify_password
+from ..models.user import UserInDB
 
 
 class User(BaseModel):
@@ -12,21 +13,22 @@ class User(BaseModel):
     password: str
 
 
-def register(user: User, session: ClientSession) -> None:
+def register(user: UserInDB, session: ClientSession) -> None:
     users = get_users_collection(session=session)
 
     users.insert_one({
         'username': user.username,
+        'email': user.email,
         'password': hash_password(user.password)
     })
 
 
-def get_info(username: str, session: ClientSession) -> Optional[User]:
+def get_info(username: str, session: ClientSession) -> Optional[UserInDB]:
     users = get_users_collection(session=session)
 
     user = users.find_one({'username': username})
     if user is not None:
-        return User.parse_obj(user)
+        return UserInDB.parse_obj(user)
 
 
 def authenticate(

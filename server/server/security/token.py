@@ -33,7 +33,7 @@ def create_access_token(
 
 def decode_token(token: str) -> dict:
     try:
-        return jwt.decode(token=SECRET_KEY, algorithms=[ALGORITHM])
+        return jwt.decode(token, key=SECRET_KEY, algorithms=[ALGORITHM])
     except jwt.PyJWTError:
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED,
