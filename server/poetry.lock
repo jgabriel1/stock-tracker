@@ -265,6 +265,11 @@ optional = false
 python-versions = ">=3.6"
 version = "1.5.1"
 
+[package.dependencies]
+[package.dependencies.email-validator]
+optional = true
+version = ">=1.0.3"
+
 [package.extras]
 dotenv = ["python-dotenv (>=0.10.4)"]
 email = ["email-validator (>=1.0.3)"]
@@ -461,7 +466,7 @@ python-versions = ">=3.6.1"
 version = "8.1"
 
 [metadata]
-content-hash = "b548017701b3b8b7df3012edac642e1ed1d02fe46b1a281c4b44fdf73de544b6"
+content-hash = "9e90b0dcb242cae0860cba322c3dd72f2817c318772e85eba8a9ce54de1e1907"
 python-versions = "^3.8"
 
 [metadata.files]
