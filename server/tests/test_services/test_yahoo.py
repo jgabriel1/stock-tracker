@@ -2,38 +2,72 @@ import pytest
 
 from server.services.yahoo_finance import get_stock_info, YahooStockModel
 
-test_stock = pytest.fixture(lambda: {
-    'chart': {
+test_result = pytest.fixture(lambda: {
+    'spark': {
+        # result is the list of all stocks queried to the API:
         'result': [
+            # Stock Schema starts here #
             {
-                'meta': {
-                    'currency': 'BRL',
-                    'symbol': 'EMBR3.SA',
-                    'regularMarketPrice': 8.82,
-                    'previousClose': 9.33
-                }
-            }
+                'symbol': 'petr3.sa',
+                'response': [
+                    {
+                        'meta': {
+                            'symbol': 'PETR3.SA',
+                            'currency': 'BRL',
+                            'regularMarketPrice': 21.49,
+                            'chartPreviousClose': 21.24
+                        }
+                    }
+                ]
+            },
+            # First Stock Schema ends #
+            {
+                'symbol': 'embr3.sa',
+                'response': [
+                    {
+                        'meta': {
+                            'symbol': 'EMBR3.SA',
+                            'currency': 'BRL',
+                            'regularMarketPrice': 8.63,
+                            'chartPreviousClose': 8.82
+                        }
+                    }
+                ]
+            },
+            # Second Stock Schema ends #
         ]
     }
 })
 
 
-def test_stock_model(test_stock):
-    serialized_stock = YahooStockModel.serialize_stock(test_stock)
+def test_stock_model(test_result):
+    test_stock1, test_stock2 = test_result.get('spark').get('result')
 
-    assert serialized_stock.currency == 'BRL'
-    assert serialized_stock.symbol == 'EMBR3.SA'
-    assert serialized_stock.regularMarketPrice == 8.82
-    assert serialized_stock.previousClose == 9.33
+    serialized_stock1 = YahooStockModel.serialize_stock(test_stock1)
+
+    assert serialized_stock1.currency == 'BRL'
+    assert serialized_stock1.symbol == 'PETR3.SA'
+    assert serialized_stock1.regularMarketPrice == 21.49
+    assert serialized_stock1.chartPreviousClose == 21.24
+
+    serialized_stock2 = YahooStockModel.serialize_stock(test_stock2)
+
+    assert serialized_stock2.currency == 'BRL'
+    assert serialized_stock2.symbol == 'EMBR3.SA'
+    assert serialized_stock2.regularMarketPrice == 8.63
+    assert serialized_stock2.chartPreviousClose == 8.82
 
 
 def test_get_stock_info():
-    stock = get_stock_info('embr3.sa')
+    searched_stocks = ['PETR4.SA', 'EMBR3.SA', 'PETR3.SA']
 
-    assert type(stock) == YahooStockModel
+    stocks_result = get_stock_info(searched_stocks)
+    assert type(stocks_result) == dict
 
-    assert stock.symbol == 'EMBR3.SA'
-    assert stock.currency == 'BRL'
+    tickers = stocks_result.keys()
+    assert len(searched_stocks) == len(tickers)
+    assert set(searched_stocks) == set(tickers)
 
-    assert type(stock.regularMarketPrice) == float
-    assert type(stock.previousClose) == float
+    stocks = stocks_result.values()
+    for stock in stocks:
+        assert isinstance(stock, YahooStockModel)
