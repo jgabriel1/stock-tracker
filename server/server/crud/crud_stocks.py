@@ -21,9 +21,7 @@ def create(stock: Stock, username: str, session: ClientSession) -> None:
     users.find_one_and_update(
         filter={'username': username},
         update={
-            '$set': {
-                'stocks': {stock.ticker: stock.dict()}
-            }
+            '$set': {f'stocks.{stock.ticker}': stock.dict()}
         },
         session=session
     )
@@ -35,9 +33,7 @@ def update(stock: Stock, username: str, session: ClientSession) -> None:
     users.find_one_and_update(
         filter={'username': username},
         update={
-            '$set': {
-                'stocks': {f'{stock.ticker}': stock.dict()}
-            }
+            '$set': {f'stocks.{stock.ticker}': stock.dict()}
         },
         session=session
     )

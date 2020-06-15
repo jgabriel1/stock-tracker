@@ -3,7 +3,7 @@ import os
 import requests
 from dotenv import load_dotenv
 from fastapi import HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from starlette.status import HTTP_404_NOT_FOUND
 
 load_dotenv()
@@ -12,10 +12,17 @@ BASE_URL = os.getenv('YAHOO_API_URL')
 
 
 class YahooStockModel(BaseModel):
+    '''
+    TODO: Look into the _ vs . conversion and how to do it better.
+    '''
     symbol: str
     currency: str
     regularMarketPrice: float
     previousClose: float
+
+    @validator('symbol')
+    def turn_dots_into_underscores(cls, value: str):
+        return value.replace('.', '_')
 
     @classmethod
     def serialize_stock(cls, response_json: dict):
@@ -28,7 +35,10 @@ class YahooStockModel(BaseModel):
 
 
 def get_stock_info(ticker: str, _range='5d', interval='5m') -> YahooStockModel:
-    url = f'{BASE_URL}{ticker}'
+    '''
+    TODO: Look into the _ vs . conversion and how to do it better.
+    '''
+    url = f"{BASE_URL}{ticker.replace('_', '.')}"
     query = {
         'range': _range,
         'interval': interval
