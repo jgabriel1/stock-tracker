@@ -22,7 +22,7 @@ def create(stock: Stock, username: str, session: ClientSession) -> None:
         filter={'username': username},
         update={
             '$set': {
-                'stocks', {stock.ticker, stock.dict()}
+                'stocks': {stock.ticker: stock.dict()}
             }
         },
         session=session
@@ -36,7 +36,7 @@ def update(stock: Stock, username: str, session: ClientSession) -> None:
         filter={'username': username},
         update={
             '$set': {
-                'stocks', {f'{stock.ticker}': stock.dict()}
+                'stocks': {f'{stock.ticker}': stock.dict()}
             }
         },
         session=session

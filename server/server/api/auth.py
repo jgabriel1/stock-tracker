@@ -1,7 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from pymongo.client_session import ClientSession
-from starlette.status import HTTP_201_CREATED, HTTP_401_UNAUTHORIZED
+from pymongo.errors import DuplicateKeyError
+from starlette.status import (
+    HTTP_201_CREATED,
+    HTTP_401_UNAUTHORIZED,
+    HTTP_409_CONFLICT
+)
 
 from ..crud import crud_users
 from ..models.user import UserInDB
@@ -13,7 +18,13 @@ router = APIRouter()
 
 @router.post('/register', status_code=HTTP_201_CREATED, response_model=Token)
 def register(user: UserInDB, session: ClientSession = Depends(get_db)):
-    crud_users.create(user, session=session)
+    try:
+        crud_users.create(user, session=session)
+    except DuplicateKeyError:
+        raise HTTPException(
+            status_code=HTTP_409_CONFLICT,
+            detail='Username or email already taken!'
+        )
 
     access_token = create_access_token(data={'sub': user.username})
     return {'access_token': access_token, 'token_type': 'bearer'}

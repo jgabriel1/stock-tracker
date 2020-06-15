@@ -34,4 +34,5 @@ def test_register_already_taken_username(client: TestClient, sample_user):
     second_response = client.post('/auth/register', json=sample_user)
 
     assert second_response.status_code == HTTP_409_CONFLICT
-    assert second_response.json().get('detail') == 'Username already taken.'
+    assert second_response.json().get('detail') == \
+        'Username or email already taken!'
