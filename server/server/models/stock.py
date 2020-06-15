@@ -5,6 +5,7 @@ class Stock(BaseModel):
     ticker: str
     price_bought: float
     n_shares: int
+
     total_invested: float = None
 
     @validator('total_invested', always=True)

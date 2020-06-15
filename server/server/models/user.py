@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict
 
 from pydantic import BaseModel, EmailStr
 
@@ -11,7 +11,7 @@ class User(BaseModel):
 
 
 class UserPublic(User):
-    stocks: List[Stock] = []
+    stocks: Dict[str, Stock] = {}
 
 
 class UserInDB(User):
@@ -19,4 +19,4 @@ class UserInDB(User):
 
 
 class UserOutDB(UserInDB):
-    stocks: List[Stock] = []
+    stocks: Dict[str, Stock] = {}
