@@ -47,4 +47,4 @@ def get_stock_info(ticker_list: List[str]) -> Dict[str, YahooStockModel]:
         for stock in response.json().get('spark').get('result')
     ]
 
-    return {stock.symbol.upper(): stock for stock in stocks_list}
+    return {stock.symbol.lower(): stock for stock in stocks_list}

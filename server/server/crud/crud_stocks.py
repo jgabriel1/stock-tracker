@@ -12,16 +12,20 @@ def index(username: str, session: ClientSession) -> Dict[str, dict]:
     user = users.find_one({'username': username}, session=session)
 
     stocks: dict = user.get('stocks')
-    return stocks
+    return {
+        _underscores_to_dots(ticker): stock for ticker, stock in stocks.items()
+    }
 
 
 def create(stock: Stock, username: str, session: ClientSession) -> None:
     users = get_users_collection(session=session)
 
+    ticker = _dots_to_underscores(stock.ticker)
+
     users.find_one_and_update(
         filter={'username': username},
         update={
-            '$set': {f'stocks.{stock.ticker}': stock.dict()}
+            '$set': {f'stocks.{ticker}': stock.dict()}
         },
         session=session
     )
@@ -30,10 +34,12 @@ def create(stock: Stock, username: str, session: ClientSession) -> None:
 def update(stock: Stock, username: str, session: ClientSession) -> None:
     users = get_users_collection(session=session)
 
+    ticker = _dots_to_underscores(stock.ticker)
+
     users.find_one_and_update(
         filter={'username': username},
         update={
-            '$set': {f'stocks.{stock.ticker}': stock.dict()}
+            '$set': {f'stocks.{ticker}': stock.dict()}
         },
         session=session
     )
@@ -42,10 +48,28 @@ def update(stock: Stock, username: str, session: ClientSession) -> None:
 def destroy(stock: Stock, username: str, session: ClientSession) -> None:
     users = get_users_collection(session=session)
 
+    ticker = _dots_to_underscores(stock.ticker)
+
     users.find_one_and_update(
         filter={'username': username},
         update={
-            '$unset': {f'stocks.{stock.ticker}': ''}
+            '$unset': {f'stocks.{ticker}': ''}
         },
         session=session
     )
+
+
+def _dots_to_underscores(ticker: str):
+    '''
+    MongoDB doesn't allow keys for documents to have dots in them. This funtion
+    converts dots into underscores so that the information can be saved into
+    the database.
+    '''
+    return ticker.replace('.', '_')
+
+
+def _underscores_to_dots(ticker: str):
+    '''
+    Reverse operation of _dots_to_underscores.
+    '''
+    return ticker.replace('_', '.')
