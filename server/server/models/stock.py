@@ -8,6 +8,10 @@ class Stock(BaseModel):
 
     total_invested: float = None
 
+    @validator('ticker')
+    def uppercase_any_ticker(cls, value: str):
+        return value.upper()
+
     @validator('total_invested', always=True)
     def calculate_total_invested(cls, value, values, **kwargs):
         return values['price_bought'] * values['n_shares']

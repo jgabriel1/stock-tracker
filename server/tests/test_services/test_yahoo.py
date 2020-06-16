@@ -59,7 +59,7 @@ def test_stock_model(test_result):
 
 
 def test_get_stock_info():
-    searched_stocks = ['petr4.sa', 'embr3.sa', 'petr3.sa']
+    searched_stocks = ['PETR4.SA', 'EMBR3.SA', 'PETR3.SA']
 
     stocks_result = get_stock_info(searched_stocks)
     assert type(stocks_result) == dict

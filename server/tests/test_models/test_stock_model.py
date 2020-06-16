@@ -3,7 +3,7 @@ import pytest
 from server.models.stock import Stock
 
 test_stock_insertion = pytest.fixture(lambda: {
-    'ticker': 'EMBR3.SA',
+    'ticker': 'embr3.sa',
     'price_bought': 8.82,
     'n_shares': 100,
 })
