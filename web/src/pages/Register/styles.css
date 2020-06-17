@@ -1,0 +1,10 @@
+.container {
+    margin: auto;
+    width: 40%;
+    margin-top: 50px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+}
