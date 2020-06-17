@@ -65,11 +65,11 @@ def _dots_to_underscores(ticker: str):
     converts dots into underscores so that the information can be saved into
     the database.
     '''
-    return ticker.replace('.', '_')
+    return ticker.replace('.', '_').upper()
 
 
 def _underscores_to_dots(ticker: str):
     '''
     Reverse operation of _dots_to_underscores.
     '''
-    return ticker.replace('_', '.')
+    return ticker.replace('_', '.').upper()
