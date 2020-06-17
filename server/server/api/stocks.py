@@ -1,11 +1,9 @@
-from typing import Dict
-
 from fastapi import APIRouter, Depends, Response
 from pymongo.client_session import ClientSession
 from starlette.status import HTTP_204_NO_CONTENT
 
 from ..crud import crud_stocks
-from ..models.stock import Stock, StockOutInfo
+from ..models.stock import Stock, StocksResponse
 from ..models.user import UserPublic
 from ..services.yahoo_finance import get_stock_info
 from .dependencies import get_current_user, get_db
@@ -13,7 +11,7 @@ from .dependencies import get_current_user, get_db
 router = APIRouter()
 
 
-@router.get('/stocks', response_model=Dict[str, StockOutInfo])
+@router.get('/stocks', response_model=StocksResponse)
 def list_stocks(
     user: UserPublic = Depends(get_current_user),
     session: ClientSession = Depends(get_db)
@@ -22,13 +20,13 @@ def list_stocks(
 
     stocks_info = get_stock_info(stocks.keys())
 
-    return {
-        stock: {
+    return {'stocks': [
+        {
             **stocks[stock],
             **stocks_info[stock].dict()
         }
         for stock in stocks.keys()
-    }
+    ]}
 
 
 @router.post('/stocks', status_code=HTTP_204_NO_CONTENT)

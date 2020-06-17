@@ -1,3 +1,5 @@
+from typing import List
+
 from pydantic import BaseModel, validator
 
 
@@ -19,6 +21,7 @@ class Stock(BaseModel):
 
 class StockOutInfo(BaseModel):
     # From Stock model:
+    ticker: str
     price_bought: float
     n_shares: int
     total_invested: float
@@ -26,3 +29,7 @@ class StockOutInfo(BaseModel):
     # From Yahoo Finance stock model:
     regularMarketPrice: float
     chartPreviousClose: float
+
+
+class StocksResponse(BaseModel):
+    stocks: List[StockOutInfo]

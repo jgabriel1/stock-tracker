@@ -17,6 +17,10 @@ stock_model = pytest.fixture(lambda: create_model('index_stocks_unit', **{
     'chartPreviousClose': (float, ...),
 }))
 
+stock_list_model = pytest.fixture(lambda: create_model('index_stocks_list', **{
+    'stocks': list
+}))
+
 
 @pytest.fixture
 def registered_user_token(client: TestClient) -> str:
@@ -46,24 +50,24 @@ def test_index_all_stocks(
     sample_stock,
     registered_user_token,
     register_stock,
-    stock_model
+    stock_model,
+    stock_list_model
 ):
     response = client.get('/stocks', headers={
         'Authorization': f'Bearer {registered_user_token}'
     })
 
     assert response.status_code == HTTP_200_OK
+    assert stock_list_model.validate(response.json())
 
-    stocks_index = response.json()
+    stocks_list = response.json().get('stocks')
 
-    assert sample_stock.get('ticker') in stocks_index.keys()
+    assert type(stocks_list) == list
+    assert len(stocks_list) == 1
 
-    owned_stock = stocks_index.get(sample_stock.get('ticker'))
-    assert stock_model.validate(owned_stock)
+    for stock in stocks_list:
+        assert stock_model.validate(stock)
 
-    owned_stock = stock_model.parse_obj(owned_stock)
+    stock_tickers = {stock['ticker'] for stock in stocks_list}
 
-    assert owned_stock.price_bought == sample_stock.get('price_bought')
-    assert owned_stock.n_shares == sample_stock.get('n_shares')
-    assert owned_stock.total_invested == \
-        sample_stock.get('price_bought') * sample_stock.get('n_shares')
+    assert sample_stock.get('ticker') in stock_tickers
