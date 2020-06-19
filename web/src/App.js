@@ -1,15 +1,24 @@
 import React from 'react'
+import { BrowserRouter, Route } from 'react-router-dom'
 
 import 'bootstrap/dist/css/bootstrap.css'
 import './App.css'
 
-import StockList from './pages/StockList'
+import NavBar from './components/NavBar'
+import Home from './pages/Home'
 import Register from './pages/Register'
+import Login from './pages/Login'
+import StockList from './pages/StockList'
 
-function App() {
+const App = () => {
     return (
         <div className="App">
-            <Register />
+            <BrowserRouter>
+                <NavBar />
+                <Route component={Home} path='/' exact />
+                <Route component={Register} path='/register' />
+                <Route component={Login} path='/login' />
+            </BrowserRouter>
         </div>
     )
 }

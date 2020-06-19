@@ -4,18 +4,17 @@ import InputField from '../../components/InputField'
 
 import './styles.css'
 
-const Register = props => {
+const Login = props => {
     const [username, setUsername] = useState('')
-    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
     function handleSubmit(event) {
         event.preventDefault()
-        console.log(username, email, password)
+        console.log(username, password)
     }
 
     return (
-        <div className='register-container'>
+        <div className='login-container'>
             <form onSubmit={handleSubmit}>
                 <InputField
                     label='Username: '
@@ -26,14 +25,6 @@ const Register = props => {
                 />
 
                 <InputField
-                    label='Email: '
-                    htmlId='email'
-                    htmlType='email'
-                    value={email}
-                    valueSetter={setEmail}
-                />
-
-                <InputField
                     label='Password: '
                     htmlId='password'
                     htmlType='password'
@@ -41,12 +32,12 @@ const Register = props => {
                     valueSetter={setPassword}
                 />
 
-                <div className='register-button-container'>
-                    <button type='submit' className='btn btn-dark register-btn'>Submit</button>
+                <div className='login-button-container'>
+                    <button type='submit' className='btn btn-dark login-btn'>Login</button>
                 </div>
             </form>
         </div>
     )
 }
 
-export default Register
+export default Login

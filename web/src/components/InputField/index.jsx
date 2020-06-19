@@ -15,5 +15,4 @@ const InputField = ({ label, htmlId, htmlType, value, valueSetter }) => (
     </div>
 )
 
-
 export default InputField

@@ -1,15 +1,15 @@
-.register-container {
+.login-container {
     margin: auto;
     width: 33%;
     margin-top: 64px;
 }
 
-.register-button-container {
+.login-button-container {
     display: flex;
     justify-content: center;
 }
 
-.register-btn {
+.login-btn {
     width: 50%;
     margin-top: 10px;
 }
