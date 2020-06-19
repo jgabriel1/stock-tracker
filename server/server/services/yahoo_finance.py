@@ -28,6 +28,9 @@ class YahooStockModel(BaseModel):
 
 
 def get_stock_info(ticker_list: List[str]) -> Dict[str, YahooStockModel]:
+    if not ticker_list:
+        return {}
+
     query = {
         'symbols': ','.join(ticker_list),
         'range': '1d',

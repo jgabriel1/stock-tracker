@@ -71,3 +71,12 @@ def test_get_stock_info():
     stocks = stocks_result.values()
     for stock in stocks:
         assert isinstance(stock, YahooStockModel)
+
+
+def test_get_stock_info_for_empty_list():
+    searched_stocks = []
+
+    stocks_result = get_stock_info(searched_stocks)
+
+    assert stocks_result == {}
+    assert type(stocks_result) == dict
