@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom'
 
 import InputField from '../../components/InputField'
+
+import api from '../../services/api'
+import { setToken } from '../../utils/tokenHandler'
 
 import './styles.css'
 
@@ -8,9 +12,26 @@ const Login = props => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
+    const history = useHistory()
+
     function handleSubmit(event) {
         event.preventDefault()
-        console.log(username, password)
+
+        const loginForm = new FormData()
+
+        loginForm.append('username', username)
+        loginForm.append('password', password)
+
+        const headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
+
+        api.post('/auth/token', loginForm, { headers })
+            .then(response => {
+                const { access_token } = response.data
+                setToken(access_token)
+
+                history.push('/dashboard')
+            })
+            .catch(error => console.log(error))
     }
 
     return (

@@ -6,7 +6,9 @@ import './styles.css'
 const NavBar = () => (
     <div className='navbar-container'>
         <nav className='navigation'>
-            <h3 id='title'>Stock Tracker</h3>
+            <Link to='/dashboard'>
+                <h3 id='title'>Stock Tracker</h3>
+            </Link>
 
             <div className='links'>
                 <Link className='navigation-link' to='/'>Home</Link>

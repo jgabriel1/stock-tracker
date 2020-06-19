@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom'
 
 import InputField from '../../components/InputField'
+
+import api from '../../services/api'
 
 import './styles.css'
 
@@ -9,9 +12,16 @@ const Register = props => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
+    const history = useHistory()
+
     function handleSubmit(event) {
         event.preventDefault()
-        console.log(username, email, password)
+
+        api.post('auth/register', { username, email, password })
+            .then(response => {
+                history.push('/login')
+            })
+            .catch(error => console.log(error))
     }
 
     return (
