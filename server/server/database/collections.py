@@ -9,7 +9,10 @@ def get_users_collection(session: ClientSession) -> Collection:
 
     if 'user' not in db.list_collection_names():
         users.create_indexes([
+            # Unique constraint on username:
             IndexModel([('username', DESCENDING)], unique=True),
+
+            # Unique constraint on email:
             IndexModel([('email', DESCENDING)], unique=True)
         ])
 

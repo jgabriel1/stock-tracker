@@ -31,39 +31,11 @@ def create(stock: Stock, username: str, session: ClientSession) -> None:
     )
 
 
-def update(stock: Stock, username: str, session: ClientSession) -> None:
-    users = get_users_collection(session=session)
-
-    ticker = _dots_to_underscores(stock.ticker)
-
-    users.find_one_and_update(
-        filter={'username': username},
-        update={
-            '$set': {f'stocks.{ticker}': stock.dict()}
-        },
-        session=session
-    )
-
-
-def destroy(stock: Stock, username: str, session: ClientSession) -> None:
-    users = get_users_collection(session=session)
-
-    ticker = _dots_to_underscores(stock.ticker)
-
-    users.find_one_and_update(
-        filter={'username': username},
-        update={
-            '$unset': {f'stocks.{ticker}': ''}
-        },
-        session=session
-    )
-
-
 def _dots_to_underscores(ticker: str):
     '''
-    MongoDB doesn't allow keys for documents to have dots in them. This funtion
-    converts dots into underscores so that the information can be saved into
-    the database.
+    MongoDB doesn't allow keys for documents to have dots in them.
+    This function converts dots to underscores so that the information can be
+    saved into the database.
     '''
     return ticker.replace('.', '_').upper()
 
