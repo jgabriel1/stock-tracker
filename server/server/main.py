@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .api import auth, users, stocks
+from .api import routes
 
 app = FastAPI()
 
@@ -12,6 +12,4 @@ app.add_middleware(
     allow_credentials=True
 )
 
-app.include_router(auth.router, prefix='/auth')
-app.include_router(users.router)
-app.include_router(stocks.router)
+app.include_router(routes.router)

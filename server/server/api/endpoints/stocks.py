@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends, Response
 from pymongo.client_session import ClientSession
 from starlette.status import HTTP_204_NO_CONTENT
 
-from ..crud import crud_stocks
-from ..models.stock import Stock, StocksResponse
-from ..models.user import UserPublic
-from ..services.yahoo_finance import get_stock_info
-from .dependencies import get_current_user, get_db
+from ...crud import crud_stocks
+from ...models.stock import Stock, StocksResponse
+from ...models.user import UserPublic
+from ...services.yahoo_finance import get_stock_info
+from ..dependencies import get_current_user, get_db
 
 router = APIRouter()
 

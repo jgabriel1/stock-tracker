@@ -8,10 +8,10 @@ from starlette.status import (
     HTTP_409_CONFLICT
 )
 
-from ..crud import crud_users
-from ..models.user import UserInDB
-from ..security.token import Token, create_access_token
-from .dependencies import get_db
+from ...crud import crud_users
+from ...models.user import UserInDB
+from ...security.token import Token, create_access_token
+from ..dependencies import get_db
 
 router = APIRouter()
 

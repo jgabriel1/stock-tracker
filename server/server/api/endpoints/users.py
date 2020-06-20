@@ -2,9 +2,9 @@ from fastapi import APIRouter, Body, Depends, Response, HTTPException
 from pymongo.client_session import ClientSession
 from starlette.status import HTTP_204_NO_CONTENT, HTTP_401_UNAUTHORIZED
 
-from ..crud import crud_users
-from ..models.user import UserPublic, UserOutDB
-from .dependencies import get_current_user, get_db
+from ...crud import crud_users
+from ...models.user import UserPublic, UserOutDB
+from ..dependencies import get_current_user, get_db
 
 router = APIRouter()
 
