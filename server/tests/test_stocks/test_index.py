@@ -10,7 +10,6 @@ sample_stock = pytest.fixture(lambda: {
 })
 
 stock_model = pytest.fixture(lambda: create_model('index_stocks_unit', **{
-    'price_bought': (float, ...),
     'n_shares': (int, ...),
     'total_invested': (float, ...),
     'regularMarketPrice': (float, ...),

@@ -32,7 +32,7 @@ def index(
 
         return ticker_filter and time_filters
 
-    filtered_transactions = filter(filters, transactions)
+    filtered_transactions = filter(filters, transactions.get('transactions'))
 
     return [
         Transaction.parse_obj(transaction)
@@ -40,5 +40,16 @@ def index(
     ]
 
 
-def create(transaction: Transaction, session: ClientSession):
-    ...
+def create(transaction: Transaction, username: str, session: ClientSession):
+    users = get_users_collection(session)
+
+    users.find_one_and_update(
+        {'username': username},
+        {'$push': {
+            'transactions': {
+                '$each': [transaction.dict()],
+                '$sort': {'timestamp': -1}
+            }
+        }},
+        session=session
+    )

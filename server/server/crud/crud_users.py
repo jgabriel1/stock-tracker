@@ -10,13 +10,11 @@ from ..security.hash import hash_password, verify_password
 def create(user: UserInDB, session: ClientSession) -> None:
     users = get_users_collection(session=session)
 
-    user = UserOutDB.parse_obj(user)
-
     users.insert_one({
         'username': user.username,
         'email': user.email,
         'password': hash_password(user.password),
-        'stocks': user.stocks
+        'transactions': []
     }, session=session)
 
 
