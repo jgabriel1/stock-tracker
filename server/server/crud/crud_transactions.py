@@ -7,7 +7,11 @@ from ..models.transaction import Transaction
 
 
 def index(
-    username: str, ticker: str, start: int, end: int, session: ClientSession
+    username: str,
+    ticker: str,
+    session: ClientSession,
+    start: int = None,
+    end: int = None
 ) -> List[Transaction]:
     users = get_users_collection(session)
 
@@ -51,5 +55,17 @@ def create(transaction: Transaction, username: str, session: ClientSession):
                 '$sort': {'timestamp': -1}
             }
         }},
+        session=session
+    )
+
+
+def delete_all(ticker: str, username: str, session: ClientSession) -> None:
+    users = get_users_collection(session=session)
+
+    users.find_one_and_update(
+        filter={'username': username},
+        update={
+            '$pull': {'transactions': {'ticker': ticker}}
+        },
         session=session
     )
