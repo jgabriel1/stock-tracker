@@ -33,7 +33,7 @@ def show(ticker: str, username: str,  session: ClientSession) -> dict:
     stock, = users.aggregate([
         {'$match': {'username': username}},
         {'$unwind': '$transactions'},
-        {'$match': {'$transactions.ticker': ticker}},
+        {'$match': {'transactions.ticker': ticker}},
         {'$group': {
             '_id': '$transactions.ticker',
             'total_value': {'$sum': '$transactions.total_value'},

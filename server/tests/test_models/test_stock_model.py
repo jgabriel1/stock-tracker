@@ -5,7 +5,7 @@ from server.models.stock import Stock
 test_stock_insertion = pytest.fixture(lambda: {
     'ticker': 'embr3.sa',
     'price_bought': 8.82,
-    'n_shares': 100,
+    'quantity': 100,
 })
 
 
@@ -16,9 +16,9 @@ def test_stock_model_parse(test_stock_insertion):
 
     assert serialized.ticker == 'EMBR3.SA'
     assert serialized.price_bought == 8.82
-    assert serialized.n_shares == 100
+    assert serialized.quantity == 100
 
-    assert serialized.total_invested == (100 * 8.82)
+    assert serialized.total_value == (100 * 8.82)
 
 
 def test_stock_model_instantiate(test_stock_insertion):
@@ -28,6 +28,6 @@ def test_stock_model_instantiate(test_stock_insertion):
 
     assert serialized.ticker == 'EMBR3.SA'
     assert serialized.price_bought == 8.82
-    assert serialized.n_shares == 100
+    assert serialized.quantity == 100
 
-    assert serialized.total_invested == (100 * 8.82)
+    assert serialized.total_value == (100 * 8.82)
