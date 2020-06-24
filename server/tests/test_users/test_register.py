@@ -1,38 +1,71 @@
-import pytest
 from fastapi.testclient import TestClient
-from pydantic import create_model
 from starlette.status import HTTP_201_CREATED, HTTP_409_CONFLICT
-
-sample_user = pytest.fixture(lambda: {
-    'username': 'testuser123',
-    'email': 'test@email.com',
-    'password': 'password123'
-})
-
-register_model = pytest.fixture(lambda: create_model('register', **{
-    'access_token': (str, ...),
-    'token_type': (str, ...)
-}))
+from pydantic import create_model
 
 
-def test_register_user(client: TestClient, sample_user, register_model):
-    response = client.post('/auth/register', json=sample_user)
+def test_register_user(client: TestClient):
+    user = {
+        'username': 'testuser123',
+        'password': 'password123',
+        'email': 'testemail@domain.com'
+    }
+
+    response = client.post('/auth/register', json=user)
 
     assert response.status_code == HTTP_201_CREATED
-    assert register_model.validate(response.json())
 
-    serialized_response = register_model.parse_obj(response.json())
+    user_model = create_model('user', **{
+        'username': (str, ...),
+        'email': (str, ...),
+    })
 
-    assert serialized_response.token_type == 'bearer'
+    assert user_model.validate(response.json())
+
+    data = user_model.parse_obj(response.json())
+
+    assert data.username == user.get('username')
+    assert data.email == user.get('email')
 
 
-def test_register_already_taken_username(client: TestClient, sample_user):
-    first_response = client.post('/auth/register', json=sample_user)
+def test_register_username_already_taken(client: TestClient, register_user):
+    repeated_username = 'reallygoodusername'
 
-    assert first_response.status_code == HTTP_201_CREATED
+    register_user({
+        'username': repeated_username,
+        'password': 'password1',
+        'email': 'email1@domain.com',
+    })
 
-    second_response = client.post('/auth/register', json=sample_user)
+    response = client.post('/auth/register', json={
+        'username': repeated_username,
+        'password': 'password2',
+        'email': 'email2@domain.com',
+    })
 
-    assert second_response.status_code == HTTP_409_CONFLICT
-    assert second_response.json().get('detail') == \
-        'Username or email already taken!'
+    assert response.status_code == HTTP_409_CONFLICT
+
+    error_message = response.json().get('detail')
+
+    assert error_message == 'Username or email already taken!'
+
+
+def test_register_email_already_taken(client: TestClient, register_user):
+    repeated_email = 'awesome_email@domain.com'
+
+    register_user({
+        'username': 'username1',
+        'password': 'password1',
+        'email': repeated_email,
+    })
+
+    response = client.post('/auth/register', json={
+        'username': 'username2',
+        'password': 'password2',
+        'email': repeated_email,
+    })
+
+    assert response.status_code == HTTP_409_CONFLICT
+
+    error_message = response.json().get('detail')
+
+    assert error_message == 'Username or email already taken!'

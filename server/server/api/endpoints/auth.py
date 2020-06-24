@@ -9,14 +9,14 @@ from starlette.status import (
 )
 
 from ...crud import crud_users
-from ...models.user import UserInDB
+from ...models.user import User, UserInDB
 from ...security.token import Token, create_access_token
 from ..dependencies import get_db
 
 router = APIRouter()
 
 
-@router.post('/register', status_code=HTTP_201_CREATED, response_model=Token)
+@router.post('/register', status_code=HTTP_201_CREATED, response_model=User)
 def register(user: UserInDB, session: ClientSession = Depends(get_db)):
     try:
         crud_users.create(user, session=session)
@@ -26,8 +26,7 @@ def register(user: UserInDB, session: ClientSession = Depends(get_db)):
             detail='Username or email already taken!'
         )
 
-    access_token = create_access_token(data={'sub': user.username})
-    return {'access_token': access_token, 'token_type': 'bearer'}
+    return user
 
 
 @router.post('/token', response_model=Token)
