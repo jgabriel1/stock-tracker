@@ -1,31 +1,21 @@
-import pytest
 from fastapi.testclient import TestClient
-from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
-
-sample_user = pytest.fixture(lambda: {
-    'username': 'testuser123',
-    'email': 'test@email.com',
-    'password': 'password123'
-})
+from starlette.status import HTTP_204_NO_CONTENT, HTTP_401_UNAUTHORIZED
 
 
-@pytest.fixture(autouse=True)
-def created_user_token(client: TestClient, sample_user) -> str:
-    response = client.post('/auth/register', json=sample_user)
+def test_unregister_user(client: TestClient, mock_user, auth_headers):
+    current_password = mock_user.get('password')
 
-    assert response.status_code == HTTP_201_CREATED
-
-    return response.json().get('access_token')
-
-
-def test_unregister_user(client: TestClient, sample_user, created_user_token):
-    current_password = sample_user.get('password')
-
-    response = client.delete('/users', json={
+    unregister_response = client.delete('/users', headers=auth_headers, json={
         'current_password': current_password
-    }, headers={
-        'Authorization': f'Bearer {created_user_token}'
     })
 
-    assert response.status_code == HTTP_204_NO_CONTENT
-    assert not response.content
+    assert unregister_response.status_code == HTTP_204_NO_CONTENT
+    assert not unregister_response.content
+
+    # Try to login with unregistered user:
+    login_attempt = client.post('/auth/token', data={
+        'username': mock_user.get('username'),
+        'password': mock_user.get('password'),
+    })
+
+    assert login_attempt.status_code == HTTP_401_UNAUTHORIZED

@@ -1,40 +1,16 @@
-import pytest
 from fastapi.testclient import TestClient
-from starlette.status import (
-    HTTP_201_CREATED,
-    HTTP_204_NO_CONTENT,
-    HTTP_401_UNAUTHORIZED
-)
-
-sample_user = pytest.fixture(lambda: {
-    'username': 'testuser123',
-    'email': 'test@email.com',
-    'password': 'password123'
-})
+from starlette.status import HTTP_204_NO_CONTENT, HTTP_401_UNAUTHORIZED
 
 
-@pytest.fixture(autouse=True)
-def created_user_token(client: TestClient, sample_user) -> str:
-    response = client.post('/auth/register', json=sample_user)
-
-    assert response.status_code == HTTP_201_CREATED
-
-    return response.json().get('access_token')
-
-
-def test_change_user_password(
-    client: TestClient, sample_user, created_user_token
-):
-    current_password = sample_user.get('password')
+def test_change_user_password(client: TestClient, mock_user, auth_headers):
+    current_password = mock_user.get('password')
     new_password = 'supersecretdifferentpassword123'
 
     assert new_password != current_password
 
-    response = client.put('/users/password', json={
+    response = client.put('/users/password', headers=auth_headers, json={
         'current_password': current_password,
         'new_password': new_password
-    }, headers={
-        'Authorization': f'Bearer {created_user_token}'
     })
 
     assert response.status_code == HTTP_204_NO_CONTENT
@@ -42,9 +18,9 @@ def test_change_user_password(
 
 
 def test_change_with_wrong_password_passed_in_request(
-    client: TestClient, sample_user, created_user_token
+    client: TestClient, mock_user, auth_headers
 ):
-    current_password = sample_user.get('password')
+    current_password = mock_user.get('password')
     wrong_current_password = 'wrongpassword123'
 
     assert current_password != wrong_current_password
@@ -53,11 +29,9 @@ def test_change_with_wrong_password_passed_in_request(
 
     assert new_password != current_password
 
-    response = client.put('/users/password', json={
+    response = client.put('/users/password', headers=auth_headers, json={
         'current_password': wrong_current_password,
         'new_password': new_password
-    }, headers={
-        'Authorization': f'Bearer {created_user_token}'
     })
 
     assert response.status_code == HTTP_401_UNAUTHORIZED
