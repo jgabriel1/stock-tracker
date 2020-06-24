@@ -7,7 +7,7 @@ def get_users_collection(session: ClientSession) -> Collection:
     db: Database = session.client.get_database()
     users: Collection = db.users
 
-    if 'user' not in db.list_collection_names():
+    if 'users' not in db.list_collection_names():
         users.create_indexes([
             # Unique constraint on username:
             IndexModel([('username', DESCENDING)], unique=True),
