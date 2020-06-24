@@ -1,14 +1,15 @@
 from datetime import datetime
-from typing import List
 
 from fastapi.testclient import TestClient
-from pydantic import create_model
 from pytest import approx
 from starlette.status import HTTP_200_OK
 
 
 def test_index_transactions(
-    client: TestClient, auth_headers, create_transaction
+    client: TestClient,
+    auth_headers,
+    create_transaction,
+    transactions_list_model
 ):
     right_now = datetime.utcnow().timestamp()
 
@@ -26,21 +27,9 @@ def test_index_transactions(
 
     assert response.status_code == HTTP_200_OK
 
-    transaction_model = create_model('transaction', **{
-        'ticker': (str, ...),
-        'quantity': (int, ...),
-        'total_value': (float, ...),
-        'timestamp': (int, ...),
-        'average_price': (float, ...),
-    })
+    assert transactions_list_model.validate(response.json())
 
-    index_model = create_model('index',  **{
-        'transactions': (List[transaction_model], ...)
-    })
-
-    assert index_model.validate(response.json())
-
-    data = index_model.parse_obj(response.json())
+    data = transactions_list_model.parse_obj(response.json())
 
     for transaction in data.transactions:
         assert transaction.ticker == 'AAPL'
