@@ -41,13 +41,16 @@ def create_transaction(client: TestClient, auth_headers) -> Callable:
 def stocks_list_model():
     stock_model = create_model('stock', **{
         'ticker': (str, ...),
-        'quantity': (int, ...),
-        'total_value': (float, ...),
+        'total_invested': (float, ...),
+        'total_sold': (float, ...),
+        'currently_owned_shares': (int, ...),
+        'average_bought_price': (float, ...),
         'regularMarketPrice': (float, ...),
         'chartPreviousClose': (float, ...),
     })
 
     list_model = create_model('stocks_list', **{
+        'total_applied': (float, ...),
         'stocks': (List[stock_model], ...)
     })
 
