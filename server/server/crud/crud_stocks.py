@@ -13,14 +13,46 @@ def index(username: str, session: ClientSession) -> Dict[str, dict]:
         {'$unwind': '$transactions'},
         {'$group': {
             '_id': '$transactions.ticker',
-            'total_value': {'$sum': '$transactions.total_value'},
-            'quantity': {'$sum': '$transactions.quantity'}
+
+            'total_invested': {'$sum': {'$cond': [
+                {'$gt': ['$transactions.total_value', 0]},
+                '$transactions.total_value',
+                0
+            ]}},
+            'total_shares_bought':{'$sum': {'$cond': [
+                {'$gt': ['$transactions.total_value', 0]},
+                '$transactions.quantity',
+                0
+            ]}},
+
+            'total_sold':{'$sum': {'$cond': [
+                {'$lt': ['$transactions.total_value', 0]},
+                '$transactions.total_value',
+                0
+            ]}},
+            'total_shares_sold':{'$sum': {'$cond': [
+                {'$lt': ['$transactions.total_value', 0]},
+                '$transactions.quantity',
+                0
+            ]}},
         }},
         {'$project': {
-            'ticker': '$_id',
             '_id': 0,
-            'total_value': 1,
-            'quantity': 1
+            'ticker': '$_id',
+
+            'total_invested': 1,
+            'total_sold': 1,
+
+            # Using add because selling transactions are negative:
+            'currently_owned_shares': {'$add': [
+                '$total_shares_bought',
+                '$total_shares_sold',
+            ]},
+
+            'average_bought_price': {'$divide': [
+                '$total_invested',
+                '$total_shares_bought',
+            ]},
         }}
     ], session=session)
 
@@ -36,14 +68,12 @@ def show(ticker: str, username: str,  session: ClientSession) -> dict:
         {'$match': {'transactions.ticker': ticker}},
         {'$group': {
             '_id': '$transactions.ticker',
-            'total_value': {'$sum': '$transactions.total_value'},
-            'quantity': {'$sum': '$transactions.quantity'}
+            'quantity': {'$sum': '$transactions.quantity'},
         }},
         {'$project': {
-            'ticker': '$_id',
             '_id': 0,
-            'total_value': 1,
-            'quantity': 1
+            'quantity': 1,
+            'ticker': '$_id',
         }}
     ], session=session)
 
