@@ -1,0 +1,14 @@
+.new-transaction-container {
+    margin: auto;
+    width: 66%;
+    padding: 16px;
+}
+
+.new-transaction-form>.button-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.new-transaction-form>.button-container>button {
+    width: 96px;
+}

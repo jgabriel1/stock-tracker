@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import Stock from '../../components/Stock'
+import NewTransaction from '../../components/NewTransaction'
 
 import api from '../../services/api'
 import { getToken } from '../../utils/tokenHandler'
@@ -22,6 +23,7 @@ const StockList = props => {
 
     return (
         <div className='stocks-container'>
+            <NewTransaction />
             <table className='table table-hover'>
                 <thead>
                     <tr>
