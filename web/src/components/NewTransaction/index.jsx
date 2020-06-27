@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import InputField from '../InputField'
 
@@ -9,9 +9,13 @@ import './styles.css'
 
 const NewTransaction = props => {
     const [ticker, setTicker] = useState('')
-    const [quantity, setQuantity] = useState(0)
-    const [unitValue, setUnitValue] = useState(0)
-    const [totalValue, setTotalValue] = useState(0)
+    const [quantity, setQuantity] = useState('')
+    const [unitValue, setUnitValue] = useState('')
+    const [totalValue, setTotalValue] = useState('')
+
+    useEffect(() => {
+        setTotalValue(quantity * unitValue)
+    }, [quantity, unitValue])
 
     function handleCreate(event) {
         event.preventDefault()
@@ -74,7 +78,7 @@ const NewTransaction = props => {
                                 label='Total Value '
                                 htmlId='total-value-field'
                                 htmlType='number'
-                                value={totalValue || quantity * unitValue}
+                                value={totalValue}
                                 valueSetter={setTotalValue}
                             />
                         </div>
