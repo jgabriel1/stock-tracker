@@ -1,0 +1,9 @@
+.sell-stock-button {
+    margin: auto;
+    width: 100%;
+}
+
+.sale-button-container {
+    display: flex;
+    flex-direction: column;
+}
