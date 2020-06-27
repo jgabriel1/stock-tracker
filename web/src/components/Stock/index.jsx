@@ -47,7 +47,7 @@ const Stock = props => {
 
     return (
         <div className='stock-container'>
-            <div id={ticker} className='row'>
+            <div id={ticker} className='row stock-info-container'>
                 <div className='col'>{ticker}</div>
                 <div className='col'>{currently_owned_shares}</div>
                 <div className='col'>{average_bought_price.toFixed(2)}</div>
@@ -64,12 +64,12 @@ const Stock = props => {
             </div>
             {
                 saleMode ?
-                    <div className='sale-mode-container container'>
+                    <div className='container sale-mode-container'>
                         <form onSubmit={handleSaleTransaction}>
                             <div className='form-row'>
-                                <div className='col'>{ticker}</div>
+                                <div className='col-1  ticker-container'>{ticker}</div>
 
-                                <div className='col'>
+                                <div className='col-3'>
                                     <InputField
                                         label='Unit Value '
                                         htmlId='unit-value-field'
@@ -79,7 +79,7 @@ const Stock = props => {
                                     />
                                 </div>
 
-                                <div className='col'>
+                                <div className='col-3'>
                                     <InputField
                                         label='Quantity '
                                         htmlId='quantity-field'
@@ -89,7 +89,7 @@ const Stock = props => {
                                     />
                                 </div>
 
-                                <div className='col'>
+                                <div className='col-3'>
                                     <InputField
                                         label='Total Value '
                                         htmlId='total-value-field'
@@ -101,10 +101,6 @@ const Stock = props => {
 
                                 <div className='col sale-button-container'>
                                     <button type='submit' className='btn btn-dark'>Confirm</button>
-                                    <button
-                                        type='button'
-                                        className='btn btn-dark'
-                                        onClick={() => setSaleMode(!saleMode)}>Cancel</button>
                                 </div>
                             </div>
                         </form>

@@ -1,9 +1,42 @@
+.stock-container {
+    margin-bottom: 16px;
+}
+
+.stock-info-container {
+    margin-bottom: 8px;
+}
+
+.stock-info-container>div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ticker-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .sell-stock-button {
     margin: auto;
     width: 100%;
 }
 
+.sale-mode-container {
+    height: auto;
+    transition: all 0.5 ease-in;
+    padding: 0;
+    /* margin: 16px 0; */
+}
+
 .sale-button-container {
     display: flex;
     flex-direction: column;
+    padding: 0;
+}
+
+.sale-button-container>button {
+    margin: auto;
+    width: 50%;
 }

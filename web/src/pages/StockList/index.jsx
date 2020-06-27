@@ -26,14 +26,14 @@ const StockList = props => {
     return (
         <div className='stocks-container'>
             <NewTransaction />
-            <div className='table table-hover'>
+            <div className='container'>
                 <div className='container'>
-                    <div className='row'>
+                    <div className='row stock-table-header'>
                         <div className='col'>Ticker</div>
                         <div className='col'>Current</div>
                         <div className='col'>Average Price</div>
-                        <div className='col'>Value Invested</div>
-                        <div className='col'>Current Market Price</div>
+                        <div className='col'>Invested</div>
+                        <div className='col'>Current Price</div>
                         <div className='col'>Current Worth</div>
                         <div className='col'>Potential Profit</div>
                         <div className='col'></div>
