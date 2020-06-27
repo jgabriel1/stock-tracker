@@ -6,6 +6,8 @@ import NewTransaction from '../../components/NewTransaction'
 import api from '../../services/api'
 import { getToken } from '../../utils/tokenHandler'
 
+import './styles.css'
+
 const StockList = props => {
     const [stocks, setStocks] = useState([])
 
@@ -24,19 +26,20 @@ const StockList = props => {
     return (
         <div className='stocks-container'>
             <NewTransaction />
-            <table className='table table-hover'>
-                <thead>
-                    <tr>
-                        <th>Ticker</th>
-                        <th>Current</th>
-                        <th>Average Price</th>
-                        <th>Value Invested</th>
-                        <th>Current Market Price</th>
-                        <th>Current Worth</th>
-                        <th>Potential Profit</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div className='table table-hover'>
+                <div className='container'>
+                    <div className='row'>
+                        <div className='col'>Ticker</div>
+                        <div className='col'>Current</div>
+                        <div className='col'>Average Price</div>
+                        <div className='col'>Value Invested</div>
+                        <div className='col'>Current Market Price</div>
+                        <div className='col'>Current Worth</div>
+                        <div className='col'>Potential Profit</div>
+                        <div className='col'></div>
+                    </div>
+                </div>
+                <div className='container'>
                     {stocks.map(stock => (
                         <Stock
                             key={stock.ticker}
@@ -46,8 +49,8 @@ const StockList = props => {
                             regularMarketPrice={stock.regularMarketPrice}
                         />
                     ))}
-                </tbody>
-            </table>
+                </div>
+            </div>
         </div>
     )
 }
