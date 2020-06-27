@@ -1,19 +1,26 @@
 import React from 'react'
 
-const Stock = ({ ticker, nShares, priceBought, currentPrice }) => {
-    const totalInvested = priceBought * nShares // For now, this is it;
-    const totalVariation = (currentPrice * nShares) - totalInvested
-    const relativeVariation = 100 * totalVariation / totalInvested
+const Stock = props => {
+    const {
+        ticker,
+        currently_owned_shares,
+        average_bought_price,
+        regularMarketPrice
+    } = props
+
+    const value_invested = currently_owned_shares * average_bought_price
+    const current_worth = currently_owned_shares * regularMarketPrice
+    const potential_profit = current_worth - value_invested
 
     return (
         <tr id={ticker} className='stock-container'>
             <td>{ticker}</td>
-            <td>{nShares}</td>
-            <td>{priceBought}</td>
-            <td>{currentPrice}</td>
-            <td>{totalInvested}</td>
-            <td>{totalVariation}</td>
-            <td>{`${relativeVariation.toFixed(2)}%`}</td>
+            <td>{currently_owned_shares}</td>
+            <td>{average_bought_price.toFixed(2)}</td>
+            <td>{value_invested.toFixed(2)}</td>
+            <td>{regularMarketPrice.toFixed(2)}</td>
+            <td>{current_worth.toFixed(2)}</td>
+            <td>{potential_profit.toFixed(2)}</td>
         </tr>
     )
 }

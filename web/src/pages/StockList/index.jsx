@@ -25,13 +25,13 @@ const StockList = props => {
             <table className='table table-hover'>
                 <thead>
                     <tr>
-                        <th>ticker</th>
-                        <th>nShares</th>
-                        <th>priceBought</th>
-                        <th>currentPrice</th>
-                        <th>totalInvested</th>
-                        <th>totalVariation</th>
-                        <th>relativeVariation</th>
+                        <th>Ticker</th>
+                        <th>Current</th>
+                        <th>Average Price</th>
+                        <th>Value Invested</th>
+                        <th>Current Market Price</th>
+                        <th>Current Worth</th>
+                        <th>Potential Profit</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,9 +39,9 @@ const StockList = props => {
                         <Stock
                             key={stock.ticker}
                             ticker={stock.ticker}
-                            nShares={stock.n_shares}
-                            priceBought={stock.price_bought}
-                            currentPrice={stock.regularMarketPrice}
+                            currently_owned_shares={stock.currently_owned_shares}
+                            average_bought_price={stock.average_bought_price}
+                            regularMarketPrice={stock.regularMarketPrice}
                         />
                     ))}
                 </tbody>
