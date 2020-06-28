@@ -46,69 +46,65 @@ const Stock = props => {
     }
 
     return (
-        <div className='stock-container'>
-            <div id={ticker} className='row stock-info-container'>
-                <div className='col'>{ticker}</div>
-                <div className='col'>{currently_owned_shares}</div>
-                <div className='col'>{average_bought_price.toFixed(2)}</div>
-                <div className='col'>{value_invested.toFixed(2)}</div>
-                <div className='col'>{regularMarketPrice.toFixed(2)}</div>
-                <div className='col'>{current_worth.toFixed(2)}</div>
-                <div className='col'>{potential_profit.toFixed(2)}</div>
-                <div className='col'>
-                    <button
-                        type='button'
-                        onClick={() => setSaleMode(!saleMode)}
-                        className='btn btn-dark sell-stock-button'>Sell</button>
-                </div>
-            </div>
+        <tbody>
+            <tr className='stock-container' onClick={() => setSaleMode(!saleMode)}>
+                <th scope='row'>{ticker}</th>
+                <td>{currently_owned_shares}</td>
+                <td>{average_bought_price.toFixed(2)}</td>
+                <td>{value_invested.toFixed(2)}</td>
+                <td>{regularMarketPrice.toFixed(2)}</td>
+                <td>{current_worth.toFixed(2)}</td>
+                <td>{potential_profit.toFixed(2)}</td>
+            </tr>
             {
                 saleMode ?
-                    <div className='container sale-mode-container'>
-                        <form onSubmit={handleSaleTransaction}>
-                            <div className='form-row'>
-                                <div className='col-1  ticker-container'>{ticker}</div>
+                    <tr>
+                        <td colSpan='8'>
+                            <form onSubmit={handleSaleTransaction}>
+                                <div className='form-row'>
+                                    <div className='col-1  ticker-container'>{ticker}</div>
 
-                                <div className='col-3'>
-                                    <InputField
-                                        label='Unit Value '
-                                        htmlId='unit-value-field'
-                                        htmlType='number'
-                                        value={unitValue}
-                                        valueSetter={setUnitValue}
-                                    />
-                                </div>
+                                    <div className='col-3'>
+                                        <InputField
+                                            label='Unit Value '
+                                            htmlId='unit-value-field'
+                                            htmlType='number'
+                                            value={unitValue}
+                                            valueSetter={setUnitValue}
+                                        />
+                                    </div>
 
-                                <div className='col-3'>
-                                    <InputField
-                                        label='Quantity '
-                                        htmlId='quantity-field'
-                                        htmlType='number'
-                                        value={quantity}
-                                        valueSetter={setQuantity}
-                                    />
-                                </div>
+                                    <div className='col-3'>
+                                        <InputField
+                                            label='Quantity '
+                                            htmlId='quantity-field'
+                                            htmlType='number'
+                                            value={quantity}
+                                            valueSetter={setQuantity}
+                                        />
+                                    </div>
 
-                                <div className='col-3'>
-                                    <InputField
-                                        label='Total Value '
-                                        htmlId='total-value-field'
-                                        htmlType='number'
-                                        value={totalValue}
-                                        valueSetter={setTotalValue}
-                                    />
-                                </div>
+                                    <div className='col-3'>
+                                        <InputField
+                                            label='Total Value '
+                                            htmlId='total-value-field'
+                                            htmlType='number'
+                                            value={totalValue}
+                                            valueSetter={setTotalValue}
+                                        />
+                                    </div>
 
-                                <div className='col sale-button-container'>
-                                    <button type='submit' className='btn btn-dark'>Confirm</button>
+                                    <div className='col sale-button-container'>
+                                        <button type='submit' className='btn btn-dark'>Sell</button>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
-                    </div>
+                            </form>
+                        </td>
+                    </tr>
                     :
                     null
             }
-        </div>
+        </tbody>
     )
 }
 

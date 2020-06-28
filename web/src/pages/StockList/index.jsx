@@ -26,31 +26,28 @@ const StockList = props => {
     return (
         <div className='stocks-container'>
             <NewTransaction />
-            <div className='container'>
-                <div className='container'>
-                    <div className='row stock-table-header'>
-                        <div className='col'>Ticker</div>
-                        <div className='col'>Current</div>
-                        <div className='col'>Average Price</div>
-                        <div className='col'>Invested</div>
-                        <div className='col'>Current Price</div>
-                        <div className='col'>Current Worth</div>
-                        <div className='col'>Potential Profit</div>
-                        <div className='col'></div>
-                    </div>
-                </div>
-                <div className='container'>
-                    {stocks.map(stock => (
-                        <Stock
-                            key={stock.ticker}
-                            ticker={stock.ticker}
-                            currently_owned_shares={stock.currently_owned_shares}
-                            average_bought_price={stock.average_bought_price}
-                            regularMarketPrice={stock.regularMarketPrice}
-                        />
-                    ))}
-                </div>
-            </div>
+            <table className='table table-hover'>
+                <thead>
+                    <tr>
+                        <th>Ticker</th>
+                        <th>Current</th>
+                        <th>Average Price</th>
+                        <th>Invested</th>
+                        <th>Current Price</th>
+                        <th>Current Worth</th>
+                        <th>Potential Profit</th>
+                    </tr>
+                </thead>
+                {stocks.map(stock => (
+                    <Stock
+                        key={stock.ticker}
+                        ticker={stock.ticker}
+                        currently_owned_shares={stock.currently_owned_shares}
+                        average_bought_price={stock.average_bought_price}
+                        regularMarketPrice={stock.regularMarketPrice}
+                    />
+                ))}
+            </table>
         </div>
     )
 }

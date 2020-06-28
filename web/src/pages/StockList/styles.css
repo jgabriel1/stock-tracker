@@ -3,15 +3,3 @@
     margin: auto;
     width: 80%;
 }
-
-.stock-table-header {
-    margin-bottom: 16px;
-}
-
-.stock-table-header>div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    font-size: medium;
-}
