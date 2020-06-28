@@ -2,11 +2,12 @@
     padding: 16px;
 }
 
-.new-transaction-form>.button-container {
+.new-transaction-form>div>.button-container {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    align-items: center;
 }
 
-.new-transaction-form>.button-container>button {
+.new-transaction-form>div>.button-container>button {
     width: 96px;
 }

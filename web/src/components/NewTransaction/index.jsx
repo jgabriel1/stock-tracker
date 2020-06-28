@@ -41,52 +41,50 @@ const NewTransaction = props => {
     return (
         <div className='new-transaction-container'>
             <form onSubmit={handleCreate} className='new-transaction-form'>
-                <fieldset>
-                    <div className='form-row'>
-                        <div className='col'>
-                            <InputField
-                                label='Ticker '
-                                htmlId='ticker-field'
-                                htmlType='text'
-                                value={ticker}
-                                valueSetter={setTicker}
-                            />
-                        </div>
-
-                        <div className='col'>
-                            <InputField
-                                label='Unit Value '
-                                htmlId='unit-value-field'
-                                htmlType='number'
-                                value={unitValue}
-                                valueSetter={setUnitValue}
-                            />
-                        </div>
-
-                        <div className='col'>
-                            <InputField
-                                label='Quantity '
-                                htmlId='quantity-field'
-                                htmlType='number'
-                                value={quantity}
-                                valueSetter={setQuantity}
-                            />
-                        </div>
-
-                        <div className='col'>
-                            <InputField
-                                label='Total Value '
-                                htmlId='total-value-field'
-                                htmlType='number'
-                                value={totalValue}
-                                valueSetter={setTotalValue}
-                            />
-                        </div>
+                <div className='form-row'>
+                    <div className='col'>
+                        <InputField
+                            label='Ticker '
+                            htmlId='ticker-field'
+                            htmlType='text'
+                            value={ticker}
+                            valueSetter={setTicker}
+                        />
                     </div>
-                </fieldset>
 
-                <div className='button-container'>
-                    <button type='submit' className='btn btn-dark'>Create</button>
+                    <div className='col'>
+                        <InputField
+                            label='Unit Value '
+                            htmlId='unit-value-field'
+                            htmlType='number'
+                            value={unitValue}
+                            valueSetter={setUnitValue}
+                        />
+                    </div>
+
+                    <div className='col'>
+                        <InputField
+                            label='Quantity '
+                            htmlId='quantity-field'
+                            htmlType='number'
+                            value={quantity}
+                            valueSetter={setQuantity}
+                        />
+                    </div>
+
+                    <div className='col'>
+                        <InputField
+                            label='Total Value '
+                            htmlId='total-value-field'
+                            htmlType='number'
+                            value={totalValue}
+                            valueSetter={setTotalValue}
+                        />
+                    </div>
+
+                    <div className='col-2 button-container'>
+                        <button type='submit' className='btn btn-dark'>Buy</button>
+                    </div>
                 </div>
             </form>
         </div>
