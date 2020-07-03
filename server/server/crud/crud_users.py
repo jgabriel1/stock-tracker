@@ -3,7 +3,7 @@ from typing import Optional
 from pymongo.client_session import ClientSession
 
 from ..database.collections import get_users_collection
-from ..models.user import User, UserInDB, UserOutDB
+from ..models.user import User, UserInDB
 from ..security.hash import hash_password, verify_password
 
 
@@ -18,12 +18,12 @@ def create(user: UserInDB, session: ClientSession) -> None:
     }, session=session)
 
 
-def show(username: str, session: ClientSession) -> Optional[UserOutDB]:
+def show(username: str, session: ClientSession) -> Optional[UserInDB]:
     users = get_users_collection(session=session)
 
     user = users.find_one({'username': username}, session=session)
     if user is not None:
-        return UserOutDB.parse_obj(user)
+        return UserInDB.parse_obj(user)
 
 
 def update_password(

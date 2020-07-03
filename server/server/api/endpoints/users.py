@@ -3,14 +3,14 @@ from pymongo.client_session import ClientSession
 from starlette.status import HTTP_204_NO_CONTENT, HTTP_401_UNAUTHORIZED
 
 from ...crud import crud_users
-from ...models.user import User, UserPublic
+from ...models.user import User
 from ..dependencies import get_current_user, get_db
 
 router = APIRouter()
 
 
-@router.get('/users/me', response_model=UserPublic)
-def show_info(user: UserPublic = Depends(get_current_user)):
+@router.get('/users/me', response_model=User)
+def show_info(user: User = Depends(get_current_user)):
     return user
 
 
