@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordRequestForm
 from pymongo.client_session import ClientSession
 from pymongo.errors import DuplicateKeyError
 from starlette.status import (
@@ -11,7 +10,7 @@ from starlette.status import (
 from ...crud import crud_users
 from ...models.user import User, UserInDB
 from ...security.token import Token, create_access_token
-from ..dependencies import get_db
+from ..dependencies import get_db, get_current_authenticated_user
 
 router = APIRouter()
 
@@ -30,11 +29,7 @@ def register(user: UserInDB, session: ClientSession = Depends(get_db)):
 
 
 @router.post('/token', response_model=Token)
-def get_access_token(
-    form: OAuth2PasswordRequestForm = Depends(),
-    session: ClientSession = Depends(get_db)
-):
-    user = crud_users.authenticate(form.username, form.password, session)
+def get_access_token(user: UserInDB = Depends(get_current_authenticated_user)):
     if not user:
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED,

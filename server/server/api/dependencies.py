@@ -1,7 +1,7 @@
 from typing import Optional
 
 from fastapi import Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pymongo.client_session import ClientSession
 from starlette.status import HTTP_401_UNAUTHORIZED
 
@@ -40,3 +40,14 @@ def get_current_user(
         raise credentials_exception
 
     return UserOutDB.parse_obj(user)
+
+
+def get_current_authenticated_user(
+    form: OAuth2PasswordRequestForm = Depends(),
+    session: ClientSession = Depends(get_db)
+):
+    user = crud_users.authenticate(
+        form.username, form.password, session=session
+    )
+
+    return user
