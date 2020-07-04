@@ -38,6 +38,7 @@ const Login = () => {
                 placeholder={'Username'}
                 value={username}
                 onChangeText={text => setUsername(text)}
+                autoCapitalize={'none'}
             />
 
             <TextInput
@@ -45,6 +46,7 @@ const Login = () => {
                 placeholder={'Password'}
                 value={password}
                 onChangeText={text => setPassword(text)}
+                autoCapitalize={'none'}
             />
 
             <Button text={'Register'} onPress={handleSubmitLogin} />
