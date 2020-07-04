@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
+import Button from '../../components/Button'
 
 const Home = () => {
     const navigation = useNavigation()
@@ -20,14 +21,11 @@ const Home = () => {
                 <Text style={styles.titleText}>Stock Tracker</Text>
                 <Text style={styles.titleDescription}>An app to track the stocks you own and project your gains.</Text>
             </View>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={navigateToLogin}>
-                    <Text style={styles.buttonText}>Login</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={navigateToRegister}>
-                    <Text style={styles.buttonText}>Register</Text>
-                </TouchableOpacity>
-            </View>
+
+            <>
+                <Button text={'Login'} onPress={navigateToLogin} />
+                <Button text={'Register'} onPress={navigateToRegister} />
+            </>
         </View>
     )
 }

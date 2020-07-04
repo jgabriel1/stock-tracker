@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
+import Button from '../../components/Button'
+
 import api from '../../services/api'
 import { setAuthToken } from '../../utils/tokenHandler'
 
@@ -45,11 +47,7 @@ const Login = () => {
                 onChangeText={text => setPassword(text)}
             />
 
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={handleSubmitLogin}>
-                    <Text style={styles.buttonText}>Register</Text>
-                </TouchableOpacity>
-            </View>
+            <Button text={'Register'} onPress={handleSubmitLogin} />
         </View>
     )
 }
@@ -72,23 +70,4 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 16
     },
-
-    buttonContainer: {
-        width: '80%',
-    },
-
-    button: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#999',
-        height: 48,
-        borderRadius: 4,
-        marginBottom: 16
-    },
-
-    buttonText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#fff',
-    }
 })
