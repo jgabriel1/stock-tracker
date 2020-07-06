@@ -26,3 +26,14 @@ def list_stocks(
         }
         for stock in stocks.keys()
     ]}
+
+
+@router.get('/stocks/{ticker}')
+def show_stock(
+    ticker: str,
+    user: User = Depends(get_current_user),
+    session: ClientSession = Depends(get_db)
+):
+    stock = crud_stocks.show(ticker, user.username, session=session)
+
+    return stock

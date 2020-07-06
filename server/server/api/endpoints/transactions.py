@@ -38,7 +38,7 @@ def new_transaction(
     with session.start_transaction():
         crud_transactions.create(transaction, user.username, session=session)
 
-        stock = crud_stocks.show(
+        stock = crud_stocks.show_count(
             transaction.ticker, user.username, session=session
         )
 
