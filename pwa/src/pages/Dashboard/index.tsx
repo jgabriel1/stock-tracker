@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
         borderBottomWidth: 1,
         width: Dimensions.get('window').width, // probably changing this
-        fontSize: 16,
     }
 })
 
