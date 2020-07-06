@@ -1,14 +1,21 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import { RouteProp } from '@react-navigation/native'
 
-interface Props {
+interface DetailParams {
     ticker: string
 }
 
-const Detail = (props: Props) => {
+interface Props {
+    route: RouteProp<{ Detail: DetailParams }, 'Detail'>
+}
+
+const Detail = ({ route }: Props) => {
+    const { ticker } = route.params
+
     return (
-        <View>
-            <Text>Details for {props.ticker}</Text>
+        <View style={styles.container}>
+            <Text>{ticker}</Text>
         </View>
     )
 }
