@@ -1,35 +1,71 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import {
+    StyleSheet,
+    Text,
+    View,
+    FlatList,
+    SafeAreaView,
+    TouchableOpacity,
+    Dimensions
+} from 'react-native'
+
+import { useNavigation } from '@react-navigation/native'
 
 import { getAuthToken } from '../../utils/tokenHandler'
 import api from '../../services/api'
 
+interface StockInfo {
+    ticker: string
+    total_invested: number
+    average_bought_price: number
+    total_sold: number
+    currently_owned_shares: number
+}
+
 const Dashboard = () => {
-    const [username, setUsername] = useState('')
-    const [email, setEmail] = useState('')
+    const [totalInvested, setTotalInvested] = useState(0)
+    const [stocks, setStocks] = useState<StockInfo[]>([])
+
+    const navigation = useNavigation()
 
     useEffect(() => {
-        getAuthToken()
-            .then(token => {
-                const headers = { Authorization: `Bearer ${token}` }
+        (async () => {
+            const token = await getAuthToken()
+            const headers = { Authorization: `Bearer ${token}` }
 
-                api.get('users/me', { headers })
-                    .then(response => {
-                        const { username, email } = response.data
+            api.get('stocks', { headers })
+                .then(response => {
+                    const { stocks, total_applied } = response.data
 
-                        setUsername(username)
-                        setEmail(email)
-                    })
-                    .catch(error => alert(error))
-            })
-            .catch(error => alert(error))
+                    setStocks(stocks)
+                    setTotalInvested(total_applied)
+                })
+                .catch(error => alert(error))
+        })()
     }, [])
 
+    function navigateToDetail(item: StockInfo) {
+        navigation.navigate('Detail', {
+            ticker: item.ticker
+        })
+    }
+
     return (
-        <View style={styles.container}>
-            <Text>Username: {username}</Text>
-            <Text>Email: {email}</Text>
-        </View>
+        <SafeAreaView style={styles.container}>
+            <FlatList
+                data={stocks}
+                keyExtractor={item => item.ticker}
+                renderItem={({ item }: { item: StockInfo }) => (
+                    <TouchableOpacity style={styles.gridRow} onPress={() => navigateToDetail(item)}>
+                        <Text style={{ fontSize: 18 }}>{item.ticker}</Text>
+                        <Text>{item.currently_owned_shares}</Text>
+                        <Text>{item.average_bought_price}</Text>
+                        <Text>{item.total_invested}</Text>
+                    </TouchableOpacity>
+                )}
+                contentContainerStyle={styles.listContainer}
+            />
+        </SafeAreaView>
     )
 }
 
@@ -41,4 +77,22 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+
+    listContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    gridRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        borderColor: '#999',
+        paddingVertical: 16,
+        borderBottomWidth: 1,
+        width: Dimensions.get('window').width, // probably changing this
+        fontSize: 16,
+    }
 })
+
+// https://reactnavigation.org/docs/params/
