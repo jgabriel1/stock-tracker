@@ -9,7 +9,7 @@ from .api import routes
 load_dotenv()
 
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
-PWA_URL = os.getenv('PWA_URL', 'http://192.168.2.2:19006')
+PWA_URL = os.getenv('PWA_URL', 'http://192.168.2.3:19006')
 
 app = FastAPI()
 
