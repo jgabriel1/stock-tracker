@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from 'axios'
+import api from '../api'
 
-const YAHOO_API_URL = 'https://query1.finance.yahoo.com/v7/finance/spark'
+import { BASE_API_URL, PROXY_URL } from './urls'
 
 interface YahooResponseData {
     spark: {
@@ -36,10 +37,23 @@ export const getStockInfo = async (tickerList: string[]): Promise<YahooStock[]> 
         symbols: tickerList.join(','),
         range: '1d',
         interval: '1d',
-        // corsDomain: 'finance.yahoo.com',
     }
 
-    const response = await axios.get(YAHOO_API_URL, { params })
+    try {
+        const response = await axios.get(`${PROXY_URL}${BASE_API_URL}v7/finance/spark`, { params })
 
-    return parseResponse(response)
+        return parseResponse(response)
+    }
+    catch {
+        try {
+            const backupResponse = await api.get('yahoo-proxy/info', { params })
+
+            return parseResponse(backupResponse)
+        }
+        catch (error) {
+            alert(error)
+            return []
+        }
+    }
 }
+

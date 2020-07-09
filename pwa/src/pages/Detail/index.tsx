@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, SafeAreaView, Dimensions } from 'react-native'
 import { RouteProp } from '@react-navigation/native'
 
 import { getAuthToken } from '../../utils/tokenHandler'
-import { getStockInfo, YahooStock } from '../../services/yahooFinance'
+import { getStockInfo, YahooStock } from '../../services/yahooFinance/stockInfo'
 import api from '../../services/api'
 
 interface DetailParams {
