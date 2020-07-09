@@ -9,6 +9,7 @@ import {
     Dimensions
 } from 'react-native'
 
+import { AppLoading } from 'expo'
 import { useNavigation } from '@react-navigation/native'
 
 import { getAuthToken } from '../../utils/tokenHandler'
@@ -25,29 +26,39 @@ interface StockInfo {
 const Dashboard = () => {
     const [totalInvested, setTotalInvested] = useState(0)
     const [stocks, setStocks] = useState<StockInfo[]>([])
+    const [dataReady, setDataReady] = useState<boolean>(false)
 
     const navigation = useNavigation()
 
     useEffect(() => {
-        (async () => {
+        async function fetchBackendData() {
             const token = await getAuthToken()
             const headers = { Authorization: `Bearer ${token}` }
 
-            api.get('stocks', { headers })
-                .then(response => {
-                    const { stocks, total_applied } = response.data
+            try {
+                const response = await api.get('stocks', { headers })
 
-                    setStocks(stocks)
-                    setTotalInvested(total_applied)
-                })
-                .catch(error => alert(error))
-        })()
+                const { stocks, total_applied } = response.data
+
+                setStocks(stocks)
+                setTotalInvested(total_applied)
+            }
+            catch (error) {
+                alert(error)
+            }
+        }
+
+        fetchBackendData().then(() => setDataReady(true))
     }, [])
 
     function navigateToDetail(item: StockInfo) {
         navigation.navigate('Detail', {
             ticker: item.ticker
         })
+    }
+
+    if (!dataReady) {
+        return <AppLoading />
     }
 
     return (

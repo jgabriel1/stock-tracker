@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, SafeAreaView, Dimensions } from 'react-native'
 import { useNavigation, RouteProp } from '@react-navigation/native'
+import { AppLoading } from 'expo'
 
 import ReturnButton from '../../components/ReturnButton'
 
@@ -35,25 +36,30 @@ interface Stock {
 const Detail = ({ route }: Props) => {
     const { ticker } = route.params
 
+    const [yahooInfo, setYahooInfo] = useState({} as YahooStock)
+    const [yahooInfoReady, setYahooInfoReady] = useState(false)
+
     const [transactionList, setTransactionList] = useState<Transaction[]>([])
     const [stock, setStock] = useState({} as Stock)
-    const [yahooInfo, setYahooInfo] = useState({} as YahooStock)
+    const [backendInfoReady, setBackendInfoReady] = useState(false)
 
     const navigation = useNavigation()
 
     useEffect(() => {
-        (async () => {
+        async function fetchYahooData() {
             try {
                 const [stockInfo] = await getStockInfo([ticker])
                 setYahooInfo(stockInfo)
             } catch (error) {
                 alert(error)
             }
-        })();
+        }
+
+        fetchYahooData().then(() => setYahooInfoReady(true))
     }, [])
 
     useEffect(() => {
-        (async () => {
+        async function fetchBackendData() {
             const token = await getAuthToken()
 
             const params = { ticker }
@@ -70,8 +76,14 @@ const Detail = ({ route }: Props) => {
             } catch (error) {
                 alert(error)
             }
-        })();
+        }
+
+        fetchBackendData().then(() => setBackendInfoReady(true))
     }, [])
+
+    if (!yahooInfoReady || !backendInfoReady) {
+        return <AppLoading />
+    }
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -107,7 +119,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 8,
     },
 
     titleContainer: {
