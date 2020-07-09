@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, SafeAreaView, Dimensions } from 'react-native'
-import { RouteProp } from '@react-navigation/native'
+import { useNavigation, RouteProp } from '@react-navigation/native'
+
+import ReturnButton from '../../components/ReturnButton'
 
 import { getAuthToken } from '../../utils/tokenHandler'
 import { getStockInfo, YahooStock } from '../../services/yahooFinance/stockInfo'
@@ -37,6 +39,8 @@ const Detail = ({ route }: Props) => {
     const [stock, setStock] = useState({} as Stock)
     const [yahooInfo, setYahooInfo] = useState({} as YahooStock)
 
+    const navigation = useNavigation()
+
     useEffect(() => {
         (async () => {
             try {
@@ -70,23 +74,28 @@ const Detail = ({ route }: Props) => {
     }, [])
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.titleContainer}>
-                <Text style={styles.title}>{stock.ticker}</Text>
+        <SafeAreaView style={{ flex: 1 }}>
+            <View style={{ alignItems: 'flex-start' }}>
+                <ReturnButton navigation={navigation} />
             </View>
-            <View style={styles.infoContainer}>
-                <Text>{yahooInfo.symbol}</Text>
-                <Text>{yahooInfo.regularMarketPrice}</Text>
-                <Text>{yahooInfo.chartPreviousClose}</Text>
-            </View>
-            {transactionList.map((transaction, index) => (
-                <View style={styles.transactionContainer} key={index}>
-                    <Text>{transaction.quantity}</Text>
-                    <Text>{transaction.average_price}</Text>
-                    <Text>{transaction.total_value}</Text>
-                    <Text>{transaction.timestamp}</Text>
+            <View style={styles.container}>
+                <View style={styles.titleContainer}>
+                    <Text style={styles.title}>{stock.ticker}</Text>
                 </View>
-            ))}
+                <View style={styles.infoContainer}>
+                    <Text>{yahooInfo.symbol}</Text>
+                    <Text>{yahooInfo.regularMarketPrice}</Text>
+                    <Text>{yahooInfo.chartPreviousClose}</Text>
+                </View>
+                {transactionList.map((transaction, index) => (
+                    <View style={styles.transactionContainer} key={index}>
+                        <Text>{transaction.quantity}</Text>
+                        <Text>{transaction.average_price}</Text>
+                        <Text>{transaction.total_value}</Text>
+                        <Text>{transaction.timestamp}</Text>
+                    </View>
+                ))}
+            </View>
         </SafeAreaView>
     )
 }
