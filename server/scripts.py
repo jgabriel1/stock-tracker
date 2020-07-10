@@ -7,7 +7,7 @@ def start():
         call([
             'uvicorn',
             'server.main:app',
-            '--host', '192.168.2.3',
+            '--host', '192.168.2.2',
             '--port', '8000',
             '--no-use-colors'
         ])
@@ -21,7 +21,7 @@ def dev():
         call([
             'uvicorn',
             'server.main:app',
-            '--host', '192.168.2.3',
+            '--host', '192.168.2.2',
             '--port', '8000',
             '--reload',
             '--no-use-colors'
