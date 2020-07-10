@@ -71,27 +71,29 @@ const Dashboard = () => {
     }, [])
 
     useEffect(() => {
+        function calculateCurrentWorth(
+            stocks: Map<string, StockInfo>,
+            yahooStocks: Map<string, YahooStock>
+        ): number {
+            const tickers = stocks.keys()
+
+            const currentPrices = Array.from(tickers).map(ticker => {
+                const { currently_owned_shares } = stocks.get(ticker) as StockInfo
+                const { regularMarketPrice } = yahooStocks.get(ticker) as YahooStock
+
+                return regularMarketPrice * currently_owned_shares
+            })
+
+            // Sum of all the values
+            return currentPrices.reduce((a, b) => (a + b))
+        }
+
         if (stocks.size !== 0) {
             const current = calculateCurrentWorth(stocks, yahooInfo)
             setCurrentWorth(current)
         }
     }, [yahooInfo])
 
-    function calculateCurrentWorth(
-        stocks: Map<string, StockInfo>,
-        yahooStocks: Map<string, YahooStock>
-    ): number {
-        const tickers = stocks.keys()
-
-        const currentPrices = Array.from(tickers).map(ticker => {
-            const { currently_owned_shares } = stocks.get(ticker) as StockInfo
-            const { regularMarketPrice } = yahooStocks.get(ticker) as YahooStock
-
-            return regularMarketPrice * currently_owned_shares
-        })
-
-        return currentPrices.reduce((a, b) => (a + b))
-    }
 
     function navigateToDetail(item: StockInfo) {
         navigation.navigate('Detail', {
@@ -105,35 +107,51 @@ const Dashboard = () => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
+
             <View style={styles.headerContainer}>
                 <View style={styles.infoContainer}>
                     <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Total Invested</Text>
-                    <Text style={{ fontSize: 18, fontStyle: 'italic' }}>$ {totalInvested.toFixed(2)}</Text>
+                    <Text style={{ fontSize: 18 }}>$ {totalInvested.toFixed(2)}</Text>
                 </View>
                 <View style={styles.infoContainer}>
                     <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Current Worth</Text>
-                    <Text style={{ fontSize: 18, fontStyle: 'italic' }}>$ {calculateCurrentWorth(stocks, yahooInfo).toFixed(2)}</Text>
+                    <Text style={{ fontSize: 18 }}>$ {currentWorth.toFixed(2)}</Text>
                 </View>
                 <View style={styles.infoContainer}>
                     <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Balance</Text>
-                    <Text style={{ fontSize: 18, fontStyle: 'italic' }}>$ {(currentWorth - totalInvested).toFixed(2)}</Text>
+                    <Text style={{ fontSize: 18 }}>$ {(currentWorth - totalInvested).toFixed(2)}</Text>
                 </View>
             </View>
+
             <FlatList
                 data={Array.from(stocks.values())}
                 keyExtractor={item => item.ticker}
-                renderItem={({ item }: { item: StockInfo }) => (
-                    <TouchableOpacity onPress={() => navigateToDetail(item)}>
-                        <View style={styles.gridRow}>
-                            <Text style={{ fontSize: 18 }}>{item.ticker}</Text>
-                            <Text>{item.currently_owned_shares}</Text>
-                            <Text>{item.average_bought_price}</Text>
-                            <Text>{item.total_invested}</Text>
-                        </View>
-                    </TouchableOpacity>
-                )}
+                renderItem={({ item }: { item: StockInfo }) => {
+                    const { ticker, currently_owned_shares, average_bought_price } = item
+
+                    const { regularMarketPrice } = yahooInfo.get(ticker) as YahooStock
+
+                    const potentialProfit = (regularMarketPrice - average_bought_price) * currently_owned_shares
+                    const profitColor = potentialProfit > 0 ? '#0a0' : '#d00'
+
+                    return (
+                        <TouchableOpacity onPress={() => navigateToDetail(item)}>
+                            <View style={styles.tickerContainer}>
+                                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{ticker}</Text>
+                            </View>
+                            <View style={styles.gridRow}>
+                                <View style={styles.gridColumn}><Text>x{currently_owned_shares}</Text></View>
+                                <View style={styles.gridColumn}><Text>{average_bought_price.toFixed(2)}</Text></View>
+                                <View style={styles.gridColumn}><Text>{regularMarketPrice.toFixed(2)}</Text></View>
+                                <View style={styles.gridColumn}><Text style={{ color: profitColor }}>{potentialProfit.toFixed(2)}</Text></View>
+                            </View>
+                        </TouchableOpacity>
+                    )
+                }}
                 contentContainerStyle={styles.listContainer}
+                scrollEnabled={true}
             />
+
         </SafeAreaView>
     )
 }
@@ -142,7 +160,7 @@ export default Dashboard
 
 const styles = StyleSheet.create({
     headerContainer: {
-        flex: 0.8,
+        height: Dimensions.get('window').height * 0.4
     },
 
     infoContainer: {
@@ -152,11 +170,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 32,
     },
 
-    listContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+    listContainer: {},
 
     gridRow: {
         flexDirection: 'row',
@@ -165,5 +179,16 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
         borderBottomWidth: 1,
         width: Dimensions.get('window').width, // probably changing this
-    }
+    },
+
+    gridColumn: {
+        height: '100%',
+        width: Dimensions.get('window').width / 4,
+        alignItems: 'center',
+    },
+
+    tickerContainer: {
+        paddingLeft: 32,
+        paddingTop: 16
+    },
 })
