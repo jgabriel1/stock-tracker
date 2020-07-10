@@ -25,10 +25,10 @@ interface StockInfo {
 }
 
 const Dashboard = () => {
-    const [stocks, setStocks] = useState<StockInfo[]>([])
+    const [stocks, setStocks] = useState<Map<string, StockInfo>>(new Map())
     const [totalInvested, setTotalInvested] = useState(0)
 
-    const [yahooInfo, setYahooInfo] = useState<YahooStock[]>([])
+    const [yahooInfo, setYahooInfo] = useState<Map<string, YahooStock>>(new Map())
     const [currentWorth, setCurrentWorth] = useState(0)
 
     const [dataReady, setDataReady] = useState<boolean>(false)
@@ -45,10 +45,10 @@ const Dashboard = () => {
 
                 const { stocks, total_applied } = response.data
 
-                setStocks(stocks)
+                setStocks(new Map(Object.entries(stocks)))
                 setTotalInvested(total_applied)
 
-                return stocks.map((stock: StockInfo) => stock.ticker)
+                return Object.keys(stocks)
             }
             catch (error) {
                 alert(error)
@@ -71,20 +71,26 @@ const Dashboard = () => {
     }, [])
 
     useEffect(() => {
-        const current = calculateCurrentWorth(stocks, yahooInfo)
-        setCurrentWorth(current)
-    }, [])
+        if (stocks.size !== 0) {
+            const current = calculateCurrentWorth(stocks, yahooInfo)
+            setCurrentWorth(current)
+        }
+    }, [yahooInfo])
 
-    function calculateCurrentWorth(stocks: StockInfo[], yahooStocks: YahooStock[]): number {
-        const merged = stocks.map(stock => {
-            for (let yahooStock of yahooStocks) {
-                if (yahooStock.symbol === stock.ticker) {
-                    return { ...yahooStock, ...stock }
-                }
-            }
+    function calculateCurrentWorth(
+        stocks: Map<string, StockInfo>,
+        yahooStocks: Map<string, YahooStock>
+    ): number {
+        const tickers = stocks.keys()
+
+        const currentPrices = Array.from(tickers).map(ticker => {
+            const { currently_owned_shares } = stocks.get(ticker) as StockInfo
+            const { regularMarketPrice } = yahooStocks.get(ticker) as YahooStock
+
+            return regularMarketPrice * currently_owned_shares
         })
 
-        return merged.reduce((accum, current: any) => (accum + (current.currently_owned_shares * current.regularMarketPrice)), 0)
+        return currentPrices.reduce((a, b) => (a + b))
     }
 
     function navigateToDetail(item: StockInfo) {
@@ -102,19 +108,19 @@ const Dashboard = () => {
             <View style={styles.headerContainer}>
                 <View style={styles.infoContainer}>
                     <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Total Invested</Text>
-                    <Text style={{ fontSize: 18 }}>$ {totalInvested.toFixed(2)}</Text>
+                    <Text style={{ fontSize: 18, fontStyle: 'italic' }}>$ {totalInvested.toFixed(2)}</Text>
                 </View>
                 <View style={styles.infoContainer}>
                     <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Current Worth</Text>
-                    <Text style={{ fontSize: 18 }}>$ {calculateCurrentWorth(stocks, yahooInfo).toFixed(2)}</Text>
+                    <Text style={{ fontSize: 18, fontStyle: 'italic' }}>$ {calculateCurrentWorth(stocks, yahooInfo).toFixed(2)}</Text>
                 </View>
                 <View style={styles.infoContainer}>
                     <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Balance</Text>
-                    <Text style={{ fontSize: 18 }}>$ {(currentWorth - totalInvested).toFixed(2)}</Text>
+                    <Text style={{ fontSize: 18, fontStyle: 'italic' }}>$ {(currentWorth - totalInvested).toFixed(2)}</Text>
                 </View>
             </View>
             <FlatList
-                data={stocks}
+                data={Array.from(stocks.values())}
                 keyExtractor={item => item.ticker}
                 renderItem={({ item }: { item: StockInfo }) => (
                     <TouchableOpacity onPress={() => navigateToDetail(item)}>

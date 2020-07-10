@@ -6,7 +6,7 @@ import { AppLoading } from 'expo'
 import ReturnButton from '../../components/ReturnButton'
 
 import { getAuthToken } from '../../utils/tokenHandler'
-import { getStockInfo, YahooStock } from '../../services/yahooFinance/stockInfo'
+import { getSingleStockInfo, YahooStock } from '../../services/yahooFinance/stockInfo'
 import api from '../../services/api'
 
 interface DetailParams {
@@ -48,7 +48,7 @@ const Detail = ({ route }: Props) => {
     useEffect(() => {
         async function fetchYahooData() {
             try {
-                const [stockInfo] = await getStockInfo([ticker])
+                const stockInfo = await getSingleStockInfo(ticker)
                 setYahooInfo(stockInfo)
             } catch (error) {
                 alert(error)

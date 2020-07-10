@@ -22,17 +22,17 @@ export interface YahooStock {
     chartPreviousClose: number
 }
 
-const parseResponse = (response: AxiosResponse<YahooResponseData>): YahooStock[] => {
+const parseResponse = (response: AxiosResponse<YahooResponseData>): Map<string, YahooStock> => {
     const { data } = response
     const results = data.spark.result
 
     // This mapping "enters" the json object simplifying the final result
     const stocksInfo = results.map((result: YahooStockResult) => (result.response[0].meta))
 
-    return stocksInfo
+    return new Map(stocksInfo.map(stockInfo => [stockInfo.symbol, stockInfo]))
 }
 
-export const getStockInfo = async (tickerList: string[]): Promise<YahooStock[]> => {
+export const getStockInfo = async (tickerList: string[]): Promise<Map<string, YahooStock>> => {
     const params = {
         symbols: tickerList.join(','),
         range: '1d',
@@ -52,8 +52,14 @@ export const getStockInfo = async (tickerList: string[]): Promise<YahooStock[]> 
         }
         catch (error) {
             alert(error)
-            return []
+            return new Map()
         }
     }
+}
+
+export const getSingleStockInfo = async (ticker: string): Promise<YahooStock> => {
+    const mapping = await getStockInfo([ticker])
+
+    return mapping.get(ticker) as YahooStock
 }
 
