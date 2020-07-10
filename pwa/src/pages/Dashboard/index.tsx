@@ -14,6 +14,7 @@ import { useNavigation } from '@react-navigation/native'
 
 import { getAuthToken } from '../../utils/tokenHandler'
 import api from '../../services/api'
+import { getStockInfo, YahooStock } from '../../services/yahooFinance/stockInfo'
 
 interface StockInfo {
     ticker: string
@@ -24,14 +25,18 @@ interface StockInfo {
 }
 
 const Dashboard = () => {
-    const [totalInvested, setTotalInvested] = useState(0)
     const [stocks, setStocks] = useState<StockInfo[]>([])
+    const [totalInvested, setTotalInvested] = useState(0)
+
+    const [yahooInfo, setYahooInfo] = useState<YahooStock[]>([])
+    const [currentWorth, setCurrentWorth] = useState(0)
+
     const [dataReady, setDataReady] = useState<boolean>(false)
 
     const navigation = useNavigation()
 
     useEffect(() => {
-        async function fetchBackendData() {
+        async function fetchBackendData(): Promise<string[]> {
             const token = await getAuthToken()
             const headers = { Authorization: `Bearer ${token}` }
 
@@ -42,14 +47,45 @@ const Dashboard = () => {
 
                 setStocks(stocks)
                 setTotalInvested(total_applied)
+
+                return stocks.map((stock: StockInfo) => stock.ticker)
             }
             catch (error) {
+                alert(error)
+                return []
+            }
+        }
+
+        async function fetchYahooData(tickers: string[]) {
+            try {
+                const stocksYahooInfo = await getStockInfo(tickers)
+                setYahooInfo(stocksYahooInfo)
+            } catch (error) {
                 alert(error)
             }
         }
 
-        fetchBackendData().then(() => setDataReady(true))
+        fetchBackendData().then(tickers => {
+            fetchYahooData(tickers).then(() => setDataReady(true))
+        })
     }, [])
+
+    useEffect(() => {
+        const current = calculateCurrentWorth(stocks, yahooInfo)
+        setCurrentWorth(current)
+    }, [])
+
+    function calculateCurrentWorth(stocks: StockInfo[], yahooStocks: YahooStock[]): number {
+        const merged = stocks.map(stock => {
+            for (let yahooStock of yahooStocks) {
+                if (yahooStock.symbol === stock.ticker) {
+                    return { ...yahooStock, ...stock }
+                }
+            }
+        })
+
+        return merged.reduce((accum, current: any) => (accum + (current.currently_owned_shares * current.regularMarketPrice)), 0)
+    }
 
     function navigateToDetail(item: StockInfo) {
         navigation.navigate('Detail', {
@@ -62,16 +98,32 @@ const Dashboard = () => {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={{ flex: 1 }}>
+            <View style={styles.headerContainer}>
+                <View style={styles.infoContainer}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Total Invested</Text>
+                    <Text style={{ fontSize: 18 }}>$ {totalInvested.toFixed(2)}</Text>
+                </View>
+                <View style={styles.infoContainer}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Current Worth</Text>
+                    <Text style={{ fontSize: 18 }}>$ {calculateCurrentWorth(stocks, yahooInfo).toFixed(2)}</Text>
+                </View>
+                <View style={styles.infoContainer}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Balance</Text>
+                    <Text style={{ fontSize: 18 }}>$ {(currentWorth - totalInvested).toFixed(2)}</Text>
+                </View>
+            </View>
             <FlatList
                 data={stocks}
                 keyExtractor={item => item.ticker}
                 renderItem={({ item }: { item: StockInfo }) => (
-                    <TouchableOpacity style={styles.gridRow} onPress={() => navigateToDetail(item)}>
-                        <Text style={{ fontSize: 18 }}>{item.ticker}</Text>
-                        <Text>{item.currently_owned_shares}</Text>
-                        <Text>{item.average_bought_price}</Text>
-                        <Text>{item.total_invested}</Text>
+                    <TouchableOpacity onPress={() => navigateToDetail(item)}>
+                        <View style={styles.gridRow}>
+                            <Text style={{ fontSize: 18 }}>{item.ticker}</Text>
+                            <Text>{item.currently_owned_shares}</Text>
+                            <Text>{item.average_bought_price}</Text>
+                            <Text>{item.total_invested}</Text>
+                        </View>
                     </TouchableOpacity>
                 )}
                 contentContainerStyle={styles.listContainer}
@@ -83,10 +135,15 @@ const Dashboard = () => {
 export default Dashboard
 
 const styles = StyleSheet.create({
-    container: {
+    headerContainer: {
+        flex: 0.8,
+    },
+
+    infoContainer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'flex-start',
+        paddingHorizontal: 32,
     },
 
     listContainer: {
@@ -104,5 +161,3 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width, // probably changing this
     }
 })
-
-// https://reactnavigation.org/docs/params/
