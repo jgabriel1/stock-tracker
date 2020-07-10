@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict
 
 from pydantic import BaseModel, validator
 
@@ -15,21 +15,8 @@ class Stock(BaseModel):
         return value.upper()
 
 
-class StockOutInfo(BaseModel):
-    # From Stock model:
-    ticker: str
-    total_invested: float
-    average_bought_price: float
-    total_sold: float
-    currently_owned_shares: int
-
-    # From Yahoo Finance stock model:
-    regularMarketPrice: float
-    chartPreviousClose: float
-
-
 class StocksResponse(BaseModel):
-    stocks: List[StockOutInfo]
+    stocks: Dict[str, Stock]
     total_applied: float = None
 
     @validator('total_applied', always=True)
@@ -37,5 +24,5 @@ class StocksResponse(BaseModel):
         stocks = values['stocks']
         return sum(
             stock.currently_owned_shares * stock.average_bought_price
-            for stock in stocks
+            for stock in stocks.values()
         )

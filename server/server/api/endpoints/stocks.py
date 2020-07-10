@@ -2,9 +2,8 @@ from fastapi import APIRouter, Depends
 from pymongo.client_session import ClientSession
 
 from ...crud import crud_stocks
-from ...models.stock import StocksResponse
+from ...models.stock import Stock, StocksResponse
 from ...models.user import User
-from ...services.yahoo_finance import get_stock_info
 from ..dependencies import get_current_user, get_db
 
 router = APIRouter()
@@ -17,18 +16,10 @@ def list_stocks(
 ):
     stocks = crud_stocks.index(user.username, session=session)
 
-    stocks_info = get_stock_info(stocks.keys())
-
-    return {'stocks': [
-        {
-            **stocks[stock],
-            **stocks_info[stock].dict()
-        }
-        for stock in stocks.keys()
-    ]}
+    return {'stocks': stocks}
 
 
-@router.get('/stocks/{ticker}')
+@router.get('/stocks/{ticker}', response_model=Stock)
 def show_stock(
     ticker: str,
     user: User = Depends(get_current_user),
