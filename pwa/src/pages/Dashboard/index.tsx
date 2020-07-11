@@ -1,22 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import {
-    StyleSheet,
-    Text,
-    View,
-    FlatList,
-    SafeAreaView,
-    TouchableOpacity,
-    Dimensions
-} from 'react-native'
-
+import { StyleSheet, Text, View, SafeAreaView, Dimensions } from 'react-native'
 import { AppLoading } from 'expo'
 import { useNavigation } from '@react-navigation/native'
 
-import { getAuthToken } from '../../utils/tokenHandler'
+import StockList from './components/StockList'
+
 import api from '../../services/api'
 import { getStockInfo, YahooStock } from '../../services/yahooFinance/stockInfo'
+import { getAuthToken } from '../../utils/tokenHandler'
 
-interface StockInfo {
+export interface StockInfo {
     ticker: string
     total_invested: number
     average_bought_price: number
@@ -94,13 +87,6 @@ const Dashboard = () => {
         }
     }, [yahooInfo])
 
-
-    function navigateToDetail(item: StockInfo) {
-        navigation.navigate('Detail', {
-            ticker: item.ticker
-        })
-    }
-
     if (!dataReady) {
         return <AppLoading />
     }
@@ -123,34 +109,7 @@ const Dashboard = () => {
                 </View>
             </View>
 
-            <FlatList
-                data={Array.from(stocks.values())}
-                keyExtractor={item => item.ticker}
-                renderItem={({ item }: { item: StockInfo }) => {
-                    const { ticker, currently_owned_shares, average_bought_price } = item
-
-                    const { regularMarketPrice } = yahooInfo.get(ticker) as YahooStock
-
-                    const potentialProfit = (regularMarketPrice - average_bought_price) * currently_owned_shares
-                    const profitColor = potentialProfit > 0 ? '#0a0' : '#d00'
-
-                    return (
-                        <TouchableOpacity onPress={() => navigateToDetail(item)}>
-                            <View style={styles.tickerContainer}>
-                                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{ticker}</Text>
-                            </View>
-                            <View style={styles.gridRow}>
-                                <View style={styles.gridColumn}><Text>x{currently_owned_shares}</Text></View>
-                                <View style={styles.gridColumn}><Text>{average_bought_price.toFixed(2)}</Text></View>
-                                <View style={styles.gridColumn}><Text>{regularMarketPrice.toFixed(2)}</Text></View>
-                                <View style={styles.gridColumn}><Text style={{ color: profitColor }}>{potentialProfit.toFixed(2)}</Text></View>
-                            </View>
-                        </TouchableOpacity>
-                    )
-                }}
-                contentContainerStyle={styles.listContainer}
-                scrollEnabled={true}
-            />
+            <StockList {...{ stocks, yahooInfo, navigation }} />
 
         </SafeAreaView>
     )
@@ -168,27 +127,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'flex-start',
         paddingHorizontal: 32,
-    },
-
-    listContainer: {},
-
-    gridRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        borderColor: '#999',
-        paddingVertical: 16,
-        borderBottomWidth: 1,
-        width: Dimensions.get('window').width, // probably changing this
-    },
-
-    gridColumn: {
-        height: '100%',
-        width: Dimensions.get('window').width / 4,
-        alignItems: 'center',
-    },
-
-    tickerContainer: {
-        paddingLeft: 32,
-        paddingTop: 16
     },
 })
