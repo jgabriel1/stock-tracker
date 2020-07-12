@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, SafeAreaView, Dimensions } from 'react-native'
+import { StyleSheet, SafeAreaView } from 'react-native'
 import { AppLoading } from 'expo'
 import { useNavigation } from '@react-navigation/native'
 
+import MainInfo from './components/MainInfo'
 import StockList from './components/StockList'
 
 import api from '../../services/api'
@@ -22,14 +23,14 @@ const Dashboard = () => {
     const [totalInvested, setTotalInvested] = useState(0)
 
     const [yahooInfo, setYahooInfo] = useState<Map<string, YahooStock>>(new Map())
-    const [currentWorth, setCurrentWorth] = useState(0)
 
     const [dataReady, setDataReady] = useState<boolean>(false)
+    const [yahooDataReady, setYahooDataReady] = useState<boolean>(false)
 
     const navigation = useNavigation()
 
     useEffect(() => {
-        async function fetchBackendData(): Promise<string[]> {
+        async function fetchBackendData() {
             const token = await getAuthToken()
             const headers = { Authorization: `Bearer ${token}` }
 
@@ -40,74 +41,52 @@ const Dashboard = () => {
 
                 setStocks(new Map(Object.entries(stocks)))
                 setTotalInvested(total_applied)
-
-                return Object.keys(stocks)
             }
             catch (error) {
                 alert(error)
-                return []
             }
         }
 
+        fetchBackendData().then(() => setDataReady(true))
+    }, [])
+
+    useEffect(() => {
         async function fetchYahooData(tickers: string[]) {
             try {
                 const stocksYahooInfo = await getStockInfo(tickers)
                 setYahooInfo(stocksYahooInfo)
+                setYahooDataReady(true)
             } catch (error) {
                 alert(error)
             }
         }
 
-        fetchBackendData().then(tickers => {
-            fetchYahooData(tickers).then(() => setDataReady(true))
-        })
-    }, [])
+        if (dataReady) {
+            const tickers = Array.from(stocks.keys())
 
-    useEffect(() => {
-        function calculateCurrentWorth(
-            stocks: Map<string, StockInfo>,
-            yahooStocks: Map<string, YahooStock>
-        ): number {
-            const tickers = stocks.keys()
+            // when rendering the screen for the first time, execute it immediately
+            if (!yahooDataReady) {
+                setTimeout(async () => {
+                    await fetchYahooData(tickers)
+                }, 1)
+            }
 
-            const currentPrices = Array.from(tickers).map(ticker => {
-                const { currently_owned_shares } = stocks.get(ticker) as StockInfo
-                const { regularMarketPrice } = yahooStocks.get(ticker) as YahooStock
+            const interval = setInterval(async () => {
+                await fetchYahooData(tickers)
+            }, 5000 * 60)
 
-                return regularMarketPrice * currently_owned_shares
-            })
-
-            // Sum of all the values
-            return currentPrices.reduce((a, b) => (a + b))
+            return () => clearInterval(interval)
         }
+    }, [dataReady, stocks])
 
-        if (stocks.size !== 0) {
-            const current = calculateCurrentWorth(stocks, yahooInfo)
-            setCurrentWorth(current)
-        }
-    }, [yahooInfo])
-
-    if (!dataReady) {
+    if (!dataReady || !yahooDataReady) {
         return <AppLoading />
     }
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={styles.mainContainer}>
 
-            <View style={styles.headerContainer}>
-                <View style={styles.infoContainer}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Total Invested</Text>
-                    <Text style={{ fontSize: 18 }}>$ {totalInvested.toFixed(2)}</Text>
-                </View>
-                <View style={styles.infoContainer}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Current Worth</Text>
-                    <Text style={{ fontSize: 18 }}>$ {currentWorth.toFixed(2)}</Text>
-                </View>
-                <View style={styles.infoContainer}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Balance</Text>
-                    <Text style={{ fontSize: 18 }}>$ {(currentWorth - totalInvested).toFixed(2)}</Text>
-                </View>
-            </View>
+            <MainInfo {...{ totalInvested, stocks, yahooInfo }} />
 
             <StockList {...{ stocks, yahooInfo, navigation }} />
 
@@ -118,14 +97,7 @@ const Dashboard = () => {
 export default Dashboard
 
 const styles = StyleSheet.create({
-    headerContainer: {
-        height: Dimensions.get('window').height * 0.4
-    },
-
-    infoContainer: {
+    mainContainer: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        paddingHorizontal: 32,
     },
 })
