@@ -29,7 +29,23 @@ const parseResponse = (response: AxiosResponse<YahooResponseData>): Map<string, 
     // This mapping "enters" the json object simplifying the final result
     const stocksInfo = results.map((result: YahooStockResult) => (result.response[0].meta))
 
-    return new Map(stocksInfo.map(stockInfo => [stockInfo.symbol, stockInfo]))
+    return new Map(
+        stocksInfo.map(info => [
+            // Map key
+            info.symbol,
+
+            // Map value
+            {
+                symbol: info.symbol,
+                currency: info.currency,
+                regularMarketPrice: info.regularMarketPrice,
+                chartPreviousClose: info.chartPreviousClose,
+            }
+            // Redeclaring the object like this to filter out any other unnecessary data sent
+            // by the external api that is not going to be used. The interface declared before
+            // does not do this on it's own.
+        ])
+    )
 }
 
 export const getStockInfo = async (tickerList: string[]): Promise<Map<string, YahooStock>> => {
