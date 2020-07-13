@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, SafeAreaView } from 'react-native'
+import { StyleSheet, SafeAreaView, Platform } from 'react-native'
 import { AppLoading } from 'expo'
 import { useNavigation } from '@react-navigation/native'
+import { Feather as Icon } from '@expo/vector-icons'
+import ActionButton from 'react-native-action-button'
 
 import MainInfo from './components/MainInfo'
 import StockList from './components/StockList'
@@ -89,6 +91,13 @@ const Dashboard = () => {
             <MainInfo {...{ totalInvested, stocks, yahooInfo }} />
 
             <StockList {...{ stocks, yahooInfo, navigation }} />
+
+            <ActionButton
+                onPress={() => navigation.navigate('NewTransaction')}
+                renderIcon={() => <Icon name='plus' size={32} color='#fff' />}
+                buttonColor='rgba(0, 0, 0, 0.8)'
+                hideShadow={Platform.OS === 'web' ? true : false}
+            />
 
         </SafeAreaView>
     )
