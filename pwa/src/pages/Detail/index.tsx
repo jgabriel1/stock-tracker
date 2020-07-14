@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, SafeAreaView, Dimensions } from 'react-native'
-import { useNavigation, RouteProp } from '@react-navigation/native'
+import { useNavigation, RouteProp, useRoute } from '@react-navigation/native'
 import { AppLoading } from 'expo'
 
 import ReturnButton from '../../components/ReturnButton'
@@ -11,10 +11,6 @@ import api from '../../services/api'
 
 interface DetailParams {
     ticker: string
-}
-
-interface Props {
-    route: RouteProp<{ Detail: DetailParams }, 'Detail'>
 }
 
 interface Transaction {
@@ -33,7 +29,8 @@ interface Stock {
     average_bought_price: number
 }
 
-const Detail = ({ route }: Props) => {
+const Detail = () => {
+    const route = useRoute<RouteProp<{ Detail: DetailParams }, 'Detail'>>()
     const { ticker } = route.params
 
     const [yahooInfo, setYahooInfo] = useState({} as YahooStock)
