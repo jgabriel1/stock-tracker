@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, SafeAreaView, Platform } from 'react-native'
 import { AppLoading } from 'expo'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useIsFocused, useRoute, RouteProp } from '@react-navigation/native'
 import { Feather as Icon } from '@expo/vector-icons'
 import ActionButton from 'react-native-action-button'
 
@@ -11,6 +11,8 @@ import StockList from './components/StockList'
 import api from '../../services/api'
 import { getStockInfo, YahooStock } from '../../services/yahooFinance/stockInfo'
 import { getAuthToken } from '../../utils/tokenHandler'
+
+import { AppStackParamList } from '../../routes'
 
 export interface StockInfo {
     ticker: string
@@ -30,6 +32,8 @@ const Dashboard = () => {
     const [yahooDataReady, setYahooDataReady] = useState<boolean>(false)
 
     const navigation = useNavigation()
+    const isFocused = useIsFocused()
+    const route = useRoute<RouteProp<AppStackParamList, 'Dashboard'>>()
 
     useEffect(() => {
         async function fetchBackendData() {
@@ -49,8 +53,18 @@ const Dashboard = () => {
             }
         }
 
-        fetchBackendData().then(() => setDataReady(true))
-    }, [])
+        const { loadData } = route.params
+
+        if (isFocused && loadData) {
+            fetchBackendData()
+                .then(() => {
+                    setDataReady(true)
+                    setYahooDataReady(false)
+
+                    route.params.loadData = false
+                })
+        }
+    }, [isFocused])
 
     useEffect(() => {
         async function fetchYahooData(tickers: string[]) {
@@ -79,7 +93,7 @@ const Dashboard = () => {
 
             return () => clearInterval(interval)
         }
-    }, [dataReady, stocks])
+    }, [dataReady, yahooDataReady])
 
     if (!dataReady || !yahooDataReady) {
         return <AppLoading />
