@@ -1,5 +1,4 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
@@ -10,7 +9,16 @@ import Dashboard from './pages/Dashboard'
 import NewTransaction from './pages/NewTransaction'
 import Detail from './pages/Detail'
 
-const AppStack = createStackNavigator()
+export type AppStackParamList = {
+    Home: undefined
+    Login: undefined
+    Register: undefined
+    Dashboard: { loadData: boolean }
+    Detail: { ticker: string }
+    NewTransaction: undefined
+}
+
+const AppStack = createStackNavigator<AppStackParamList>()
 
 const Routes = () => {
     return (
