@@ -9,7 +9,6 @@ import api from '../../services/api'
 import { getAuthToken } from '../../utils/tokenHandler'
 
 /** TODO:
- * Refresh dashboard somehow on submitting the new transaction form when navigating back
  * Setup the TextInput+Picker component somehow to integrate with yahoo query api
  */
 
@@ -33,7 +32,9 @@ const NewTransaction = () => {
 
                 api.post('transactions', data, { headers })
                     .then(() => {
-                        navigation.navigate('Dashboard')
+                        navigation.navigate('Dashboard', {
+                            loadData: true
+                        })
                     })
                     .catch(error => alert(error))
             })

@@ -26,7 +26,11 @@ const Login = () => {
                 const { access_token } = response.data
 
                 setAuthToken(access_token)
-                    .then(() => { navigation.navigate('Dashboard') })
+                    .then(() => {
+                        navigation.navigate('Dashboard', {
+                            loadData: true
+                        })
+                    })
             })
             .catch(error => console.log(error))
     }

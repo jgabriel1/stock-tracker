@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, SafeAreaView, Dimensions } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native'
 import { useNavigation, RouteProp, useRoute } from '@react-navigation/native'
 import { AppLoading } from 'expo'
 
@@ -9,9 +9,8 @@ import { getAuthToken } from '../../utils/tokenHandler'
 import { getSingleStockInfo, YahooStock } from '../../services/yahooFinance/stockInfo'
 import api from '../../services/api'
 
-interface DetailParams {
-    ticker: string
-}
+import { AppStackParamList } from '../../routes'
+
 
 interface Transaction {
     ticker: string
@@ -30,7 +29,7 @@ interface Stock {
 }
 
 const Detail = () => {
-    const route = useRoute<RouteProp<{ Detail: DetailParams }, 'Detail'>>()
+    const route = useRoute<RouteProp<AppStackParamList, 'Detail'>>()
     const { ticker } = route.params
 
     const [yahooInfo, setYahooInfo] = useState({} as YahooStock)
