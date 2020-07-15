@@ -1,7 +1,10 @@
 import React, { useState, SetStateAction, Dispatch, useCallback } from 'react'
 import { StyleSheet, Text, View, TextInput, FlatList, Button, Dimensions } from 'react-native'
 
+import useDebounce from '../../../hooks/useDebounce'
+
 import { getSearchQuery, YahooSearchAnswers } from '../../../services/yahooFinance/stockSearch'
+
 
 interface Props {
     tickerValue: string
@@ -12,16 +15,16 @@ interface Props {
 const StockPicker = ({ tickerValue, valueSetter }: Props) => {
     const [answerList, setAnswerList] = useState<YahooSearchAnswers[]>([])
 
-    const searchForText = useCallback(async (text: string) => {
+    const debouncedQuery = useDebounce(async (text: string) => {
         const answers = await getSearchQuery(text)
         setAnswerList(answers)
-    }, [])
+    }, 500)
 
     return (
         <View style={styles.container}>
             <TextInput
                 style={styles.input}
-                onChangeText={text => searchForText(text)}
+                onChangeText={text => debouncedQuery(text)}
                 autoCapitalize='none'
                 placeholder='Stock Ticker'
             />
