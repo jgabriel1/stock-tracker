@@ -4,9 +4,13 @@ import { useNavigation } from '@react-navigation/native'
 
 import ReturnButton from '../../components/ReturnButton'
 import Button from '../../components/Button'
+import StockPicker from './components/StockPicker'
+import Modal from './components/Modal'
 
 import api from '../../services/api'
 import { getAuthToken } from '../../utils/tokenHandler'
+
+import { Provider } from 'react-native-paper'
 
 /** TODO:
  * Setup the TextInput+Picker component somehow to integrate with yahoo query api
@@ -16,6 +20,8 @@ const NewTransaction = () => {
     const [ticker, setTicker] = useState('')
     const [quantity, setQuantity] = useState('')
     const [totalValue, setTotalValue] = useState('')
+
+    const [showStockPicker, setShowStockPicker] = useState(false)
 
     const navigation = useNavigation()
 
@@ -41,43 +47,51 @@ const NewTransaction = () => {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <Provider>
+            <SafeAreaView style={styles.container}>
 
-            <View style={styles.headerContainer}>
-                <ReturnButton navigation={navigation} />
-            </View>
+                <View style={styles.headerContainer}>
+                    <ReturnButton navigation={navigation} />
+                </View>
 
-            <ScrollView alwaysBounceVertical={false} contentContainerStyle={styles.mainContent}>
-                <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 32 }}>New Transaction</Text>
+                <View style={styles.mainContent}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 32 }}>New Transaction</Text>
 
-                <TextInput
-                    style={styles.input}
-                    onChangeText={text => setTicker(text)}
-                    autoCapitalize='none'
-                    placeholder='Stock Ticker'
-                />
+                    <Button
+                        text='modal'
+                        onPress={() => setShowStockPicker(true)}
+                    />
 
-                <TextInput
-                    style={styles.input}
-                    onChangeText={text => setQuantity(text)}
-                    autoCapitalize='none'
-                    placeholder='Quantity'
-                    keyboardType='number-pad'
-                />
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={text => setQuantity(text)}
+                        autoCapitalize='none'
+                        placeholder='Quantity'
+                        keyboardType='number-pad'
+                    />
 
-                <TextInput
-                    style={styles.input}
-                    onChangeText={text => setTotalValue(text)}
-                    autoCapitalize='none'
-                    placeholder='Total Value'
-                    keyboardType='number-pad'
-                />
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={text => setTotalValue(text)}
+                        autoCapitalize='none'
+                        placeholder='Total Value'
+                        keyboardType='number-pad'
+                    />
 
-                <Button text='Create' onPress={handleSubmitTransaction} />
+                    <Button text='Create' onPress={handleSubmitTransaction} />
 
-            </ScrollView>
+                </View>
 
-        </SafeAreaView>
+                <Modal
+                    visible={showStockPicker}
+                    onDismiss={() => setShowStockPicker(false)}
+                    contentContainerStyle={styles.modalContainer}
+                >
+                    <StockPicker tickerValue={ticker} valueSetter={setTicker} />
+                </Modal>
+
+            </SafeAreaView>
+        </Provider>
     )
 }
 
@@ -114,4 +128,9 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 16
     },
+
+    modalContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
 })
