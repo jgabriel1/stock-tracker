@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, ScrollView, SafeAreaView, TextInput } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, SafeAreaView, TextInput, TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
 import ReturnButton from '../../components/ReturnButton'
@@ -12,9 +12,6 @@ import { getAuthToken } from '../../utils/tokenHandler'
 
 import { Provider } from 'react-native-paper'
 
-/** TODO:
- * Setup the TextInput+Picker component somehow to integrate with yahoo query api
- */
 
 const NewTransaction = () => {
     const [ticker, setTicker] = useState('')
@@ -57,10 +54,14 @@ const NewTransaction = () => {
                 <View style={styles.mainContent}>
                     <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 32 }}>New Transaction</Text>
 
-                    <Button
-                        text='modal'
-                        onPress={() => setShowStockPicker(true)}
-                    />
+                    <TouchableOpacity onPress={() => setShowStockPicker(true)} style={styles.input}>
+                        {
+                            ticker ?
+                                <Text style={{ fontSize: 16 }}>{ticker}</Text>
+                                :
+                                <Text style={{ fontSize: 16, color: '#bbb' }}>Stock Ticker</Text>
+                        }
+                    </TouchableOpacity>
 
                     <TextInput
                         style={styles.input}
@@ -87,11 +88,11 @@ const NewTransaction = () => {
                     onDismiss={() => setShowStockPicker(false)}
                     contentContainerStyle={styles.modalContainer}
                 >
-                    <StockPicker tickerValue={ticker} valueSetter={setTicker} />
+                    <StockPicker {...{ ticker, setTicker, setShowStockPicker }} />
                 </Modal>
 
             </SafeAreaView>
-        </Provider>
+        </Provider >
     )
 }
 
