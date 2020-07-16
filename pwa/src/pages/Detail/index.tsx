@@ -83,9 +83,9 @@ const Detail = () => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <View style={{ alignItems: 'flex-start' }}>
-                <ReturnButton navigation={navigation} />
-            </View>
+
+            <ReturnButton />
+
             <View style={styles.container}>
                 <View style={styles.titleContainer}>
                     <Text style={styles.title}>{stock.ticker}</Text>

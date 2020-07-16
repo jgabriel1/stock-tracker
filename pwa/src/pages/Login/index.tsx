@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 
 import Button from '../../components/Button'
 import KeyboardView from '../../components/KeyboardView'
+import ReturnButton from '../../components/ReturnButton'
 
 import api from '../../services/api'
 import { setAuthToken } from '../../utils/tokenHandler'
@@ -38,6 +39,9 @@ const Login = () => {
 
     return (
         <KeyboardView>
+
+            <ReturnButton />
+
             <View style={styles.container}>
                 <TextInput
                     style={styles.input}
@@ -57,6 +61,7 @@ const Login = () => {
 
                 <Button text='Login' onPress={handleSubmitLogin} />
             </View>
+
         </KeyboardView>
     )
 }

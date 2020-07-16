@@ -47,56 +47,52 @@ const NewTransaction = () => {
 
     return (
         <Provider>
-            <KeyboardView>
-                <SafeAreaView style={styles.container}>
+            <KeyboardView style={styles.container}>
 
-                    <View style={styles.headerContainer}>
-                        <ReturnButton navigation={navigation} />
-                    </View>
+                <ReturnButton />
 
-                    <View style={styles.mainContent}>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 32 }}>New Transaction</Text>
+                <View style={styles.mainContent}>
+                    <Text style={styles.title}>New Transaction</Text>
 
-                        <TouchableOpacity onPress={() => setShowStockPicker(true)} style={styles.input}>
-                            {
-                                ticker ?
-                                    <Text style={{ fontSize: 16 }}>{ticker}</Text>
-                                    :
-                                    <Text style={{ fontSize: 16, color: '#bbb' }}>Stock Ticker</Text>
-                            }
-                        </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setShowStockPicker(true)} style={styles.input}>
+                        {
+                            ticker ?
+                                <Text style={{ fontSize: 16 }}>{ticker}</Text>
+                                :
+                                <Text style={{ fontSize: 16, color: '#bbb' }}>Stock Ticker</Text>
+                        }
+                    </TouchableOpacity>
 
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={text => setQuantity(text)}
-                            autoCapitalize='none'
-                            placeholder='Quantity'
-                            keyboardType='number-pad'
-                        />
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={text => setQuantity(text)}
+                        autoCapitalize='none'
+                        placeholder='Quantity'
+                        keyboardType='number-pad'
+                    />
 
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={text => setTotalValue(text)}
-                            autoCapitalize='none'
-                            placeholder='Total Value'
-                            keyboardType='number-pad'
-                        />
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={text => setTotalValue(text)}
+                        autoCapitalize='none'
+                        placeholder='Total Value'
+                        keyboardType='number-pad'
+                    />
 
-                        <Button text='Create' onPress={handleSubmitTransaction} />
+                    <Button text='Create' onPress={handleSubmitTransaction} />
 
-                    </View>
+                </View>
 
-                    <Modal
-                        visible={showStockPicker}
-                        onDismiss={() => setShowStockPicker(false)}
-                        contentContainerStyle={styles.modalContainer}
-                    >
-                        <StockPicker {...{ ticker, setTicker, setShowStockPicker }} />
-                    </Modal>
+                <Modal
+                    visible={showStockPicker}
+                    onDismiss={() => setShowStockPicker(false)}
+                    contentContainerStyle={styles.modalContainer}
+                >
+                    <StockPicker {...{ ticker, setTicker, setShowStockPicker }} />
+                </Modal>
 
-                </SafeAreaView>
             </KeyboardView>
-        </Provider>
+        </Provider >
     )
 }
 
@@ -122,6 +118,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingTop: 8,
         paddingHorizontal: 8,
+    },
+
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 32
     },
 
     input: {

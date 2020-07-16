@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 
 import Button from '../../components/Button'
 import KeyboardView from '../../components/KeyboardView'
+import ReturnButton from '../../components/ReturnButton'
 
 import api from '../../services/api'
 
@@ -34,6 +35,9 @@ const Register = () => {
 
     return (
         <KeyboardView>
+
+            <ReturnButton />
+
             <View style={styles.container}>
                 <TextInput
                     style={styles.input}
@@ -63,6 +67,7 @@ const Register = () => {
 
                 <Button text={'Register'} onPress={handleSubmitRegistration} />
             </View>
+
         </KeyboardView>
     )
 }
