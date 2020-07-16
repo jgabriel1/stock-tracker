@@ -4,20 +4,28 @@ import api from '../api'
 import { BASE_API_URL, PROXY_URL } from './urls'
 
 interface YahooSearchResponseData {
-    quotes: Array<YahooSearchAnswers>
+    quotes: Array<YahooSearchAnswer>
 }
 
-export interface YahooSearchAnswers {
+export interface YahooSearchAnswer {
     exchange: string
     symbol: string
     longname?: string
+    typeDisp?: string
 }
 
-const parseSearchResponse = (response: AxiosResponse<YahooSearchResponseData>): YahooSearchAnswers[] => {
-    return response.data.quotes
+const parseSearchResponse = (response: AxiosResponse<YahooSearchResponseData>): YahooSearchAnswer[] => {
+    const parsed = response.data.quotes.map(answer => ({
+        exchange: answer.exchange,
+        symbol: answer.symbol,
+        longname: answer.longname,
+        typeDisp: answer.typeDisp,
+    }))
+
+    return parsed
 }
 
-export const getSearchQuery = async (query: string): Promise<YahooSearchAnswers[]> => {
+export const getSearchQuery = async (query: string): Promise<YahooSearchAnswer[]> => {
     const params = {
         q: query,
         quotesCount: 5,
