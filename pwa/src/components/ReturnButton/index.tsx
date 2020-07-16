@@ -1,23 +1,36 @@
 import React from 'react'
-import { StyleSheet, TouchableOpacity } from 'react-native'
+import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native'
 import { Feather } from '@expo/vector-icons'
-import { NavigationProp } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
+
+interface Props {
+    style?: ViewStyle
+}
 
 
-const ReturnButton = ({ navigation }: { navigation: NavigationProp<any> }) => (
-    <TouchableOpacity onPress={navigation.goBack} style={styles.button}>
-        <Feather name='arrow-left' size={32} color='#000' />
-    </TouchableOpacity>
-)
+const ReturnButton = ({ style }: Props) => {
+    const navigation = useNavigation()
+
+    return (
+        <TouchableOpacity
+            onPress={navigation.goBack}
+            style={{ ...defaultStyles.button, ...style }}
+        >
+            <Feather name='arrow-left' size={32} color='#000' />
+        </TouchableOpacity>
+    )
+}
 
 export default ReturnButton
 
-const styles = StyleSheet.create({
+const defaultStyles = StyleSheet.create({
     button: {
-        marginTop: 4,
-        marginLeft: 8,
+        marginTop: 12,
+        marginLeft: 12,
         paddingHorizontal: 10,
         paddingVertical: 8,
         borderRadius: 32,
+        alignSelf: 'flex-start',
+        position: 'relative'
     }
 })
