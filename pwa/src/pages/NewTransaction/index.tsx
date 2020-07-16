@@ -1,16 +1,18 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, ScrollView, SafeAreaView, TextInput, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView, TextInput, TouchableOpacity } from 'react-native'
+import { Provider } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 
-import ReturnButton from '../../components/ReturnButton'
-import Button from '../../components/Button'
-import StockPicker from './components/StockPicker'
 import Modal from './components/Modal'
+import StockPicker from './components/StockPicker'
+import Button from '../../components/Button'
+import ReturnButton from '../../components/ReturnButton'
+import KeyboardView from '../../components/KeyboardView'
+
 
 import api from '../../services/api'
 import { getAuthToken } from '../../utils/tokenHandler'
 
-import { Provider } from 'react-native-paper'
 
 
 const NewTransaction = () => {
@@ -45,54 +47,56 @@ const NewTransaction = () => {
 
     return (
         <Provider>
-            <SafeAreaView style={styles.container}>
+            <KeyboardView>
+                <SafeAreaView style={styles.container}>
 
-                <View style={styles.headerContainer}>
-                    <ReturnButton navigation={navigation} />
-                </View>
+                    <View style={styles.headerContainer}>
+                        <ReturnButton navigation={navigation} />
+                    </View>
 
-                <View style={styles.mainContent}>
-                    <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 32 }}>New Transaction</Text>
+                    <View style={styles.mainContent}>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 32 }}>New Transaction</Text>
 
-                    <TouchableOpacity onPress={() => setShowStockPicker(true)} style={styles.input}>
-                        {
-                            ticker ?
-                                <Text style={{ fontSize: 16 }}>{ticker}</Text>
-                                :
-                                <Text style={{ fontSize: 16, color: '#bbb' }}>Stock Ticker</Text>
-                        }
-                    </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setShowStockPicker(true)} style={styles.input}>
+                            {
+                                ticker ?
+                                    <Text style={{ fontSize: 16 }}>{ticker}</Text>
+                                    :
+                                    <Text style={{ fontSize: 16, color: '#bbb' }}>Stock Ticker</Text>
+                            }
+                        </TouchableOpacity>
 
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={text => setQuantity(text)}
-                        autoCapitalize='none'
-                        placeholder='Quantity'
-                        keyboardType='number-pad'
-                    />
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={text => setQuantity(text)}
+                            autoCapitalize='none'
+                            placeholder='Quantity'
+                            keyboardType='number-pad'
+                        />
 
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={text => setTotalValue(text)}
-                        autoCapitalize='none'
-                        placeholder='Total Value'
-                        keyboardType='number-pad'
-                    />
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={text => setTotalValue(text)}
+                            autoCapitalize='none'
+                            placeholder='Total Value'
+                            keyboardType='number-pad'
+                        />
 
-                    <Button text='Create' onPress={handleSubmitTransaction} />
+                        <Button text='Create' onPress={handleSubmitTransaction} />
 
-                </View>
+                    </View>
 
-                <Modal
-                    visible={showStockPicker}
-                    onDismiss={() => setShowStockPicker(false)}
-                    contentContainerStyle={styles.modalContainer}
-                >
-                    <StockPicker {...{ ticker, setTicker, setShowStockPicker }} />
-                </Modal>
+                    <Modal
+                        visible={showStockPicker}
+                        onDismiss={() => setShowStockPicker(false)}
+                        contentContainerStyle={styles.modalContainer}
+                    >
+                        <StockPicker {...{ ticker, setTicker, setShowStockPicker }} />
+                    </Modal>
 
-            </SafeAreaView>
-        </Provider >
+                </SafeAreaView>
+            </KeyboardView>
+        </Provider>
     )
 }
 

@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-nativ
 import { useNavigation } from '@react-navigation/native'
 
 import Button from '../../components/Button'
+import KeyboardView from '../../components/KeyboardView'
 
 import api from '../../services/api'
 import { setAuthToken } from '../../utils/tokenHandler'
@@ -36,25 +37,27 @@ const Login = () => {
     }
 
     return (
-        <View style={styles.container}>
-            <TextInput
-                style={styles.input}
-                placeholder={'Username'}
-                value={username}
-                onChangeText={text => setUsername(text)}
-                autoCapitalize={'none'}
-            />
+        <KeyboardView>
+            <View style={styles.container}>
+                <TextInput
+                    style={styles.input}
+                    placeholder={'Username'}
+                    value={username}
+                    onChangeText={text => setUsername(text)}
+                    autoCapitalize={'none'}
+                />
 
-            <TextInput
-                style={styles.input}
-                placeholder={'Password'}
-                value={password}
-                onChangeText={text => setPassword(text)}
-                autoCapitalize={'none'}
-            />
+                <TextInput
+                    style={styles.input}
+                    placeholder={'Password'}
+                    value={password}
+                    onChangeText={text => setPassword(text)}
+                    autoCapitalize={'none'}
+                />
 
-            <Button text={'Register'} onPress={handleSubmitLogin} />
-        </View>
+                <Button text='Login' onPress={handleSubmitLogin} />
+            </View>
+        </KeyboardView>
     )
 }
 

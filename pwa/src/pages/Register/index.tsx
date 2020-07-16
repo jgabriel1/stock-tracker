@@ -3,6 +3,7 @@ import { StyleSheet, View, TextInput } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
 import Button from '../../components/Button'
+import KeyboardView from '../../components/KeyboardView'
 
 import api from '../../services/api'
 
@@ -32,35 +33,37 @@ const Register = () => {
     }
 
     return (
-        <View style={styles.container}>
-            <TextInput
-                style={styles.input}
-                placeholder={'Username'}
-                value={username}
-                onChangeText={text => setUsername(text)}
-                autoCapitalize={'none'}
-            />
+        <KeyboardView>
+            <View style={styles.container}>
+                <TextInput
+                    style={styles.input}
+                    placeholder={'Username'}
+                    value={username}
+                    onChangeText={text => setUsername(text)}
+                    autoCapitalize={'none'}
+                />
 
-            <TextInput
-                style={styles.input}
-                placeholder={'Email'}
-                value={email}
-                onChangeText={text => setEmail(text)}
-                autoCapitalize={'none'}
-                keyboardType={'email-address'}
-            />
+                <TextInput
+                    style={styles.input}
+                    placeholder={'Email'}
+                    value={email}
+                    onChangeText={text => setEmail(text)}
+                    autoCapitalize={'none'}
+                    keyboardType={'email-address'}
+                />
 
-            <TextInput
-                style={styles.input}
-                placeholder={'Password'}
-                value={password}
-                onChangeText={text => setPassword(text)}
-                autoCapitalize={'none'}
-                secureTextEntry={true}
-            />
+                <TextInput
+                    style={styles.input}
+                    placeholder={'Password'}
+                    value={password}
+                    onChangeText={text => setPassword(text)}
+                    autoCapitalize={'none'}
+                    secureTextEntry={true}
+                />
 
-            <Button text={'Register'} onPress={handleSubmitRegistration} />
-        </View>
+                <Button text={'Register'} onPress={handleSubmitRegistration} />
+            </View>
+        </KeyboardView>
     )
 }
 
