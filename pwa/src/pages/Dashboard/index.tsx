@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, SafeAreaView, Platform } from 'react-native'
 import { AppLoading } from 'expo'
-import { useNavigation, useIsFocused, useRoute, RouteProp } from '@react-navigation/native'
+import { useNavigation, useFocusEffect, useRoute, RouteProp } from '@react-navigation/native'
 import { Feather as Icon } from '@expo/vector-icons'
 import ActionButton from 'react-native-action-button'
 
@@ -34,10 +34,9 @@ const Dashboard = () => {
     const [yahooDataReady, setYahooDataReady] = useState<boolean>(false)
 
     const navigation = useNavigation()
-    const isFocused = useIsFocused()
     const { params: routeParams } = useRoute<RouteProp<AppStackParamList, 'Dashboard'>>()
 
-    useEffect(() => {
+    useFocusEffect(() => {
         async function fetchBackendData() {
             const token = await getAuthToken()
             const headers = { Authorization: `Bearer ${token}` }
@@ -57,7 +56,7 @@ const Dashboard = () => {
 
         const { loadData } = routeParams
 
-        if (isFocused && loadData) {
+        if (loadData) {
             fetchBackendData()
                 .then(() => {
                     setDataReady(true)
@@ -66,7 +65,7 @@ const Dashboard = () => {
                     routeParams.loadData = false
                 })
         }
-    }, [isFocused])
+    })
 
     usePeriodicEffect(async () => {
         if (dataReady) {
