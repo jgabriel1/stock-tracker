@@ -14,6 +14,8 @@ import { getAuthToken } from '../../utils/tokenHandler'
 
 import { AppStackParamList } from '../../routes'
 
+import usePeriodicEffect from '../../hooks/usePeriodicEffect'
+
 export interface StockInfo {
     ticker: string
     total_invested: number
@@ -33,7 +35,7 @@ const Dashboard = () => {
 
     const navigation = useNavigation()
     const isFocused = useIsFocused()
-    const route = useRoute<RouteProp<AppStackParamList, 'Dashboard'>>()
+    const { params: routeParams } = useRoute<RouteProp<AppStackParamList, 'Dashboard'>>()
 
     useEffect(() => {
         async function fetchBackendData() {
@@ -53,7 +55,7 @@ const Dashboard = () => {
             }
         }
 
-        const { loadData } = route.params
+        const { loadData } = routeParams
 
         if (isFocused && loadData) {
             fetchBackendData()
@@ -61,39 +63,26 @@ const Dashboard = () => {
                     setDataReady(true)
                     setYahooDataReady(false)
 
-                    route.params.loadData = false
+                    routeParams.loadData = false
                 })
         }
     }, [isFocused])
 
-    useEffect(() => {
-        async function fetchYahooData(tickers: string[]) {
-            try {
-                const stocksYahooInfo = await getStockInfo(tickers)
-                setYahooInfo(stocksYahooInfo)
-                setYahooDataReady(true)
-            } catch (error) {
-                alert(error)
-            }
-        }
-
+    usePeriodicEffect(async () => {
         if (dataReady) {
             const tickers = Array.from(stocks.keys())
 
-            // when rendering the screen for the first time, execute it immediately
-            if (!yahooDataReady) {
-                setTimeout(async () => {
-                    await fetchYahooData(tickers)
-                }, 1)
+            try {
+                const stocksYahooInfo = await getStockInfo(tickers)
+
+                setYahooInfo(stocksYahooInfo)
+                setYahooDataReady(true)
             }
-
-            const interval = setInterval(async () => {
-                await fetchYahooData(tickers)
-            }, 5000 * 60)
-
-            return () => clearInterval(interval)
+            catch (error) {
+                alert(error)
+            }
         }
-    }, [dataReady, yahooDataReady])
+    }, [stocks, dataReady, yahooDataReady], 1000 * 60)
 
     if (!dataReady || !yahooDataReady) {
         return <AppLoading />
