@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, SafeAreaView, Platform } from 'react-native'
+import React, { useEffect, useState, useCallback } from 'react'
+import { StyleSheet, SafeAreaView, Platform, View, Text } from 'react-native'
 import { AppLoading } from 'expo'
 import { useNavigation, useFocusEffect, useRoute, RouteProp } from '@react-navigation/native'
 import { Feather as Icon } from '@expo/vector-icons'
@@ -14,7 +14,6 @@ import { getAuthToken } from '../../utils/tokenHandler'
 
 import { AppStackParamList } from '../../routes'
 
-import usePeriodicEffect from '../../hooks/usePeriodicEffect'
 
 export interface StockInfo {
     ticker: string
@@ -36,52 +35,64 @@ const Dashboard = () => {
     const navigation = useNavigation()
     const { params: routeParams } = useRoute<RouteProp<AppStackParamList, 'Dashboard'>>()
 
-    useFocusEffect(() => {
-        async function fetchBackendData() {
-            const token = await getAuthToken()
-            const headers = { Authorization: `Bearer ${token}` }
+    useFocusEffect(
+        useCallback(() => {
+            async function fetchBackendData() {
+                const token = await getAuthToken()
+                const headers = { Authorization: `Bearer ${token}` }
 
-            try {
-                const response = await api.get('stocks', { headers })
+                try {
+                    const response = await api.get('stocks', { headers })
 
-                const { stocks, total_applied } = response.data
+                    const { stocks, total_applied } = response.data
 
-                setStocks(new Map(Object.entries(stocks)))
-                setTotalInvested(total_applied)
+                    setStocks(new Map(Object.entries(stocks)))
+                    setTotalInvested(total_applied)
+                }
+                catch (error) {
+                    alert(error)
+                }
             }
-            catch (error) {
-                alert(error)
+
+            const { loadData } = routeParams
+
+            if (loadData) {
+                fetchBackendData()
+                    .then(() => {
+                        setDataReady(true)
+                        setYahooDataReady(false)
+
+                        routeParams.loadData = false
+                    })
             }
-        }
+        }, [routeParams])
+    )
 
-        const { loadData } = routeParams
-
-        if (loadData) {
-            fetchBackendData()
-                .then(() => {
-                    setDataReady(true)
-                    setYahooDataReady(false)
-
-                    routeParams.loadData = false
-                })
-        }
-    })
-
-    usePeriodicEffect(async () => {
-        if (dataReady) {
-            const tickers = Array.from(stocks.keys())
-
+    useEffect(() => {
+        async function fetchYahooData(tickers: string[]) {
             try {
                 const stocksYahooInfo = await getStockInfo(tickers)
-
                 setYahooInfo(stocksYahooInfo)
                 setYahooDataReady(true)
-            }
-            catch (error) {
+            } catch (error) {
                 alert(error)
             }
         }
-    }, [stocks, dataReady, yahooDataReady], 1000 * 60)
+        if (dataReady) {
+            const tickers = Array.from(stocks.keys())
+            // when rendering the screen for the first time, execute it immediately
+            if (!yahooDataReady) {
+                setTimeout(async () => {
+                    await fetchYahooData(tickers)
+                }, 1)
+            }
+            const interval = setInterval(async () => {
+                await fetchYahooData(tickers)
+            }, 5000 * 60)
+
+            return () => clearInterval(interval)
+        }
+    }, [dataReady, yahooDataReady])
 
     if (!dataReady || !yahooDataReady) {
         return <AppLoading />
@@ -90,9 +101,18 @@ const Dashboard = () => {
     return (
         <SafeAreaView style={styles.mainContainer}>
 
-            <MainInfo {...{ totalInvested, stocks, yahooInfo }} />
+            {
+                (yahooInfo.size === stocks.size) ?
+                    <>
+                        <MainInfo {...{ totalInvested, stocks, yahooInfo }} />
 
-            <StockList {...{ stocks, yahooInfo, navigation }} />
+                        <StockList {...{ stocks, yahooInfo, navigation }} />
+                    </>
+                    :
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <Text>Loading Data</Text>
+                    </View>
+            }
 
             <ActionButton
                 onPress={() => navigation.navigate('NewTransaction')}
