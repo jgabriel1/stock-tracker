@@ -13,6 +13,7 @@ import { getStockInfo, YahooStock } from '../../services/yahooFinance/stockInfo'
 import { getAuthToken } from '../../utils/tokenHandler'
 
 import { AppStackParamList } from '../../routes'
+import usePeriodicEffect from '../../hooks/usePeriodicEffect'
 
 
 export interface StockInfo {
@@ -68,31 +69,23 @@ const Dashboard = () => {
         }, [routeParams])
     )
 
-    useEffect(() => {
+    usePeriodicEffect(() => {
         async function fetchYahooData(tickers: string[]) {
             try {
                 const stocksYahooInfo = await getStockInfo(tickers)
                 setYahooInfo(stocksYahooInfo)
-                setYahooDataReady(true)
             } catch (error) {
                 alert(error)
             }
         }
+
         if (dataReady) {
             const tickers = Array.from(stocks.keys())
-            // when rendering the screen for the first time, execute it immediately
-            if (!yahooDataReady) {
-                setTimeout(async () => {
-                    await fetchYahooData(tickers)
-                }, 1)
-            }
-            const interval = setInterval(async () => {
-                await fetchYahooData(tickers)
-            }, 5000 * 60)
 
-            return () => clearInterval(interval)
+            fetchYahooData(tickers)
+                .then(() => setYahooDataReady(true))
         }
-    }, [dataReady, yahooDataReady])
+    }, [dataReady, yahooDataReady, stocks], 30 * 1000)
 
     if (!dataReady || !yahooDataReady) {
         return <AppLoading />

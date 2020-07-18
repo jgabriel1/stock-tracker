@@ -1,23 +1,21 @@
-import { useEffect } from "react"
+import { useEffect, useCallback } from "react"
 
 
 export default function (
-    callback: () => void | Promise<void>,
+    callback: () => void,
     dependencies: ReadonlyArray<any>,
     interval: number,
     executeImmediately = true,
 ) {
+    const memoized = useCallback(callback, [...dependencies])
+
     return useEffect(() => {
         if (executeImmediately) {
-            setTimeout(async () => {
-                await callback()
-            }, 0)
+            memoized()
         }
 
-        const id = setInterval(async () => {
-            await callback()
-        }, interval)
+        const id = setInterval(memoized, interval)
 
         return () => clearInterval(id)
-    }, [...dependencies])
+    }, [memoized, interval, executeImmediately])
 }
