@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native'
-import { useNavigation, RouteProp, useRoute } from '@react-navigation/native'
+import { RouteProp, useRoute } from '@react-navigation/native'
 import { AppLoading } from 'expo'
 
 import ReturnButton from '../../components/ReturnButton'
@@ -38,8 +38,6 @@ const Detail = () => {
     const [transactionList, setTransactionList] = useState<Transaction[]>([])
     const [stock, setStock] = useState({} as Stock)
     const [backendInfoReady, setBackendInfoReady] = useState(false)
-
-    const navigation = useNavigation()
 
     useEffect(() => {
         async function fetchYahooData() {
@@ -87,14 +85,17 @@ const Detail = () => {
             <ReturnButton />
 
             <View style={styles.container}>
+
                 <View style={styles.titleContainer}>
                     <Text style={styles.title}>{stock.ticker}</Text>
                 </View>
+
                 <View style={styles.infoContainer}>
                     <Text>{yahooInfo.symbol}</Text>
                     <Text>{yahooInfo.regularMarketPrice}</Text>
                     <Text>{yahooInfo.chartPreviousClose}</Text>
                 </View>
+
                 {transactionList.map((transaction, index) => (
                     <View style={styles.transactionContainer} key={index}>
                         <Text>{transaction.quantity}</Text>
@@ -103,6 +104,7 @@ const Detail = () => {
                         <Text>{transaction.timestamp}</Text>
                     </View>
                 ))}
+
             </View>
         </SafeAreaView>
     )
