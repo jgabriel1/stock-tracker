@@ -24,20 +24,19 @@ const AppStack = createStackNavigator<AppStackParamList>()
 
 const Routes = () => {
     return (
-        <NavigationContainer>
-            <AppStack.Navigator headerMode='none'>
-                <AppStack.Screen name='Home' component={Home} />
-                <AppStack.Screen name='Login' component={Login} />
-                <AppStack.Screen name='Register' component={Register} />
+        <DataStateProvider>
+            <NavigationContainer>
+                <AppStack.Navigator headerMode='none'>
+                    <AppStack.Screen name='Home' component={Home} />
+                    <AppStack.Screen name='Login' component={Login} />
+                    <AppStack.Screen name='Register' component={Register} />
 
-                <DataStateProvider>
                     <AppStack.Screen name='Dashboard' component={Dashboard} />
                     <AppStack.Screen name='NewTransaction' component={NewTransaction} />
                     <AppStack.Screen name='Detail' component={Detail} />
-                </DataStateProvider>
-
-            </AppStack.Navigator>
-        </NavigationContainer>
+                </AppStack.Navigator>
+            </NavigationContainer>
+        </DataStateProvider>
     )
 }
 
