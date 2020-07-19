@@ -10,7 +10,7 @@ export interface DataState {
 }
 
 export interface Action {
-    type: string
+    type: 'SET_STOCKS' | 'SET_YAHOO'
     payload: Map<string, StockInfo | YahooStock>
 }
 
