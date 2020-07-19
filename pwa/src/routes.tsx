@@ -9,6 +9,8 @@ import Dashboard from './pages/Dashboard'
 import NewTransaction from './pages/NewTransaction'
 import Detail from './pages/Detail'
 
+import DataStateProvider from './store/DataStateProvider'
+
 export type AppStackParamList = {
     Home: undefined
     Login: undefined
@@ -27,9 +29,13 @@ const Routes = () => {
                 <AppStack.Screen name='Home' component={Home} />
                 <AppStack.Screen name='Login' component={Login} />
                 <AppStack.Screen name='Register' component={Register} />
-                <AppStack.Screen name='Dashboard' component={Dashboard} />
-                <AppStack.Screen name='NewTransaction' component={NewTransaction} />
-                <AppStack.Screen name='Detail' component={Detail} />
+
+                <DataStateProvider>
+                    <AppStack.Screen name='Dashboard' component={Dashboard} />
+                    <AppStack.Screen name='NewTransaction' component={NewTransaction} />
+                    <AppStack.Screen name='Detail' component={Detail} />
+                </DataStateProvider>
+
             </AppStack.Navigator>
         </NavigationContainer>
     )
