@@ -4,7 +4,9 @@ import { YahooStock } from "../services/yahooFinance/stockInfo";
 
 export interface DataState {
     stocksData: Map<string, StockInfo>
+    isStocksDataReady: boolean
     yahooData: Map<string, YahooStock>
+    isYahooDataReady: boolean
 }
 
 export interface Action {

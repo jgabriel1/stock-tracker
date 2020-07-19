@@ -9,12 +9,15 @@ const reducer = (state: DataState, action: Action): DataState => {
         case 'SET_STOCKS':
             return {
                 ...state,
-                stocksData: action.payload as Map<string, StockInfo>
+                stocksData: action.payload as Map<string, StockInfo>,
+                isStocksDataReady: true,
+                isYahooDataReady: false,
             }
         case 'SET_YAHOO':
             return {
                 ...state,
-                yahooData: action.payload as Map<string, YahooStock>
+                yahooData: action.payload as Map<string, YahooStock>,
+                isYahooDataReady: true,
             }
         default:
             return {
@@ -25,7 +28,9 @@ const reducer = (state: DataState, action: Action): DataState => {
 
 const initialState = {
     stocksData: new Map(),
+    isStocksDataReady: false,
     yahooData: new Map(),
+    isYahooDataReady: false,
 }
 
 const useDataState = () => {
