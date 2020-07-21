@@ -10,6 +10,6 @@ export interface Transaction {
     ticker: string
     quantity: number
     total_value: number
-    timestamp: number
-    average_price: number
+    timestamp?: number
+    average_price?: number
 }
