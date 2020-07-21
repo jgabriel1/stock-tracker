@@ -1,13 +1,12 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, TextInput } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
 import Button from '../../components/Button'
 import KeyboardView from '../../components/KeyboardView'
 import ReturnButton from '../../components/ReturnButton'
 
-import api from '../../services/api'
-import { setAuthToken } from '../../utils/tokenHandler'
+import API from '../../services/api'
 
 const Login = () => {
     const [username, setUsername] = useState('')
@@ -16,25 +15,12 @@ const Login = () => {
     const navigation = useNavigation()
 
     function handleSubmitLogin() {
-        const loginForm = new FormData()
-
-        loginForm.append('username', username)
-        loginForm.append('password', password)
-
-        const headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
-
-        api.post('auth/token', loginForm, { headers })
-            .then(response => {
-                const { access_token } = response.data
-
-                setAuthToken(access_token)
-                    .then(() => {
-                        navigation.navigate('Dashboard', {
-                            loadData: true
-                        })
-                    })
+        API.postLogin(username, password)
+            .then(() => {
+                navigation.navigate('Dashboard', {
+                    loadData: true
+                })
             })
-            .catch(error => console.log(error))
     }
 
     return (

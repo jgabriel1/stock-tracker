@@ -1,81 +1,32 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { AppLoading } from 'expo'
 
 import ReturnButton from '../../components/ReturnButton'
 
-import { getAuthToken } from '../../utils/tokenHandler'
-import { getSingleStockInfo, YahooStock } from '../../services/yahooFinance/stockInfo'
-import api from '../../services/api'
+import API from '../../services/api'
+import { Transaction } from '../../services/api/types'
+import DataContext from '../../store/dataContext'
 
 import { AppStackParamList } from '../../routes'
 
-
-interface Transaction {
-    ticker: string
-    quantity: number
-    total_value: number
-    timestamp: number
-    average_price: number
-}
-
-interface Stock {
-    ticker: string
-    total_invested: number
-    total_sold: number
-    currently_owned_shares: number
-    average_bought_price: number
-}
 
 const Detail = () => {
     const route = useRoute<RouteProp<AppStackParamList, 'Detail'>>()
     const { ticker } = route.params
 
-    const [yahooInfo, setYahooInfo] = useState({} as YahooStock)
-    const [yahooInfoReady, setYahooInfoReady] = useState(false)
-
     const [transactionList, setTransactionList] = useState<Transaction[]>([])
-    const [stock, setStock] = useState({} as Stock)
-    const [backendInfoReady, setBackendInfoReady] = useState(false)
+
+    const { state, dispatch } = useContext(DataContext)
+    const { stocksData, isStocksDataReady, yahooData, isYahooDataReady } = state
 
     useEffect(() => {
-        async function fetchYahooData() {
-            try {
-                const stockInfo = await getSingleStockInfo(ticker)
-                setYahooInfo(stockInfo)
-            } catch (error) {
-                alert(error)
-            }
-        }
-
-        fetchYahooData().then(() => setYahooInfoReady(true))
+        API.getTransactionsFor(ticker)
+            .then(setTransactionList)
     }, [])
 
-    useEffect(() => {
-        async function fetchBackendData() {
-            const token = await getAuthToken()
-
-            const params = { ticker }
-            const headers = { Authorization: `Bearer ${token}` }
-
-            try {
-                const transactionsResponse = await api.get('transactions', { params, headers })
-                const { transactions } = transactionsResponse.data
-                setTransactionList(transactions)
-
-                const stockResponse = await api.get(`stocks/${ticker}`, { headers })
-                const stock = stockResponse.data
-                setStock(stock)
-            } catch (error) {
-                alert(error)
-            }
-        }
-
-        fetchBackendData().then(() => setBackendInfoReady(true))
-    }, [])
-
-    if (!yahooInfoReady || !backendInfoReady) {
+    if (!isStocksDataReady || !isYahooDataReady) {
         return <AppLoading />
     }
 
@@ -87,13 +38,13 @@ const Detail = () => {
             <View style={styles.container}>
 
                 <View style={styles.titleContainer}>
-                    <Text style={styles.title}>{stock.ticker}</Text>
+                    <Text style={styles.title}>{ticker}</Text>
                 </View>
 
                 <View style={styles.infoContainer}>
-                    <Text>{yahooInfo.symbol}</Text>
-                    <Text>{yahooInfo.regularMarketPrice}</Text>
-                    <Text>{yahooInfo.chartPreviousClose}</Text>
+                    <Text>{yahooData.get(ticker)?.symbol}</Text>
+                    <Text>{yahooData.get(ticker)?.regularMarketPrice}</Text>
+                    <Text>{yahooData.get(ticker)?.chartPreviousClose}</Text>
                 </View>
 
                 {transactionList.map((transaction, index) => (

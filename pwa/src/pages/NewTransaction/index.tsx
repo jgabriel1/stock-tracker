@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, SafeAreaView, TextInput, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
 import { Provider } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 
@@ -9,10 +9,7 @@ import Button from '../../components/Button'
 import ReturnButton from '../../components/ReturnButton'
 import KeyboardView from '../../components/KeyboardView'
 
-
-import api from '../../services/api'
-import { getAuthToken } from '../../utils/tokenHandler'
-
+import API from '../../services/api'
 
 
 const NewTransaction = () => {
@@ -31,17 +28,9 @@ const NewTransaction = () => {
             total_value: Number(totalValue),
         }
 
-        getAuthToken()
-            .then(token => {
-                const headers = { Authorization: `Bearer ${token}` }
-
-                api.post('transactions', data, { headers })
-                    .then(() => {
-                        navigation.navigate('Dashboard', {
-                            loadData: true
-                        })
-                    })
-                    .catch(error => alert(error))
+        API.postNewTransaction(data)
+            .then(() => {
+                navigation.navigate('Dashboard', { loadData: true })
             })
     }
 

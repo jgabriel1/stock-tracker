@@ -8,14 +8,16 @@ import ActionButton from 'react-native-action-button'
 import MainInfo from './components/MainInfo'
 import StockList from './components/StockList'
 
-import api from '../../services/api'
+import API from '../../services/api'
+import { Stock } from '../../services/api/types'
 import { getStockInfo } from '../../services/yahooFinance/stockInfo'
-import { getAuthToken } from '../../utils/tokenHandler'
 
 import { AppStackParamList } from '../../routes'
-import usePeriodicEffect from '../../hooks/usePeriodicEffect'
+
 import DataContext from '../../store/dataContext'
 import { DataStateContext } from '../../store/types'
+
+import usePeriodicEffect from '../../hooks/usePeriodicEffect'
 
 
 export interface StockInfo {
@@ -27,41 +29,37 @@ export interface StockInfo {
 }
 
 const Dashboard = () => {
-    const [totalInvested, setTotalInvested] = useState(0)
-
     const navigation = useNavigation()
     const { params: routeParams } = useRoute<RouteProp<AppStackParamList, 'Dashboard'>>()
 
     const { state, dispatch } = useContext<DataStateContext>(DataContext)
     const { stocksData, isStocksDataReady, yahooData, isYahooDataReady } = state
 
+    const [totalInvested, setTotalInvested] = useState(0)
+
+    const calculateTotalInvested = useCallback((stocks: Map<string, Stock>): number => {
+        const stocksValues = Array.from(stocks.values())
+
+        const total = stocksValues.reduce((accum, stock) => {
+            const { average_bought_price, currently_owned_shares } = stock
+
+            return accum + average_bought_price * currently_owned_shares
+        }, 0)
+
+        return total
+    }, [])
+
     useFocusEffect(
         useCallback(() => {
-            async function fetchBackendData() {
-                const token = await getAuthToken()
-                const headers = { Authorization: `Bearer ${token}` }
-
-                try {
-                    const response = await api.get('stocks', { headers })
-
-                    const { stocks, total_applied } = response.data
-
-                    dispatch({
-                        type: 'SET_STOCKS',
-                        payload: new Map(Object.entries(stocks))
-                    })
-
-                    setTotalInvested(total_applied)
-                }
-                catch (error) {
-                    alert(error)
-                }
-            }
-
             const { loadData } = routeParams
 
             if (loadData) {
-                fetchBackendData()
+                API.getStocksData()
+                    .then(stocks => {
+                        dispatch({ type: 'SET_STOCKS', payload: stocks })
+
+                        setTotalInvested(calculateTotalInvested(stocks))
+                    })
                     .then(() => {
                         routeParams.loadData = false
                     })
@@ -70,24 +68,13 @@ const Dashboard = () => {
     )
 
     usePeriodicEffect(() => {
-        async function fetchYahooData(tickers: string[]) {
-            try {
-                const stocksYahooInfo = await getStockInfo(tickers)
-
-                dispatch({
-                    type: 'SET_YAHOO',
-                    payload: stocksYahooInfo
-                })
-            }
-            catch (error) {
-                alert(error)
-            }
-        }
-
         if (isStocksDataReady) {
             const tickers = Array.from(stocksData.keys())
 
-            fetchYahooData(tickers)
+            getStockInfo(tickers)
+                .then(yahoo => {
+                    dispatch({ type: 'SET_YAHOO', payload: yahoo })
+                })
         }
     }, [isStocksDataReady, isYahooDataReady, stocksData], 30 * 1000)
 

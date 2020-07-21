@@ -6,7 +6,7 @@ import Button from '../../components/Button'
 import KeyboardView from '../../components/KeyboardView'
 import ReturnButton from '../../components/ReturnButton'
 
-import api from '../../services/api'
+import API from '../../services/api'
 
 const Register = () => {
     const [username, setUsername] = useState('')
@@ -16,21 +16,8 @@ const Register = () => {
     const navigation = useNavigation()
 
     function handleSubmitRegistration() {
-        const data = {
-            username,
-            email,
-            password
-        }
-
-        api.post('auth/register', data)
-            .then(() => {
-                navigation.navigate('Login')
-
-                setUsername('')
-                setEmail('')
-                setPassword('')
-            })
-            .catch(error => alert(error))
+        API.postRegister(username, email, password)
+            .then(() => navigation.navigate('Login'))
     }
 
     return (
