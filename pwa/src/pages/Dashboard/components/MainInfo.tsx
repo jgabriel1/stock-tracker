@@ -1,23 +1,34 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { StyleSheet, Text, View, Dimensions } from 'react-native'
 
 import { Stock } from '../../../services/api/types'
 import { YahooStock } from '../../../services/yahooFinance/stockInfo'
 
 interface Props {
-    totalInvested: number
-    stocks: Map<string, Stock>
-    yahooInfo: Map<string, YahooStock>
+    stocksData: Map<string, Stock>
+    yahooData: Map<string, YahooStock>
 }
 
-const MainInfo = ({ totalInvested, stocks, yahooInfo }: Props) => {
+const MainInfo: React.FC<Props> = ({ stocksData, yahooData }) => {
     const [currentWorth, setCurrentWorth] = useState(0)
+    const [totalInvested, setTotalInvested] = useState(0)
 
-    useEffect(() => {
-        function calculateCurrentWorth(
-            stocks: Map<string, Stock>,
-            yahooStocks: Map<string, YahooStock>
-        ): number {
+    const calculateTotalInvested = useCallback(
+        (stocks: Map<string, Stock>): number => {
+            const stocksValues = Array.from(stocks.values())
+
+            const total = stocksValues.reduce((accum, stock) => {
+                const { average_bought_price, currently_owned_shares } = stock
+
+                return accum + average_bought_price * currently_owned_shares
+            }, 0)
+
+            return total
+        }, []
+    )
+
+    const calculateCurrentWorth = useCallback(
+        (stocks: Map<string, Stock>, yahooStocks: Map<string, YahooStock>): number => {
             const tickers = stocks.keys()
 
             const currentPrices = Array.from(tickers).map(ticker => {
@@ -29,13 +40,19 @@ const MainInfo = ({ totalInvested, stocks, yahooInfo }: Props) => {
 
             // Sum of all the values
             return currentPrices.reduce((a, b) => (a + b))
-        }
+        }, []
+    )
 
-        if (stocks.size !== 0) {
-            const current = calculateCurrentWorth(stocks, yahooInfo)
+    useEffect(() => {
+        setTotalInvested(() => calculateTotalInvested(stocksData))
+    }, [stocksData])
+
+    useEffect(() => {
+        if (stocksData.size !== 0) {
+            const current = calculateCurrentWorth(stocksData, yahooData)
             setCurrentWorth(current)
         }
-    }, [yahooInfo])
+    }, [yahooData])
 
     return (
         <View style={styles.headerContainer}>
