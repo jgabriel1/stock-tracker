@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { StyleSheet, View, TextInput } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
@@ -7,20 +7,28 @@ import KeyboardView from '../../components/KeyboardView'
 import ReturnButton from '../../components/ReturnButton'
 
 import API from '../../services/api'
+import * as Yahoo from '../../services/yahooFinance/stockInfo'
+import DataContext from '../../store/dataContext'
 
 const Login = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
+    const { state, dispatch } = useContext(DataContext)
+
     const navigation = useNavigation()
 
-    function handleSubmitLogin() {
-        API.postLogin(username, password)
-            .then(() => {
-                navigation.navigate('Dashboard', {
-                    loadData: true
-                })
-            })
+    async function handleSubmitLogin() {
+        await API.postLogin(username, password)
+
+        const stocks = await API.getStocksData()
+        dispatch({ type: 'SET_STOCKS', payload: stocks })
+
+        const tickers = Array.from(stocks.keys())
+        const yahooStocks = await Yahoo.getStockInfo(tickers)
+        dispatch({ type: 'SET_YAHOO', payload: yahooStocks })
+
+        navigation.navigate('Dashboard')
     }
 
     return (
