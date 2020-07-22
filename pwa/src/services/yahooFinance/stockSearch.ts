@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
-import api from '../api'
 
-import { BASE_API_URL, PROXY_URL } from './urls'
+import { BASE_API_URL, PROXY_URL, BACKEND_PROXY_URL } from './urls'
 
 interface YahooSearchResponseData {
     quotes: Array<YahooSearchAnswer>
@@ -35,13 +34,19 @@ export const getSearchQuery = async (query: string): Promise<YahooSearchAnswer[]
     }
 
     try {
-        const response = await axios.get(`${PROXY_URL}${BASE_API_URL}v1/finance/search`, { params })
+        const response = await axios.get(
+            `${PROXY_URL}${BASE_API_URL}v1/finance/search`,
+            { params }
+        )
 
         return parseSearchResponse(response)
     }
     catch {
         try {
-            const backupResponse = await api.get('yahoo-proxy/search', { params })
+            const backupResponse = await axios.get(
+                `${BACKEND_PROXY_URL}yahoo-proxy/search`,
+                { params }
+            )
 
             return parseSearchResponse(backupResponse)
         }
