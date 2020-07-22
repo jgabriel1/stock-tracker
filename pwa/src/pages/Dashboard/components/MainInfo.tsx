@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, Dimensions } from 'react-native'
 
-import { StockInfo } from '..'
+import { Stock } from '../../../services/api/types'
 import { YahooStock } from '../../../services/yahooFinance/stockInfo'
 
 interface Props {
     totalInvested: number
-    stocks: Map<string, StockInfo>
+    stocks: Map<string, Stock>
     yahooInfo: Map<string, YahooStock>
 }
 
@@ -15,13 +15,13 @@ const MainInfo = ({ totalInvested, stocks, yahooInfo }: Props) => {
 
     useEffect(() => {
         function calculateCurrentWorth(
-            stocks: Map<string, StockInfo>,
+            stocks: Map<string, Stock>,
             yahooStocks: Map<string, YahooStock>
         ): number {
             const tickers = stocks.keys()
 
             const currentPrices = Array.from(tickers).map(ticker => {
-                const { currently_owned_shares } = stocks.get(ticker) as StockInfo
+                const { currently_owned_shares } = stocks.get(ticker) as Stock
                 const { regularMarketPrice } = yahooStocks.get(ticker) as YahooStock
 
                 return regularMarketPrice * currently_owned_shares

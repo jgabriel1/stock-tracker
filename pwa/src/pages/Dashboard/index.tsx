@@ -20,14 +20,6 @@ import { DataStateContext } from '../../store/types'
 import usePeriodicEffect from '../../hooks/usePeriodicEffect'
 
 
-export interface StockInfo {
-    ticker: string
-    total_invested: number
-    average_bought_price: number
-    total_sold: number
-    currently_owned_shares: number
-}
-
 const Dashboard = () => {
     const navigation = useNavigation()
     const { params: routeParams } = useRoute<RouteProp<AppStackParamList, 'Dashboard'>>()

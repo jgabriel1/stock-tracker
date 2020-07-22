@@ -2,12 +2,12 @@ import React from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, FlatList } from 'react-native'
 import { NavigationProp } from '@react-navigation/native'
 
-import { StockInfo } from '..'
+import { Stock } from '../../../services/api/types'
 import { YahooStock } from '../../../services/yahooFinance/stockInfo'
 
 
 interface Props {
-    stocks: Map<string, StockInfo>
+    stocks: Map<string, Stock>
     yahooInfo: Map<string, YahooStock>
     navigation: NavigationProp<any>
 }
@@ -15,7 +15,7 @@ interface Props {
 const StockList = ({ stocks, yahooInfo, navigation }: Props) => {
     const stocksList = Array.from(stocks.values())
 
-    function navigateToDetail(item: StockInfo): void {
+    function navigateToDetail(item: Stock): void {
         navigation.navigate('Detail', {
             ticker: item.ticker
         })
@@ -25,7 +25,7 @@ const StockList = ({ stocks, yahooInfo, navigation }: Props) => {
         <FlatList
             data={stocksList}
             keyExtractor={item => item.ticker}
-            renderItem={({ item }: { item: StockInfo }) => {
+            renderItem={({ item }: { item: Stock }) => {
                 const { ticker, currently_owned_shares, average_bought_price } = item
 
                 const { regularMarketPrice } = yahooInfo.get(ticker) as YahooStock
