@@ -1,24 +1,23 @@
 import React from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, FlatList } from 'react-native'
-import { NavigationProp } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 
 import { Stock } from '../../../services/api/types'
 import { YahooStock } from '../../../services/yahooFinance/stockInfo'
 
 
 interface Props {
-    stocks: Map<string, Stock>
-    yahooInfo: Map<string, YahooStock>
-    navigation: NavigationProp<any>
+    stocksData: Map<string, Stock>
+    yahooData: Map<string, YahooStock>
 }
 
-const StockList = ({ stocks, yahooInfo, navigation }: Props) => {
-    const stocksList = Array.from(stocks.values())
+const StockList: React.FC<Props> = ({ stocksData, yahooData }) => {
+    const navigation = useNavigation()
+
+    const stocksList = Array.from(stocksData.values())
 
     function navigateToDetail(item: Stock): void {
-        navigation.navigate('Detail', {
-            ticker: item.ticker
-        })
+        navigation.navigate('Detail', { ticker: item.ticker })
     }
 
     return (
@@ -28,7 +27,7 @@ const StockList = ({ stocks, yahooInfo, navigation }: Props) => {
             renderItem={({ item }: { item: Stock }) => {
                 const { ticker, currently_owned_shares, average_bought_price } = item
 
-                const { regularMarketPrice } = yahooInfo.get(ticker) as YahooStock
+                const { regularMarketPrice } = yahooData.get(ticker) as YahooStock
 
                 const potentialProfit = (regularMarketPrice - average_bought_price) * currently_owned_shares
                 const profitColor = potentialProfit > 0 ? '#0a0' : '#d00'

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
 import { Provider } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
@@ -10,6 +10,8 @@ import ReturnButton from '../../components/ReturnButton'
 import KeyboardView from '../../components/KeyboardView'
 
 import API from '../../services/api'
+import * as Yahoo from '../../services/yahooFinance/stockInfo'
+import DataContext from '../../store/dataContext'
 
 
 const NewTransaction = () => {
@@ -19,19 +21,27 @@ const NewTransaction = () => {
 
     const [showStockPicker, setShowStockPicker] = useState(false)
 
+    const { state, dispatch } = useContext(DataContext)
+
     const navigation = useNavigation()
 
-    function handleSubmitTransaction() {
+    async function handleSubmitTransaction() {
         const data = {
             ticker,
             quantity: Number(quantity),
             total_value: Number(totalValue),
         }
 
-        API.postNewTransaction(data)
-            .then(() => {
-                navigation.navigate('Dashboard', { loadData: true })
-            })
+        await API.postNewTransaction(data)
+
+        const stocks = await API.getStocksData()
+        dispatch({ type: 'SET_STOCKS', payload: stocks })
+
+        const tickers = Array.from(stocks.keys())
+        const yahooStocks = await Yahoo.getStockInfo(tickers)
+        dispatch({ type: 'SET_YAHOO', payload: yahooStocks })
+
+        navigation.navigate('Dashboard')
     }
 
     return (
@@ -48,7 +58,7 @@ const NewTransaction = () => {
                             ticker ?
                                 <Text style={{ fontSize: 16 }}>{ticker}</Text>
                                 :
-                                <Text style={{ fontSize: 16, color: '#bbb' }}>Stock Ticker</Text>
+                                <Text style={{ fontSize: 16, color: '#ccc' }}>Stock Ticker</Text>
                         }
                     </TouchableOpacity>
 
