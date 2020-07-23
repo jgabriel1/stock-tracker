@@ -1,6 +1,5 @@
 import React, { useContext } from 'react'
 import { StyleSheet, SafeAreaView, Platform, View, Text } from 'react-native'
-import { AppLoading } from 'expo'
 import { useNavigation } from '@react-navigation/native'
 import { Feather as Icon } from '@expo/vector-icons'
 import ActionButton from 'react-native-action-button'
@@ -33,20 +32,14 @@ const Dashboard = () => {
         }
     }, [isStocksDataReady, isYahooDataReady, stocksData], 30 * 1000, false)
 
-    if (!isStocksDataReady || !isYahooDataReady) {
-        return <AppLoading />
-    }
-
     return (
         <SafeAreaView style={styles.mainContainer}>
 
-            {
-                (yahooData.size === stocksData.size) ?
-                    <>
-                        <MainInfo {...{ stocksData, yahooData }} />
+            <MainInfo />
 
-                        <StockList {...{ stocksData, yahooData }} />
-                    </>
+            {
+                (isStocksDataReady) ?
+                    <StockList />
                     :
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         <Text>Loading Data</Text>
