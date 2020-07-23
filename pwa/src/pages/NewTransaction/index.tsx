@@ -37,11 +37,11 @@ const NewTransaction = () => {
         const stocks = await API.getStocksData()
         dispatch({ type: 'SET_STOCKS', payload: stocks })
 
+        navigation.navigate('Dashboard')
+
         const tickers = Array.from(stocks.keys())
         const yahooStocks = await Yahoo.getStockInfo(tickers)
         dispatch({ type: 'SET_YAHOO', payload: yahooStocks })
-
-        navigation.navigate('Dashboard')
     }
 
     return (

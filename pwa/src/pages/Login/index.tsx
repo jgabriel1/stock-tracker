@@ -10,11 +10,12 @@ import API from '../../services/api'
 import * as Yahoo from '../../services/yahooFinance/stockInfo'
 import DataContext from '../../store/dataContext'
 
+
 const Login = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
-    const { state, dispatch } = useContext(DataContext)
+    const { dispatch } = useContext(DataContext)
 
     const navigation = useNavigation()
 
@@ -24,11 +25,11 @@ const Login = () => {
         const stocks = await API.getStocksData()
         dispatch({ type: 'SET_STOCKS', payload: stocks })
 
+        navigation.navigate('Dashboard')
+
         const tickers = Array.from(stocks.keys())
         const yahooStocks = await Yahoo.getStockInfo(tickers)
         dispatch({ type: 'SET_YAHOO', payload: yahooStocks })
-
-        navigation.navigate('Dashboard')
     }
 
     return (
