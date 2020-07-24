@@ -1,6 +1,8 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, FlatList } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+
+import DependentView from './DependentView'
 
 import { Stock } from '../../../services/api/types'
 import { YahooStock } from '../../../services/yahooFinance/stockInfo'
@@ -9,14 +11,14 @@ import DataContext from '../../../store/dataContext'
 
 const StockList = () => {
     const { state } = useContext(DataContext)
-    const { stocksData, yahooData, isYahooDataReady } = state
+    const { stocksData, yahooData } = state
 
     const navigation = useNavigation()
 
     const stocksList = Array.from(stocksData.values())
 
-    function navigateToDetail(item: Stock): void {
-        navigation.navigate('Detail', { ticker: item.ticker })
+    function navigateToDetail(ticker: string): void {
+        navigation.navigate('Detail', { ticker })
     }
 
     return (
@@ -27,7 +29,7 @@ const StockList = () => {
                 const { ticker, currently_owned_shares, average_bought_price } = item
 
                 return (
-                    <TouchableOpacity onPress={() => navigateToDetail(item)}>
+                    <TouchableOpacity onPress={() => navigateToDetail(ticker)}>
                         <View style={styles.tickerContainer}>
                             <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{ticker}</Text>
                         </View>
@@ -42,36 +44,26 @@ const StockList = () => {
                                 <Text>{average_bought_price.toFixed(2)}</Text>
                             </View>
 
-                            {useMemo(() => {
-                                if (!isYahooDataReady) {
-                                    return (
-                                        <>
-                                            <View style={styles.gridColumn}>
-                                                <Text>-</Text>
-                                            </View>
-                                            <View style={styles.gridColumn}>
-                                                <Text>-</Text>
-                                            </View>
-                                        </>
-                                    )
-                                }
+                            {
+                                yahooData.has(ticker) ?
+                                    <DependentView
+                                        viewStyle={styles.gridColumn}
+                                        average_bought_price={average_bought_price}
+                                        currently_owned_shares={currently_owned_shares}
 
-                                const { regularMarketPrice } = yahooData.get(ticker) as YahooStock
-
-                                const potentialProfit = (regularMarketPrice - average_bought_price) * currently_owned_shares
-                                const profitColor = potentialProfit > 0 ? '#0a0' : '#d00'
-
-                                return (
+                                        // typescript forced formality, since the conditional guarantees it is defined:
+                                        regularMarketPrice={(yahooData.get(ticker) as YahooStock).regularMarketPrice}
+                                    />
+                                    :
                                     <>
                                         <View style={styles.gridColumn}>
-                                            <Text>{regularMarketPrice.toFixed(2)}</Text>
+                                            <Text>-</Text>
                                         </View>
                                         <View style={styles.gridColumn}>
-                                            <Text style={{ color: profitColor }}>{potentialProfit.toFixed(2)}</Text>
+                                            <Text>-</Text>
                                         </View>
                                     </>
-                                )
-                            }, [isYahooDataReady, yahooData, ticker])}
+                            }
 
                         </View>
                     </TouchableOpacity>
