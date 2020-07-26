@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-nativ
 import { Provider } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 
-import Modal from './components/Modal'
+import Modal from '../../components/Modal'
 import StockPicker from './components/StockPicker'
 import Button from '../../components/Button'
 import ReturnButton from '../../components/ReturnButton'
@@ -82,15 +82,15 @@ const NewTransaction = () => {
 
                 </View>
 
-                <Modal
-                    visible={showStockPicker}
-                    onDismiss={() => setShowStockPicker(false)}
-                    contentContainerStyle={styles.modalContainer}
-                >
-                    <StockPicker {...{ ticker, setTicker, setShowStockPicker }} />
-                </Modal>
-
             </KeyboardView>
+
+            <Modal
+                visible={showStockPicker}
+                onDismiss={() => setShowStockPicker(false)}
+                contentContainerStyle={styles.modalContainer}
+            >
+                <StockPicker {...{ ticker, setTicker, setShowStockPicker }} />
+            </Modal>
         </Provider >
     )
 }
