@@ -1,6 +1,6 @@
 import React from 'react'
 import { ViewStyle, StyleProp } from 'react-native'
-import { Portal, Provider, Modal as PaperModal } from 'react-native-paper'
+import { Portal, Provider as ModalProvider, Modal as PaperModal } from 'react-native-paper'
 
 interface Props {
     visible: boolean
@@ -19,3 +19,5 @@ const Modal: React.FC<Props> = ({ children, visible, onDismiss, contentContainer
 
 
 export default Modal
+
+export { ModalProvider }
