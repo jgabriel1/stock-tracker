@@ -81,11 +81,7 @@ const NewTransaction = () => {
 
                 </View>
 
-                <Modal
-                    visible={showStockPicker}
-                    onDismiss={() => setShowStockPicker(false)}
-                    contentContainerStyle={styles.modalContainer}
-                >
+                <Modal visible={showStockPicker} onDismiss={() => setShowStockPicker(false)}>
                     <StockPicker {...{ ticker, setTicker, setShowStockPicker }} />
                 </Modal>
             </KeyboardView>
@@ -132,9 +128,4 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 16
     },
-
-    modalContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    }
 })

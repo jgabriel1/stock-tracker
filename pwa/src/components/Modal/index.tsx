@@ -1,4 +1,5 @@
 import React from 'react'
+import { StyleSheet } from 'react-native'
 import { ViewStyle, StyleProp } from 'react-native'
 import { Portal, Provider as ModalProvider, Modal as PaperModal } from 'react-native-paper'
 
@@ -9,15 +10,25 @@ interface Props {
 }
 
 
-const Modal: React.FC<Props> = ({ children, visible, onDismiss, contentContainerStyle }) => (
+const Modal: React.FC<Props> = ({ children, visible, onDismiss }) => (
     <Portal>
-        <PaperModal {...{ visible, onDismiss, contentContainerStyle }}>
+        <PaperModal
+            visible={visible}
+            onDismiss={onDismiss}
+            contentContainerStyle={styles.modalContainer}
+        >
             {children}
         </PaperModal>
     </Portal>
 )
 
-
+export { ModalProvider }
 export default Modal
 
-export { ModalProvider }
+const styles = StyleSheet.create({
+    modalContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
+})
+
