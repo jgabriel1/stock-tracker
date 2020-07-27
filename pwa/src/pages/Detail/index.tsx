@@ -4,6 +4,8 @@ import { RouteProp, useRoute } from '@react-navigation/native'
 import { AppLoading } from 'expo'
 
 import ReturnButton from '../../components/ReturnButton'
+import Modal, { ModalProvider } from '../../components/Modal'
+import TransactionModal from './components/TransactionModal'
 
 import API from '../../services/api'
 import { Transaction, Stock } from '../../services/api/types'
@@ -20,6 +22,8 @@ const Detail = () => {
     const { ticker } = route.params
 
     const [transactionList, setTransactionList] = useState<Transaction[]>([])
+    const [showBuyModal, setShowBuyModal] = useState(false)
+    const [showSellModal, setShowSellModal] = useState(false)
 
     const { state } = useContext(DataContext)
     const { stocksData, isStocksDataReady, yahooData, isYahooDataReady } = state
@@ -45,110 +49,120 @@ const Detail = () => {
     }
 
     return (
-        <SafeAreaView style={styles.generalContainer}>
+        <ModalProvider>
+            <SafeAreaView style={styles.generalContainer}>
 
-            <ReturnButton />
+                <ReturnButton />
 
-            <View style={styles.container}>
+                <View style={styles.container}>
 
-                <View style={styles.titleContainer}>
-                    <Text style={styles.title}>{ticker}</Text>
-                </View>
+                    <View style={styles.titleContainer}>
+                        <Text style={styles.title}>{ticker}</Text>
+                    </View>
 
-                <View style={styles.infoContainer}>
-                    <View style={styles.infoRow}>
-                        <View style={styles.infoItem}>
-                            <Text style={styles.infoItemTitle}>Total Invested:</Text>
-                            <Text style={styles.infoItemValue}>{`$ ${totalInvested.toFixed(2)}`}</Text>
+                    <View style={styles.infoContainer}>
+                        <View style={styles.infoRow}>
+                            <View style={styles.infoItem}>
+                                <Text style={styles.infoItemTitle}>Total Invested:</Text>
+                                <Text style={styles.infoItemValue}>{`$ ${totalInvested.toFixed(2)}`}</Text>
+                            </View>
+
+                            <View style={styles.infoItem}>
+                                <Text style={styles.infoItemTitle}>Current Worth:</Text>
+                                <Text style={styles.infoItemValue}>{`$ ${currentWorth.toFixed(2)}`}</Text>
+                            </View>
                         </View>
 
-                        <View style={styles.infoItem}>
-                            <Text style={styles.infoItemTitle}>Current Worth:</Text>
-                            <Text style={styles.infoItemValue}>{`$ ${currentWorth.toFixed(2)}`}</Text>
+                        <View style={styles.infoRow}>
+                            <View style={styles.infoItem}>
+                                <Text style={styles.infoItemTitle}>Balance:</Text>
+                                <Text style={styles.infoItemValue}>{`$ ${balance.toFixed(2)}`}</Text>
+                            </View>
+
+                            <View style={styles.infoItem}>
+                                <Text style={styles.infoItemTitle}>Variation(%):</Text>
+                                <Text style={styles.infoItemValue}>{`${variation.toFixed(2)} %`}</Text>
+                            </View>
                         </View>
                     </View>
 
-                    <View style={styles.infoRow}>
-                        <View style={styles.infoItem}>
-                            <Text style={styles.infoItemTitle}>Balance:</Text>
-                            <Text style={styles.infoItemValue}>{`$ ${balance.toFixed(2)}`}</Text>
-                        </View>
+                    <View style={styles.buttonsContainer}>
+                        <TouchableOpacity
+                            onPress={() => setShowBuyModal(true)}
+                            containerStyle={styles.button}
+                        >
+                            <Icon name='plus' size={32} color='#eee' />
+                        </TouchableOpacity>
 
-                        <View style={styles.infoItem}>
-                            <Text style={styles.infoItemTitle}>Variation(%):</Text>
-                            <Text style={styles.infoItemValue}>{`${variation.toFixed(2)} %`}</Text>
-                        </View>
+                        <TouchableOpacity
+                            onPress={() => setShowSellModal(true)}
+                            containerStyle={styles.button}
+                        >
+                            <Icon name='minus' size={32} color='#eee' />
+                        </TouchableOpacity>
                     </View>
+
+                    <FlatList
+                        style={{ width: '100%' }}
+                        data={transactionList}
+                        stickyHeaderIndices={[0]}
+                        showsVerticalScrollIndicator={false}
+                        alwaysBounceVertical={false}
+                        ListHeaderComponent={() => (
+                            <View style={styles.transactionRow}>
+                                <View style={styles.transactionColumn}>
+                                    <Text>Quantity</Text>
+                                </View>
+
+                                <View style={styles.transactionColumn}>
+                                    <Text>Avg. Price</Text>
+                                </View>
+
+                                <View style={styles.transactionColumn}>
+                                    <Text>Total</Text>
+                                </View>
+
+                                <View style={styles.transactionColumn}>
+                                    <Text>Date</Text>
+                                </View>
+                            </View>
+                        )}
+                        renderItem={({ item, index }) => {
+                            const date = new Date((item.timestamp as number) * 1000)
+
+                            return (
+                                <View style={styles.transactionRow} key={index}>
+                                    <View style={styles.transactionColumn}>
+                                        <Text>x{item.quantity}</Text>
+                                    </View>
+
+                                    <View style={styles.transactionColumn}>
+                                        <Text>$ {item.average_price?.toFixed(2)}</Text>
+                                    </View>
+
+                                    <View style={styles.transactionColumn}>
+                                        <Text>$ {item.total_value.toFixed(2)}</Text>
+                                    </View>
+
+                                    <View style={styles.transactionColumn}>
+                                        <Text>{`${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`}</Text>
+                                    </View>
+                                </View>
+                            )
+                        }}
+                    />
+
                 </View>
 
-                <View style={styles.buttonsContainer}>
-                    <TouchableOpacity
-                        onPress={() => console.log('buy')}
-                        containerStyle={styles.button}
-                    >
-                        <Icon name='plus' size={32} color='#eee' />
-                    </TouchableOpacity>
+                <Modal visible={showBuyModal} onDismiss={() => setShowBuyModal(false)}>
+                    <TransactionModal ticker={ticker} type='buy' />
+                </Modal>
 
-                    <TouchableOpacity
-                        onPress={() => console.log('sell')}
-                        containerStyle={styles.button}
-                    >
-                        <Icon name='minus' size={32} color='#eee' />
-                    </TouchableOpacity>
-                </View>
-
-                <FlatList
-                    style={{ width: '100%' }}
-                    data={transactionList}
-                    stickyHeaderIndices={[0]}
-                    showsVerticalScrollIndicator={false}
-                    alwaysBounceVertical={false}
-                    ListHeaderComponent={() => (
-                        <View style={styles.transactionRow}>
-                            <View style={styles.transactionColumn}>
-                                <Text>Quantity</Text>
-                            </View>
-
-                            <View style={styles.transactionColumn}>
-                                <Text>Avg. Price</Text>
-                            </View>
-
-                            <View style={styles.transactionColumn}>
-                                <Text>Total</Text>
-                            </View>
-
-                            <View style={styles.transactionColumn}>
-                                <Text>Date</Text>
-                            </View>
-                        </View>
-                    )}
-                    renderItem={({ item }: { item: Transaction }) => {
-                        const date = new Date((item.timestamp as number) * 1000)
-
-                        return (
-                            <View style={styles.transactionRow} key={item.timestamp}>
-                                <View style={styles.transactionColumn}>
-                                    <Text>x{item.quantity}</Text>
-                                </View>
-
-                                <View style={styles.transactionColumn}>
-                                    <Text>$ {item.average_price?.toFixed(2)}</Text>
-                                </View>
-
-                                <View style={styles.transactionColumn}>
-                                    <Text>$ {item.total_value.toFixed(2)}</Text>
-                                </View>
-
-                                <View style={styles.transactionColumn}>
-                                    <Text>{`${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`}</Text>
-                                </View>
-                            </View>
-                        )
-                    }}
-                />
-
-            </View>
-        </SafeAreaView>
+                <Modal visible={showSellModal} onDismiss={() => setShowSellModal(false)}>
+                    <TransactionModal ticker={ticker} type='sell' />
+                </Modal>
+            </SafeAreaView>
+        </ModalProvider>
     )
 }
 
@@ -157,7 +171,6 @@ export default Detail
 const styles = StyleSheet.create({
     generalContainer: {
         flex: 1,
-        justifyContent: 'center',
     },
 
     container: {
