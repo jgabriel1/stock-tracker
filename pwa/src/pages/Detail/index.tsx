@@ -1,12 +1,19 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { AppLoading } from 'expo'
+import { Feather as Icon } from '@expo/vector-icons'
 
 import ReturnButton from '../../components/ReturnButton'
+import Modal, { ModalProvider } from '../../components/Modal'
+import MainStockInfo from './components/MainStockInfo'
+import TransactionList from './components/TransactionList'
+import TransactionModal from './components/TransactionModal'
 
 import API from '../../services/api'
-import { Transaction } from '../../services/api/types'
+import { Transaction, Stock } from '../../services/api/types'
+import { YahooStock } from '../../services/yahooFinance/stockInfo'
 import DataContext from '../../store/dataContext'
 
 import { AppStackParamList } from '../../routes'
@@ -17,61 +24,92 @@ const Detail = () => {
     const { ticker } = route.params
 
     const [transactionList, setTransactionList] = useState<Transaction[]>([])
+    const [showBuyModal, setShowBuyModal] = useState(false)
+    const [showSellModal, setShowSellModal] = useState(false)
 
-    const { state, dispatch } = useContext(DataContext)
+    const { state } = useContext(DataContext)
     const { stocksData, isStocksDataReady, yahooData, isYahooDataReady } = state
 
-    useEffect(() => {
-        API.getTransactionsFor(ticker)
-            .then(setTransactionList)
-    }, [])
-
-    if (!isStocksDataReady || !isYahooDataReady) {
+    if (!isStocksDataReady || !isYahooDataReady || !stocksData.has(ticker)) {
         return <AppLoading />
     }
 
+    const { currently_owned_shares, average_bought_price } = stocksData.get(ticker) as Stock
+    const { regularMarketPrice } = yahooData.get(ticker) as YahooStock
+
+    useEffect(() => {
+        API.getTransactionsFor(ticker).then(setTransactionList)
+    }, [])
+
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <ModalProvider>
+            <SafeAreaView style={styles.outerContainer}>
 
-            <ReturnButton />
+                <ReturnButton />
 
-            <View style={styles.container}>
+                <View style={styles.container}>
 
-                <View style={styles.titleContainer}>
-                    <Text style={styles.title}>{ticker}</Text>
-                </View>
-
-                <View style={styles.infoContainer}>
-                    <Text>{yahooData.get(ticker)?.symbol}</Text>
-                    <Text>{yahooData.get(ticker)?.regularMarketPrice}</Text>
-                    <Text>{yahooData.get(ticker)?.chartPreviousClose}</Text>
-                </View>
-
-                {transactionList.map((transaction, index) => (
-                    <View style={styles.transactionContainer} key={index}>
-                        <Text>{transaction.quantity}</Text>
-                        <Text>{transaction.average_price}</Text>
-                        <Text>{transaction.total_value}</Text>
-                        <Text>{transaction.timestamp}</Text>
+                    <View style={styles.titleContainer}>
+                        <Text style={styles.title}>{ticker}</Text>
                     </View>
-                ))}
 
-            </View>
-        </SafeAreaView>
+                    <MainStockInfo
+                        averageBoughtPrice={average_bought_price}
+                        currentlyOwnedShares={currently_owned_shares}
+                        regularMarketPrice={regularMarketPrice}
+                    />
+
+                    <View style={styles.buttonsContainer}>
+                        <TouchableOpacity
+                            onPress={() => setShowBuyModal(true)}
+                            containerStyle={styles.button}
+                        >
+                            <Icon name='plus' size={32} color='#eee' />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            onPress={() => setShowSellModal(true)}
+                            containerStyle={styles.button}
+                        >
+                            <Icon name='minus' size={32} color='#eee' />
+                        </TouchableOpacity>
+                    </View>
+
+                    <TransactionList transactionList={transactionList} />
+
+                </View>
+
+                <>
+                    <Modal visible={showBuyModal} onDismiss={() => setShowBuyModal(false)}>
+                        <TransactionModal ticker={ticker} type='buy' />
+                    </Modal>
+
+                    <Modal visible={showSellModal} onDismiss={() => setShowSellModal(false)}>
+                        <TransactionModal ticker={ticker} type='sell' />
+                    </Modal>
+                </>
+            </SafeAreaView>
+        </ModalProvider>
     )
 }
 
 export default Detail
 
 const styles = StyleSheet.create({
+    outerContainer: {
+        flex: 1,
+    },
+
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        height: '100%'
     },
 
     titleContainer: {
-        width: '80%'
+        width: '80%',
+        marginBottom: 16,
     },
 
     title: {
@@ -79,17 +117,18 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 
-    infoContainer: {
+    buttonsContainer: {
+        flexDirection: 'row',
         width: '80%',
-
     },
 
-    transactionContainer: {
-        width: '100%',
-        padding: 16,
-        borderColor: '#222',
-        borderBottomWidth: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+    button: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 48,
+        borderRadius: 4,
+        marginBottom: 16,
+        backgroundColor: '#999',
     },
 })
