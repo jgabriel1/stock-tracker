@@ -1,9 +1,20 @@
-import React, { useState, useCallback } from 'react'
-import { StyleSheet, Text, Dimensions, TextInput, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView } from 'react-native'
-import Button from '../../../components/Button'
-import API from '../../../services/api'
+import React, { useState, useCallback, useContext } from 'react'
+import {
+    Dimensions,
+    Keyboard,
+    KeyboardAvoidingView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableWithoutFeedback,
+} from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+
+import Button from '../../../components/Button'
+
+import API from '../../../services/api'
 import { Transaction } from '../../../services/api/types'
+import DataContext from '../../../store/dataContext'
 
 interface Props {
     ticker: string
@@ -13,6 +24,8 @@ interface Props {
 const TransactionModal = ({ ticker, type }: Props) => {
     const [quantity, setQuantity] = useState('')
     const [totalValue, setTotalValue] = useState('')
+
+    const { dispatch } = useContext(DataContext)
 
     const navigation = useNavigation()
 
@@ -36,11 +49,16 @@ const TransactionModal = ({ ticker, type }: Props) => {
         }
     }, [ticker, type])
 
-    async function handleBuyTransaction() {
+    async function handleTransaction() {
         const data = parseData(quantity, totalValue)
 
         await API.postNewTransaction(data).catch(alert)
-        navigation.navigate('Dashboard')
+
+        navigation.goBack()
+        dispatch({
+            type: 'SET_STOCKS',
+            payload: await API.getStocksData()
+        })
     }
 
     return (
@@ -64,7 +82,7 @@ const TransactionModal = ({ ticker, type }: Props) => {
                     keyboardType='number-pad'
                 />
 
-                <Button text='Confirm' onPress={handleBuyTransaction} />
+                <Button text='Confirm' onPress={handleTransaction} />
             </KeyboardAvoidingView>
         </TouchableWithoutFeedback >
     )
