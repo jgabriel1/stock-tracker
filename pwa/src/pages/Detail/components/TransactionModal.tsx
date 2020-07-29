@@ -14,6 +14,7 @@ import Button from '../../../components/Button'
 
 import API from '../../../services/api'
 import { Transaction } from '../../../services/api/types'
+import * as Yahoo from '../../../services/yahooFinance/stockInfo'
 import DataContext from '../../../store/dataContext'
 
 interface Props {
@@ -54,10 +55,19 @@ const TransactionModal = ({ ticker, type }: Props) => {
 
         await API.postNewTransaction(data).catch(alert)
 
-        navigation.goBack()
+        const stocks = await API.getStocksData()
         dispatch({
             type: 'SET_STOCKS',
-            payload: await API.getStocksData()
+            payload: stocks
+        })
+
+        navigation.goBack()
+
+        const tickers = Array.from(stocks.keys())
+        const yahooInfo = await Yahoo.getStockInfo(tickers)
+        dispatch({
+            type: 'SET_YAHOO',
+            payload: yahooInfo
         })
     }
 

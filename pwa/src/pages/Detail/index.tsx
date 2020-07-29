@@ -30,16 +30,16 @@ const Detail = () => {
     const { state } = useContext(DataContext)
     const { stocksData, isStocksDataReady, yahooData, isYahooDataReady } = state
 
+    useEffect(() => {
+        API.getTransactionsFor(ticker).then(setTransactionList)
+    }, [])
+
     if (!isStocksDataReady || !isYahooDataReady || !stocksData.has(ticker)) {
         return <AppLoading />
     }
 
     const { currently_owned_shares, average_bought_price } = stocksData.get(ticker) as Stock
     const { regularMarketPrice } = yahooData.get(ticker) as YahooStock
-
-    useEffect(() => {
-        API.getTransactionsFor(ticker).then(setTransactionList)
-    }, [])
 
     return (
         <ModalProvider>
