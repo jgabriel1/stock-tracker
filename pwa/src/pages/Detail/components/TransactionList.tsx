@@ -59,6 +59,7 @@ const TransactionList = ({ transactionList }: Props) => {
             showsVerticalScrollIndicator={false}
             alwaysBounceVertical={false}
             ListHeaderComponent={headerComponent}
+            keyExtractor={(item, index) => String(index)}
             renderItem={renderItem}
         />
     )
