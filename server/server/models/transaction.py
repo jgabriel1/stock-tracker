@@ -9,12 +9,20 @@ class Transaction(BaseModel):
     quantity: int
     total_value: float
 
-    timestamp: int = datetime.utcnow().timestamp()
+    timestamp: int = None
     average_price: float = None
 
+    @validator('ticker', always=True)
+    def uppercase_ticker(cls, value: str, **kwargs):
+        return value if value.isupper() else value.upper()
+
+    @validator('timestamp', always=True)
+    def snap_current_time(cls, value: int, **kwargs):
+        return value or datetime.utcnow().timestamp()
+
     @validator('average_price', always=True)
-    def calculate_average_price(cls, value, values, **kwargs):
-        return values['total_value'] / values['quantity']
+    def calculate_average_price(cls, value: float, values: dict, **kwargs):
+        return value or values.get('total_value') / values.get('quantity')
 
 
 class TransactionHistory(BaseModel):
