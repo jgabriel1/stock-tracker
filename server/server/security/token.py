@@ -1,17 +1,15 @@
-import os
 from datetime import datetime, timedelta
 
 import jwt
-from dotenv import load_dotenv
 from fastapi.exceptions import HTTPException
 from pydantic import BaseModel
 from starlette.status import HTTP_401_UNAUTHORIZED
 
-load_dotenv()
-
-SECRET_KEY = os.getenv('SECRET_KEY')
-ALGORITHM = os.getenv('ALGORITHM')
-ACCESS_TOKEN_EXPIRE_DAYS = int(os.getenv('ACCESS_TOKEN_EXPIRE_DAYS'))
+from ..settings.access_token import (
+    ACCESS_TOKEN_EXPIRE_DAYS,
+    ALGORITHM,
+    SECRET_KEY
+)
 
 
 class Token(BaseModel):
