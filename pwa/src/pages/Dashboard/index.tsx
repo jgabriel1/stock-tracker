@@ -47,7 +47,7 @@ const Dashboard = () => {
             }
 
             <ActionButton
-                onPress={() => navigation.navigate('NewTransaction')}
+                onPress={() => navigation.navigate('NewTransaction', {})}
                 renderIcon={() => <Icon name='plus' size={32} color='#fff' />}
                 buttonColor='rgba(0, 0, 0, 0.8)'
                 hideShadow={Platform.OS === 'web' ? true : false}

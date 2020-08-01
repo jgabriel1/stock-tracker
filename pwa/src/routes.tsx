@@ -15,9 +15,14 @@ export type AppStackParamList = {
     Home: undefined
     Login: undefined
     Register: undefined
-    Dashboard: { loadData: boolean }
-    Detail: { ticker: string }
-    NewTransaction: undefined
+    Dashboard: undefined
+    Detail: {
+        ticker: string
+    }
+    NewTransaction: {
+        initialTicker?: string,
+        initialTransactionType?: 'IN' | 'OUT'
+    }
 }
 
 const AppStack = createStackNavigator<AppStackParamList>()
