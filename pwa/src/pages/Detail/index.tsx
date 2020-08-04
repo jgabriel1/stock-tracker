@@ -1,15 +1,14 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext, useCallback } from 'react'
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { RouteProp, useRoute } from '@react-navigation/native'
+import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
+import { StackNavigationProp } from '@react-navigation/stack'
 import { AppLoading } from 'expo'
 import { Feather as Icon } from '@expo/vector-icons'
 
 import ReturnButton from '../../components/ReturnButton'
-import Modal, { ModalProvider } from '../../components/Modal'
 import MainStockInfo from './components/MainStockInfo'
 import TransactionList from './components/TransactionList'
-import TransactionModal from './components/TransactionModal'
 
 import API from '../../services/api'
 import { Transaction, Stock } from '../../services/api/types'
@@ -20,15 +19,26 @@ import { AppStackParamList } from '../../routes'
 
 
 const Detail = () => {
-    const route = useRoute<RouteProp<AppStackParamList, 'Detail'>>()
-    const { ticker } = route.params
-
     const [transactionList, setTransactionList] = useState<Transaction[]>([])
-    const [showBuyModal, setShowBuyModal] = useState(false)
-    const [showSellModal, setShowSellModal] = useState(false)
 
-    const { state } = useContext(DataContext)
-    const { stocksData, isStocksDataReady, yahooData, isYahooDataReady } = state
+    const {
+        state: {
+            stocksData,
+            isStocksDataReady,
+            yahooData,
+            isYahooDataReady
+        }
+    } = useContext(DataContext)
+
+    const navigation = useNavigation<StackNavigationProp<AppStackParamList>>()
+    const { params: { ticker } } = useRoute<RouteProp<AppStackParamList, 'Detail'>>()
+
+    const navigateToNewTransactionWith = useCallback((type: 'IN' | 'OUT') => {
+        navigation.navigate('NewTransaction', {
+            initialTicker: ticker,
+            initialTransactionType: type
+        })
+    }, [ticker])
 
     useEffect(() => {
         API.getTransactionsFor(ticker).then(setTransactionList)
@@ -39,57 +49,47 @@ const Detail = () => {
     }
 
     const { currently_owned_shares, average_bought_price } = stocksData.get(ticker) as Stock
+
     const { regularMarketPrice } = yahooData.get(ticker) as YahooStock
 
     return (
-        <ModalProvider>
-            <SafeAreaView style={styles.outerContainer}>
+        <SafeAreaView style={styles.outerContainer}>
 
-                <ReturnButton />
+            <ReturnButton />
 
-                <View style={styles.container}>
+            <View style={styles.container}>
 
-                    <View style={styles.titleContainer}>
-                        <Text style={styles.title}>{ticker}</Text>
-                    </View>
-
-                    <MainStockInfo
-                        averageBoughtPrice={average_bought_price}
-                        currentlyOwnedShares={currently_owned_shares}
-                        regularMarketPrice={regularMarketPrice}
-                    />
-
-                    <View style={styles.buttonsContainer}>
-                        <TouchableOpacity
-                            onPress={() => setShowBuyModal(true)}
-                            containerStyle={styles.button}
-                        >
-                            <Icon name='plus' size={32} color='#eee' />
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            onPress={() => setShowSellModal(true)}
-                            containerStyle={styles.button}
-                        >
-                            <Icon name='minus' size={32} color='#eee' />
-                        </TouchableOpacity>
-                    </View>
-
-                    <TransactionList transactionList={transactionList} />
-
+                <View style={styles.titleContainer}>
+                    <Text style={styles.title}>{ticker}</Text>
                 </View>
 
-                <>
-                    <Modal visible={showBuyModal} onDismiss={() => setShowBuyModal(false)}>
-                        <TransactionModal ticker={ticker} type='buy' />
-                    </Modal>
+                <MainStockInfo
+                    averageBoughtPrice={average_bought_price}
+                    currentlyOwnedShares={currently_owned_shares}
+                    regularMarketPrice={regularMarketPrice}
+                />
 
-                    <Modal visible={showSellModal} onDismiss={() => setShowSellModal(false)}>
-                        <TransactionModal ticker={ticker} type='sell' />
-                    </Modal>
-                </>
-            </SafeAreaView>
-        </ModalProvider>
+                <View style={styles.buttonsContainer}>
+                    <TouchableOpacity
+                        onPress={() => navigateToNewTransactionWith('IN')}
+                        containerStyle={styles.button}
+                    >
+                        <Icon name='plus' size={32} color='#eee' />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => navigateToNewTransactionWith('OUT')}
+                        containerStyle={styles.button}
+                    >
+                        <Icon name='minus' size={32} color='#eee' />
+                    </TouchableOpacity>
+                </View>
+
+                <TransactionList transactionList={transactionList} />
+
+            </View>
+
+        </SafeAreaView>
     )
 }
 
