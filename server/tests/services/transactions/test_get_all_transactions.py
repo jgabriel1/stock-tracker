@@ -10,22 +10,10 @@ from ..base_test_case import BaseTestCase
 
 class ListTransactionsCase(BaseTestCase):
     transactions_data: List[dict]
-    token: str
 
     def __init__(self, client, user_data, transactions_data: List[dict]):
         super().__init__(client, user_data)
         self.transactions_data = transactions_data
-
-    def register_user(self) -> None:
-        self.client.post('auth/register', json=self.user_data)
-
-    def authenticate_user(self) -> None:
-        response = self.client.post('auth/token', data={
-            'username': self.user_data.get('username'),
-            'password': self.user_data.get('password'),
-        })
-
-        self.token = response.json().get('access_token')
 
     def create_transactions(self) -> Iterator[Response]:
         for transaction in self.transactions_data:

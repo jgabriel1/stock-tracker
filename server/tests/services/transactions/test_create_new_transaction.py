@@ -3,28 +3,16 @@ from requests import Response
 from starlette.testclient import TestClient
 from starlette.status import HTTP_204_NO_CONTENT
 
+from ..base_test_case import BaseTestCase
 
-class CreateNewTransactionCase:
-    client: TestClient
-    user_data: dict
+
+class CreateNewTransactionCase(BaseTestCase):
     transaction_data: dict
-    token: str
 
     def __init__(self, client: TestClient, user_data: dict, transaction_data: dict):
-        self.client = client
-        self.user_data = user_data
+        super().__init__(client, user_data)
+
         self.transaction_data = transaction_data
-
-    def register_user(self) -> None:
-        self.client.post('auth/register', json=self.user_data)
-
-    def authenticate_user(self) -> None:
-        response = self.client.post('auth/token', data={
-            'username': self.user_data.get('username'),
-            'password': self.user_data.get('password'),
-        })
-
-        self.token = response.json().get('access_token')
 
     def create_transaction(self) -> Response:
         return self.client.post(

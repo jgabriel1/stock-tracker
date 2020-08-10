@@ -3,18 +3,17 @@ from requests import Response
 from starlette.testclient import TestClient
 from starlette.status import HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST
 
+from ..base_test_case import BaseTestCase
 
-class CreateInvalidTransactionCase:
+
+class CreateInvalidTransactionCase(BaseTestCase):
     """
     This will basically try to create a transaction selling more stocks than
     the amount of shares they currently own of a specific stock.
     """
 
-    client: TestClient
-    user_data: dict
     buying_transaction: dict
     selling_transaction: dict
-    token: str
 
     def __init__(
             self,
@@ -23,22 +22,10 @@ class CreateInvalidTransactionCase:
             buying_transaction: dict,
             selling_transaction: dict,
     ) -> None:
-        self.client = client
-        self.user_data = user_data
+        super().__init__(client, user_data)
 
         self.buying_transaction = buying_transaction
         self.selling_transaction = selling_transaction
-
-    def register_user(self) -> None:
-        self.client.post('auth/register', json=self.user_data)
-
-    def authenticate_user(self):
-        response = self.client.post('auth/token', data={
-            'username': self.user_data.get('username'),
-            'password': self.user_data.get('password'),
-        })
-
-        self.token = response.json().get('access_token')
 
     def create_buying_transaction(self) -> Response:
         return self.client.post(
