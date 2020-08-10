@@ -23,8 +23,7 @@ class AuthenticateUserCase:
 
 @pytest.fixture(scope='module')
 def case(client: TestClient, user_data: dict):
-    c = AuthenticateUserCase(client, user_data)
-    return c
+    yield AuthenticateUserCase(client, user_data)
 
 
 @pytest.fixture(scope='function')
@@ -43,7 +42,6 @@ def test_if_user_was_registered(case, user_data):
 
 
 def test_if_user_recieved_token(case, user_data):
-    case.register_user()
     token_response = case.authenticate_user()
 
     assert token_response.status_code == HTTP_200_OK
@@ -56,7 +54,6 @@ def test_if_user_recieved_token(case, user_data):
 
 
 def test_if_token_is_valid(case, token_validator):
-    case.register_user()
     token_response = case.authenticate_user()
 
     access_token = token_response.json().get('access_token')

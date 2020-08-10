@@ -13,7 +13,7 @@ def override_test_db():
     yield
 
 
-@pytest.fixture(scope='function', autouse=True)
+@pytest.fixture(scope='module', autouse=True)
 def reset_db():
     yield
 
