@@ -27,3 +27,12 @@ def reset_db():
 def client() -> TestClient:
     test_client = TestClient(app=app)
     return test_client
+
+
+@pytest.fixture(scope='module')
+def user_data() -> dict:
+    return {
+        'username': 'test_user',
+        'password': 'password123',
+        'email': 'test@email.com',
+    }

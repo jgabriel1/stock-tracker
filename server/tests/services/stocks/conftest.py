@@ -28,7 +28,7 @@ def transactions_data(ticker) -> List[dict]:
         {
             'ticker': ticker,
             'quantity': -50,
-            'total_value': -22250,
+            'total_value': -2225,
         },
         {
             'ticker': ticker,
