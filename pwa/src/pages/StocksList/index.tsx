@@ -8,6 +8,7 @@ import { Stock } from '../../services/api/types'
 import { YahooStock } from '../../services/yahooFinance/stockInfo'
 import DataContext from '../../store/dataContext'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import NewTransactionButton from './components/NewTransactionButton'
 
 
 const StockList = () => {
@@ -73,6 +74,7 @@ const StockList = () => {
                 }}
                 scrollEnabled={true}
             />
+            <NewTransactionButton />
         </SafeAreaView>
     )
 }
@@ -82,7 +84,7 @@ export default StockList
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
 
     gridRow: {
