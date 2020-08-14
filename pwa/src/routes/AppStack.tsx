@@ -5,11 +5,12 @@ import { createStackNavigator } from '@react-navigation/stack'
 import Home from '../pages/Home'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
-import Dashboard from '../pages/Dashboard'
+// import Dashboard from '../pages/Dashboard'
 import NewTransaction from '../pages/NewTransaction'
 import Detail from '../pages/Detail'
 
 import DataStateProvider from '../store/DataStateProvider'
+import DashboardTabs from './DashboardTabs'
 
 export type AppStackParamList = {
     Home: undefined
@@ -25,21 +26,22 @@ export type AppStackParamList = {
     }
 }
 
-const AppStack = createStackNavigator<AppStackParamList>()
+const { Navigator, Screen } = createStackNavigator<AppStackParamList>()
 
 const Routes = () => {
     return (
         <DataStateProvider>
             <NavigationContainer>
-                <AppStack.Navigator headerMode='none'>
-                    <AppStack.Screen name='Home' component={Home} />
-                    <AppStack.Screen name='Login' component={Login} />
-                    <AppStack.Screen name='Register' component={Register} />
+                <Navigator headerMode='none'>
+                    <Screen name='Home' component={Home} />
+                    <Screen name='Login' component={Login} />
+                    <Screen name='Register' component={Register} />
 
-                    <AppStack.Screen name='Dashboard' component={Dashboard} />
-                    <AppStack.Screen name='NewTransaction' component={NewTransaction} />
-                    <AppStack.Screen name='Detail' component={Detail} />
-                </AppStack.Navigator>
+                    <Screen name='Dashboard' component={DashboardTabs} />
+
+                    <Screen name='NewTransaction' component={NewTransaction} />
+                    <Screen name='Detail' component={Detail} />
+                </Navigator>
             </NavigationContainer>
         </DataStateProvider>
     )

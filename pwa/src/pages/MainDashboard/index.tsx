@@ -1,15 +1,34 @@
 import React, { useContext, useMemo } from 'react'
-import { StyleSheet, Text, View, Dimensions } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native'
 
-import { Stock } from '../../../services/api/types'
-import { YahooStock } from '../../../services/yahooFinance/stockInfo'
+import { Stock } from '../../services/api/types'
+import { YahooStock } from '../../services/yahooFinance/stockInfo'
 
-import DataContext from '../../../store/dataContext'
+import DataContext from '../../store/dataContext'
+import { useNavigation } from '@react-navigation/native'
+import usePeriodicEffect from '../../hooks/usePeriodicEffect'
+import * as Yahoo from '../../services/yahooFinance/stockInfo'
 
 
-const MainInfo = () => {
-    const { state } = useContext(DataContext)
-    const { stocksData, yahooData, isYahooDataReady } = state
+const MainDashboard = () => {
+    const { state, dispatch } = useContext(DataContext)
+    const { stocksData, yahooData, isStocksDataReady, isYahooDataReady } = state
+
+    const navigation = useNavigation()
+
+    usePeriodicEffect(() => {
+        if (isStocksDataReady) {
+            const tickers = Array.from(stocksData.keys())
+
+            Yahoo.getStockInfo(tickers)
+                .then(yahoo => {
+                    dispatch({
+                        type: 'SET_YAHOO',
+                        payload: yahoo
+                    })
+                })
+        }
+    }, [isStocksDataReady, isYahooDataReady, stocksData], 30 * 1000, false)
 
     const totalInvested = useMemo(() => {
         const stocksValues = Array.from(stocksData.values())
@@ -37,7 +56,7 @@ const MainInfo = () => {
     }, [isYahooDataReady, stocksData, yahooData])
 
     return (
-        <View style={styles.headerContainer}>
+        <SafeAreaView style={styles.headerContainer}>
 
             <View style={styles.infoContainer}>
                 <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Total Invested</Text>
@@ -64,15 +83,16 @@ const MainInfo = () => {
                 }
             </View>
 
-        </View>
+        </SafeAreaView>
     )
 }
 
-export default MainInfo
+export default MainDashboard
 
 const styles = StyleSheet.create({
     headerContainer: {
-        height: Dimensions.get('window').height * 0.4
+        flex: 1,
+        justifyContent: 'center'
     },
 
     infoContainer: {
