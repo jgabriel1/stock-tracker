@@ -15,7 +15,7 @@ import { Transaction, Stock } from '../../services/api/types'
 import { YahooStock } from '../../services/yahooFinance/stockInfo'
 import DataContext from '../../store/dataContext'
 
-import { AppStackParamList } from '../../routes'
+import { AppStackParamList } from '../../routes/AppStack'
 
 
 const Detail = () => {

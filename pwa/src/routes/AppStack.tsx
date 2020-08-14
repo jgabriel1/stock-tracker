@@ -2,14 +2,14 @@ import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
-import Home from './pages/Home'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import Dashboard from './pages/Dashboard'
-import NewTransaction from './pages/NewTransaction'
-import Detail from './pages/Detail'
+import Home from '../pages/Home'
+import Login from '../pages/Login'
+import Register from '../pages/Register'
+import Dashboard from '../pages/Dashboard'
+import NewTransaction from '../pages/NewTransaction'
+import Detail from '../pages/Detail'
 
-import DataStateProvider from './store/DataStateProvider'
+import DataStateProvider from '../store/DataStateProvider'
 
 export type AppStackParamList = {
     Home: undefined
