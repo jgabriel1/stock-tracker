@@ -1,85 +1,62 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext } from 'react'
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native'
 
-import { Stock } from '../../services/api/types'
-import { YahooStock } from '../../services/yahooFinance/stockInfo'
+import usePeriodicEffect from '../../hooks/usePeriodicEffect'
 
 import DataContext from '../../store/dataContext'
-import { useNavigation } from '@react-navigation/native'
-import usePeriodicEffect from '../../hooks/usePeriodicEffect'
+import { getTotalInvested, getCurrentWorth, getAllTickers } from '../../store/selectors'
+
 import * as Yahoo from '../../services/yahooFinance/stockInfo'
 
 
 const MainDashboard = () => {
     const { state, dispatch } = useContext(DataContext)
-    const { stocksData, yahooData, isStocksDataReady, isYahooDataReady } = state
 
-    const navigation = useNavigation()
+    const tickers = getAllTickers(state)
+    const totalInvested = getTotalInvested(state)
+    const currentWorth = getCurrentWorth(state)
 
     usePeriodicEffect(() => {
-        if (isStocksDataReady) {
-            const tickers = Array.from(stocksData.keys())
-
+        if (state.isStocksDataReady) {
             Yahoo.getStockInfo(tickers)
                 .then(yahoo => {
-                    dispatch({
-                        type: 'SET_YAHOO',
-                        payload: yahoo
-                    })
+                    dispatch({ type: 'SET_YAHOO', payload: yahoo })
                 })
         }
-    }, [isStocksDataReady, isYahooDataReady, stocksData], 30 * 1000, false)
-
-    const totalInvested = useMemo(() => {
-        const stocksValues = Array.from(stocksData.values())
-
-        return stocksValues.reduce((accum, stock) => {
-            const { average_bought_price, currently_owned_shares } = stock
-
-            return accum + average_bought_price * currently_owned_shares
-        }, 0)
-    }, [stocksData])
-
-    const currentWorth = useMemo(() => {
-        if (isYahooDataReady) {
-            const tickers = Array.from(stocksData.keys())
-
-            return tickers.reduce((accum, ticker) => {
-                const { currently_owned_shares } = stocksData.get(ticker) as Stock
-                const { regularMarketPrice } = yahooData.get(ticker) as YahooStock
-
-                return accum + regularMarketPrice * currently_owned_shares
-            }, 0)
-        }
-
-        return null
-    }, [isYahooDataReady, stocksData, yahooData])
+    }, [tickers, state.isStocksDataReady], 30 * 1000, false)
 
     return (
         <SafeAreaView style={styles.headerContainer}>
 
             <View style={styles.infoContainer}>
-                <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Total Invested</Text>
-                <Text style={{ fontSize: 18 }}>$ {totalInvested.toFixed(2)}</Text>
+                <Text style={styles.infoTitle}>Total Invested</Text>
+                <Text style={styles.infoData}>$ {totalInvested.toFixed(2)}</Text>
             </View>
 
             <View style={styles.infoContainer}>
-                <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Current Worth</Text>
+                <Text style={styles.infoTitle}>Current Worth</Text>
                 {
-                    currentWorth !== null ?
-                        <Text style={{ fontSize: 18 }}>$ {currentWorth.toFixed(2)}</Text>
-                        :
-                        <Text style={{ fontSize: 18 }}>$ -</Text>
+                    currentWorth === 0
+                        ? <Text style={styles.infoData}>$ -</Text>
+                        : <Text style={styles.infoData}>$ {currentWorth.toFixed(2)}</Text>
                 }
             </View>
 
             <View style={styles.infoContainer}>
-                <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Balance</Text>
+                <Text style={styles.infoTitle}>Balance</Text>
                 {
-                    currentWorth !== null ?
-                        <Text style={{ fontSize: 18 }}>$ {(currentWorth - totalInvested).toFixed(2)}</Text>
-                        :
-                        <Text style={{ fontSize: 18 }}>$ -</Text>
+                    currentWorth === 0
+                        ? <Text style={styles.infoData}>$ -</Text>
+                        : <Text
+                            style={[
+                                styles.infoData,
+                                currentWorth > totalInvested
+                                    ? styles.greenText
+                                    : styles.redText
+                            ]}
+                        >
+                            $ {(currentWorth - totalInvested).toFixed(2)}
+                        </Text>
                 }
             </View>
 
@@ -100,5 +77,22 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'flex-start',
         paddingHorizontal: 32,
+    },
+
+    infoTitle: {
+        fontSize: 24,
+        fontWeight: 'bold'
+    },
+
+    infoData: {
+        fontSize: 18,
+    },
+
+    redText: {
+        color: '#d00',
+    },
+
+    greenText: {
+        color: '#0a0'
     },
 })
