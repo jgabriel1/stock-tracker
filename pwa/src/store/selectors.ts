@@ -6,6 +6,7 @@ export const getBackendData = (state: DataState, ticker: string) => state.stocks
 export const getYahooData = (state: DataState, ticker: string) => state.yahooData.get(ticker)
 
 export const getStockData = (state: DataState, ticker: string) => {
+    // it is guaranteed that the stock data will always be loaded
     const backendData = getBackendData(state, ticker) as Stock
     const yahooData = getYahooData(state, ticker)
 
@@ -54,3 +55,9 @@ export const getCurrentWorthPerTicker = (state: DataState, ticker: string) => {
     }
 }
 
+export const getPotentialProfitPerTicker = (state: DataState, ticker: string) => {
+    const totalInvested = getTotalInvestedPerTicker(state, ticker)
+    const currentWorth = getCurrentWorthPerTicker(state, ticker)
+
+    return currentWorth !== 0 ? currentWorth - totalInvested : 0
+}
