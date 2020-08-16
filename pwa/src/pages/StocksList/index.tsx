@@ -1,23 +1,18 @@
 import React, { useContext } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, FlatList } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
 
-import DependentView from './components/DependentView'
-
-import { Stock } from '../../services/api/types'
-import { YahooStock } from '../../services/yahooFinance/stockInfo'
 import DataContext from '../../store/dataContext'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import NewTransactionButton from './components/NewTransactionButton'
+import { getAllStocksData } from '../../store/selectors'
 
+import NewTransactionButton from './components/NewTransactionButton'
 
 const StockList = () => {
     const { state } = useContext(DataContext)
-    const { stocksData, yahooData } = state
+    const stocksList = getAllStocksData(state)
 
     const navigation = useNavigation()
-
-    const stocksList = Array.from(stocksData.values())
 
     function navigateToDetail(ticker: string): void {
         navigation.navigate('Detail', { ticker })
@@ -28,13 +23,18 @@ const StockList = () => {
             <FlatList
                 data={stocksList}
                 keyExtractor={item => item.ticker}
-                renderItem={({ item }: { item: Stock }) => {
-                    const { ticker, currently_owned_shares, average_bought_price } = item
+                renderItem={({ item: stock }) => {
+                    const { ticker, currently_owned_shares, average_bought_price } = stock
+
+                    const regularMarketPrice = stock.regularMarketPrice
+                    const potentialProfit = regularMarketPrice
+                        ? (regularMarketPrice - average_bought_price) * currently_owned_shares
+                        : 0
 
                     return (
                         <TouchableOpacity onPress={() => navigateToDetail(ticker)}>
                             <View style={styles.tickerContainer}>
-                                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{ticker}</Text>
+                                <Text style={styles.tickerText}>{ticker}</Text>
                             </View>
 
                             <View style={styles.gridRow}>
@@ -48,17 +48,23 @@ const StockList = () => {
                                 </View>
 
                                 {
-                                    yahooData.has(ticker) ?
-                                        <DependentView
-                                            viewStyle={styles.gridColumn}
-                                            average_bought_price={average_bought_price}
-                                            currently_owned_shares={currently_owned_shares}
+                                    regularMarketPrice
+                                        ? <>
+                                            <View style={styles.gridColumn}>
+                                                <Text>{regularMarketPrice.toFixed(2)}</Text>
+                                            </View>
+                                            <View style={styles.gridColumn}>
+                                                <Text style={[
+                                                    potentialProfit > 0
+                                                        ? styles.greenText
+                                                        : styles.redText
+                                                ]}>
+                                                    {potentialProfit.toFixed(2)}
+                                                </Text>
+                                            </View>
+                                        </>
 
-                                            // typescript forced formality, since the conditional guarantees it is defined:
-                                            regularMarketPrice={(yahooData.get(ticker) as YahooStock).regularMarketPrice}
-                                        />
-                                        :
-                                        <>
+                                        : <>
                                             <View style={styles.gridColumn}>
                                                 <Text>-</Text>
                                             </View>
@@ -93,7 +99,7 @@ const styles = StyleSheet.create({
         borderColor: '#999',
         paddingVertical: 16,
         borderBottomWidth: 1,
-        width: Dimensions.get('window').width, // probably changing this
+        width: Dimensions.get('window').width,
     },
 
     gridColumn: {
@@ -105,5 +111,18 @@ const styles = StyleSheet.create({
     tickerContainer: {
         paddingLeft: 32,
         paddingTop: 16
+    },
+
+    tickerText: {
+        fontSize: 18,
+        fontWeight: 'bold'
+    },
+
+    redText: {
+        color: '#d00',
+    },
+
+    greenText: {
+        color: '#0a0'
     },
 })

@@ -1,6 +1,6 @@
 import { useReducer } from 'react'
 import { DataState, Action } from './types'
-import { StockInfo } from '../pages/Dashboard'
+import { Stock } from '../services/api/types'
 import { YahooStock } from '../services/yahooFinance/stockInfo'
 
 
@@ -9,7 +9,7 @@ const reducer = (state: DataState, action: Action): DataState => {
         case 'SET_STOCKS':
             return {
                 ...state,
-                stocksData: action.payload as Map<string, StockInfo>,
+                stocksData: action.payload as Map<string, Stock>,
                 isStocksDataReady: true,
                 isYahooDataReady: false,
             }
