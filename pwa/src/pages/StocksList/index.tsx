@@ -8,13 +8,6 @@ import { getAllStocksData } from '../../store/selectors'
 
 import NewTransactionButton from './components/NewTransactionButton'
 
-interface StockData {
-    ticker: string
-    average_bought_price: number
-    currently_owned_shares: number
-    regularMarketPrice?: number
-}
-
 const StockList = () => {
     const { state } = useContext(DataContext)
     const stocksList = getAllStocksData(state)
@@ -30,7 +23,7 @@ const StockList = () => {
             <FlatList
                 data={stocksList}
                 keyExtractor={item => item.ticker}
-                renderItem={({ item: stock }: { item: StockData }) => {
+                renderItem={({ item: stock }) => {
                     const { ticker, currently_owned_shares, average_bought_price } = stock
 
                     const regularMarketPrice = stock.regularMarketPrice

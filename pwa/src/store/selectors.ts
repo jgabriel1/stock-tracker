@@ -1,11 +1,18 @@
 import { DataState } from "./types";
 import { Stock } from "../services/api/types";
 
+interface StockData {
+    ticker: string
+    average_bought_price: number
+    currently_owned_shares: number
+    regularMarketPrice?: number
+}
+
 export const getBackendData = (state: DataState, ticker: string) => state.stocksData.get(ticker)
 
 export const getYahooData = (state: DataState, ticker: string) => state.yahooData.get(ticker)
 
-export const getStockData = (state: DataState, ticker: string) => {
+export const getStockData = (state: DataState, ticker: string): StockData => {
     // it is guaranteed that the stock data will always be loaded
     const backendData = getBackendData(state, ticker) as Stock
     const yahooData = getYahooData(state, ticker)
@@ -20,7 +27,7 @@ export const getStockData = (state: DataState, ticker: string) => {
 
 export const getAllTickers = (state: DataState) => Array.from(state.stocksData.keys())
 
-export const getAllStocksData = (state: DataState) => (
+export const getAllStocksData = (state: DataState): StockData[] => (
     getAllTickers(state).map(ticker => getStockData(state, ticker))
 )
 
