@@ -22,6 +22,9 @@ const StockList = () => {
 
     return (
         <SafeAreaView style={styles.container}>
+            <View style={styles.listHeaderContainer}>
+                <Text style={styles.listHeaderText}>My Stocks</Text>
+            </View>
             <FlatList
                 data={stocksList}
                 keyExtractor={item => item.ticker}
@@ -102,6 +105,7 @@ const StockList = () => {
                     )
                 }}
                 scrollEnabled={true}
+                alwaysBounceVertical={true}
                 contentContainerStyle={styles.listContainer}
             />
             <NewTransactionButton />

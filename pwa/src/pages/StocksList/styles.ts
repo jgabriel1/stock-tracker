@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Dimensions } from 'react-native'
 
 const styles = StyleSheet.create({
     container: {
@@ -6,9 +6,23 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 
+    listHeaderContainer: {
+        paddingHorizontal: 32,
+        marginTop: 32,
+        marginBottom: 16,
+    },
+
+    listHeaderText: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        textAlign: 'left',
+    },
+
     listContainer: {
-        alignItems: 'center',
-        paddingVertical: 16,
+        flex: 1,
+        paddingTop: 16,
+        width: '95%',
+        alignSelf: 'center',
     },
 
     listItemContainer: {
@@ -18,11 +32,11 @@ const styles = StyleSheet.create({
         elevation: 15,
 
         marginBottom: 16,
-        width: '90%',
         backgroundColor: '#eee',
         borderRadius: 16,
         padding: 8,
         flexDirection: 'row',
+        alignSelf: 'center',
     },
 
     tickerContainer: {
