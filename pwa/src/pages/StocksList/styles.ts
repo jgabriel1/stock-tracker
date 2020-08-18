@@ -42,11 +42,14 @@ const styles = StyleSheet.create({
     tickerContainer: {
         justifyContent: 'center',
         paddingHorizontal: 4,
+        width: '16%',
     },
 
     tickerText: {
-        fontSize: 20,
         fontWeight: 'bold',
+        textAlign: 'center',
+        textAlignVertical: 'center',
+        fontSize: 18,
     },
 
     infoContainer: {

@@ -42,7 +42,13 @@ const StockList = () => {
                             onPress={() => navigateToDetail(ticker)}
                         >
                             <View style={styles.tickerContainer}>
-                                <Text style={styles.tickerText}>{ticker}</Text>
+                                <Text
+                                    style={styles.tickerText}
+                                    adjustsFontSizeToFit
+                                    numberOfLines={1}
+                                >
+                                    {ticker}
+                                </Text>
                             </View>
 
                             <View style={styles.infoContainer}>
