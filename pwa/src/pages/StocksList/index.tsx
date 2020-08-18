@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, Dimensions, FlatList } from 'react-native'
+import { Text, View, TouchableOpacity, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
 
@@ -7,6 +7,8 @@ import DataContext from '../../store/dataContext'
 import { getAllStocksData } from '../../store/selectors'
 
 import NewTransactionButton from './components/NewTransactionButton'
+
+import styles from './styles'
 
 const StockList = () => {
     const { state } = useContext(DataContext)
@@ -32,53 +34,75 @@ const StockList = () => {
                         : 0
 
                     return (
-                        <TouchableOpacity onPress={() => navigateToDetail(ticker)}>
+                        <TouchableOpacity
+                            style={styles.listItemContainer}
+                            onPress={() => navigateToDetail(ticker)}
+                        >
                             <View style={styles.tickerContainer}>
                                 <Text style={styles.tickerText}>{ticker}</Text>
                             </View>
 
-                            <View style={styles.gridRow}>
+                            <View style={styles.infoContainer}>
+                                <View style={styles.infoLabelsContainer}>
+                                    <View style={styles.infoLabelItem}>
+                                        <Text style={styles.infoLabelText}>Owned</Text>
+                                    </View>
 
-                                <View style={styles.gridColumn}>
-                                    <Text>x{currently_owned_shares}</Text>
+                                    <View style={styles.infoLabelItem}>
+                                        <Text style={styles.infoLabelText}>Bought at</Text>
+                                    </View>
+
+                                    <View style={styles.infoLabelItem}>
+                                        <Text style={styles.infoLabelText}>Current</Text>
+                                    </View>
+
+                                    <View style={styles.infoLabelItem}>
+                                        <Text style={styles.infoLabelText}>Balance</Text>
+                                    </View>
                                 </View>
 
-                                <View style={styles.gridColumn}>
-                                    <Text>{average_bought_price.toFixed(2)}</Text>
+                                <View style={styles.infoValuesContainer}>
+                                    <View style={styles.infoValueItem}>
+                                        <Text>{currently_owned_shares}</Text>
+                                    </View>
+
+                                    <View style={styles.infoValueItem}>
+                                        <Text>{average_bought_price.toFixed(2)}</Text>
+                                    </View>
+
+                                    {
+                                        regularMarketPrice
+                                            ? <>
+                                                <View style={styles.infoValueItem}>
+                                                    <Text>{regularMarketPrice.toFixed(2)}</Text>
+                                                </View>
+                                                <View style={styles.infoValueItem}>
+                                                    <Text style={[
+                                                        potentialProfit > 0
+                                                            ? styles.greenText
+                                                            : styles.redText
+                                                    ]}>
+                                                        {potentialProfit.toFixed(2)}
+                                                    </Text>
+                                                </View>
+                                            </>
+                                            : <>
+                                                <View style={styles.infoValueItem}>
+                                                    <Text>-</Text>
+                                                </View>
+                                                <View style={styles.infoValueItem}>
+                                                    <Text>-</Text>
+                                                </View>
+                                            </>
+                                    }
+
                                 </View>
-
-                                {
-                                    regularMarketPrice
-                                        ? <>
-                                            <View style={styles.gridColumn}>
-                                                <Text>{regularMarketPrice.toFixed(2)}</Text>
-                                            </View>
-                                            <View style={styles.gridColumn}>
-                                                <Text style={[
-                                                    potentialProfit > 0
-                                                        ? styles.greenText
-                                                        : styles.redText
-                                                ]}>
-                                                    {potentialProfit.toFixed(2)}
-                                                </Text>
-                                            </View>
-                                        </>
-
-                                        : <>
-                                            <View style={styles.gridColumn}>
-                                                <Text>-</Text>
-                                            </View>
-                                            <View style={styles.gridColumn}>
-                                                <Text>-</Text>
-                                            </View>
-                                        </>
-                                }
-
                             </View>
                         </TouchableOpacity>
                     )
                 }}
                 scrollEnabled={true}
+                contentContainerStyle={styles.listContainer}
             />
             <NewTransactionButton />
         </SafeAreaView>
@@ -86,43 +110,3 @@ const StockList = () => {
 }
 
 export default StockList
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-    },
-
-    gridRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        borderColor: '#999',
-        paddingVertical: 16,
-        borderBottomWidth: 1,
-        width: Dimensions.get('window').width,
-    },
-
-    gridColumn: {
-        height: '100%',
-        width: Dimensions.get('window').width / 4,
-        alignItems: 'center',
-    },
-
-    tickerContainer: {
-        paddingLeft: 32,
-        paddingTop: 16
-    },
-
-    tickerText: {
-        fontSize: 18,
-        fontWeight: 'bold'
-    },
-
-    redText: {
-        color: '#d00',
-    },
-
-    greenText: {
-        color: '#0a0'
-    },
-})
