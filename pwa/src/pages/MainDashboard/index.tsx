@@ -1,12 +1,20 @@
 import React, { useContext } from 'react'
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native'
+import { Text, View, SafeAreaView } from 'react-native'
 
 import usePeriodicEffect from '../../hooks/usePeriodicEffect'
 
 import DataContext from '../../store/dataContext'
-import { getTotalInvested, getCurrentWorth, getAllTickers } from '../../store/selectors'
+import {
+    getTotalInvested,
+    getCurrentWorth,
+    getAllTickers
+} from '../../store/selectors'
 
 import * as Yahoo from '../../services/yahooFinance/stockInfo'
+
+import styles from './styles'
+import FourBoxGrid from '../../components/FourBoxGrid'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
 
 const MainDashboard = () => {
@@ -18,81 +26,39 @@ const MainDashboard = () => {
 
     usePeriodicEffect(() => {
         if (state.isStocksDataReady) {
-            Yahoo.getStockInfo(tickers)
-                .then(yahoo => {
-                    dispatch({ type: 'SET_YAHOO', payload: yahoo })
-                })
+            Yahoo.getStockInfo(tickers).then(yahoo => {
+                dispatch({ type: 'SET_YAHOO', payload: yahoo })
+            })
         }
     }, [tickers, state.isStocksDataReady], 30 * 1000, false)
 
     return (
-        <SafeAreaView style={styles.headerContainer}>
-
-            <View style={styles.infoContainer}>
-                <Text style={styles.infoTitle}>Total Invested</Text>
-                <Text style={styles.infoData}>$ {totalInvested.toFixed(2)}</Text>
+        <SafeAreaView style={styles.container}>
+            <View style={styles.chartContainer}>
+                <Text>Chart goes here.</Text>
             </View>
 
-            <View style={styles.infoContainer}>
-                <Text style={styles.infoTitle}>Current Worth</Text>
-                {
-                    currentWorth === 0
-                        ? <Text style={styles.infoData}>$ -</Text>
-                        : <Text style={styles.infoData}>$ {currentWorth.toFixed(2)}</Text>
-                }
-            </View>
+            <FourBoxGrid
+                nodes={[
+                    <TouchableOpacity style={{ justifyContent: 'center', height: '100%', alignItems: 'center' }}>
+                        <Text>Lorem Ipsum</Text>
+                    </TouchableOpacity>,
 
-            <View style={styles.infoContainer}>
-                <Text style={styles.infoTitle}>Balance</Text>
-                {
-                    currentWorth === 0
-                        ? <Text style={styles.infoData}>$ -</Text>
-                        : <Text
-                            style={[
-                                styles.infoData,
-                                currentWorth > totalInvested
-                                    ? styles.greenText
-                                    : styles.redText
-                            ]}
-                        >
-                            $ {(currentWorth - totalInvested).toFixed(2)}
-                        </Text>
-                }
-            </View>
+                    <TouchableOpacity style={{ justifyContent: 'center', height: '100%', alignItems: 'center' }}>
+                        <Text>Lorem Ipsum</Text>
+                    </TouchableOpacity>,
 
+                    <TouchableOpacity style={{ justifyContent: 'center', height: '100%', alignItems: 'center' }}>
+                        <Text>Lorem Ipsum</Text>
+                    </TouchableOpacity>,
+
+                    <TouchableOpacity style={{ justifyContent: 'center', height: '100%', alignItems: 'center' }}>
+                        <Text>Lorem Ipsum</Text>
+                    </TouchableOpacity>,
+                ]}
+            />
         </SafeAreaView>
     )
 }
 
 export default MainDashboard
-
-const styles = StyleSheet.create({
-    headerContainer: {
-        flex: 1,
-        justifyContent: 'center'
-    },
-
-    infoContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        paddingHorizontal: 32,
-    },
-
-    infoTitle: {
-        fontSize: 24,
-        fontWeight: 'bold'
-    },
-
-    infoData: {
-        fontSize: 18,
-    },
-
-    redText: {
-        color: '#d00',
-    },
-
-    greenText: {
-        color: '#0a0'
-    },
-})
