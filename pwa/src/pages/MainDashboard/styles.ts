@@ -20,6 +20,30 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 15,
     },
+
+    infoContainer: {
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    infoTitle: {
+        marginBottom: 16,
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+
+    infoValue: {
+        fontSize: 18,
+    },
+
+    redText: {
+        color: '#d00',
+    },
+
+    greenText: {
+        color: '#0a0'
+    },
 })
 
 export default styles

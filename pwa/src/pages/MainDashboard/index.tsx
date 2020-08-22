@@ -40,20 +40,43 @@ const MainDashboard = () => {
 
             <FourBoxGrid
                 nodes={[
-                    <TouchableOpacity style={{ justifyContent: 'center', height: '100%', alignItems: 'center' }}>
-                        <Text>Lorem Ipsum</Text>
+                    <TouchableOpacity style={styles.infoContainer}>
+                        <Text style={styles.infoTitle}>Total Invested</Text>
+                        <Text style={styles.infoValue}>$ {totalInvested.toFixed(2)}</Text>
                     </TouchableOpacity>,
 
-                    <TouchableOpacity style={{ justifyContent: 'center', height: '100%', alignItems: 'center' }}>
-                        <Text>Lorem Ipsum</Text>
+                    <TouchableOpacity style={styles.infoContainer}>
+                        <Text style={styles.infoTitle}>Current Worth</Text>
+                        <Text style={styles.infoValue}>$ {currentWorth.toFixed(2)}</Text>
                     </TouchableOpacity>,
 
-                    <TouchableOpacity style={{ justifyContent: 'center', height: '100%', alignItems: 'center' }}>
-                        <Text>Lorem Ipsum</Text>
+                    <TouchableOpacity style={styles.infoContainer}>
+                        <Text style={styles.infoTitle}>Balance</Text>
+                        <Text style={styles.infoValue}>
+                            $ <Text
+                                style={
+                                    currentWorth > totalInvested
+                                        ? styles.greenText
+                                        : styles.redText
+                                }
+                            >
+                                {currentWorth && (currentWorth - totalInvested).toFixed(2)}
+                            </Text>
+                        </Text>
                     </TouchableOpacity>,
 
-                    <TouchableOpacity style={{ justifyContent: 'center', height: '100%', alignItems: 'center' }}>
-                        <Text>Lorem Ipsum</Text>
+                    <TouchableOpacity style={styles.infoContainer}>
+                        <Text style={styles.infoTitle}>Variation</Text>
+                        <Text
+                            style={[
+                                styles.infoValue,
+                                currentWorth > totalInvested
+                                    ? styles.greenText
+                                    : styles.redText
+                            ]}
+                        >
+                            {currentWorth && (100 * (currentWorth / totalInvested - 1)).toFixed(2)}%
+                        </Text>
                     </TouchableOpacity>,
                 ]}
             />
