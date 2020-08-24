@@ -1,20 +1,22 @@
 import React, { useContext } from 'react'
 import { Text, View, SafeAreaView } from 'react-native'
+import { VictoryPie, VictoryTheme } from 'victory-native'
 
 import usePeriodicEffect from '../../hooks/usePeriodicEffect'
+
+import FourBoxGrid from '../../components/FourBoxGrid'
 
 import DataContext from '../../store/dataContext'
 import {
     getTotalInvested,
     getCurrentWorth,
-    getAllTickers
+    getAllTickers,
+    getCurrentWorthChartData
 } from '../../store/selectors'
 
 import * as Yahoo from '../../services/yahooFinance/stockInfo'
 
 import styles from './styles'
-import FourBoxGrid from '../../components/FourBoxGrid'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 
 
 const MainDashboard = () => {
@@ -23,6 +25,7 @@ const MainDashboard = () => {
     const tickers = getAllTickers(state)
     const totalInvested = getTotalInvested(state)
     const currentWorth = getCurrentWorth(state)
+    const currentWorthChartData = getCurrentWorthChartData(state)
 
     usePeriodicEffect(() => {
         if (state.isStocksDataReady) {
@@ -35,22 +38,42 @@ const MainDashboard = () => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.chartContainer}>
-                <Text>Chart goes here.</Text>
+                <Text style={styles.chartTitle}>Inventory</Text>
+                <VictoryPie
+                    theme={VictoryTheme.material}
+                    padding={{ top: 100, bottom: 100, left: 100, right: 100, }}
+                    data={currentWorthChartData}
+                    labels={({ datum }) => `${datum.x}\n${datum.y.toFixed(1)}%`}
+                    labelRadius={({ radius }) => 1.1 * (radius as number)}
+                    // labelComponent??
+                    style={{
+                        labels: {
+                            fontSize: 14,
+                            textAlign: 'center',
+                        },
+                        parent: {
+                            flex: 1,
+                            width: '100%',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }
+                    }}
+                />
             </View>
 
             <FourBoxGrid
                 nodes={[
-                    <TouchableOpacity style={styles.infoContainer}>
+                    <View style={styles.infoContainer}>
                         <Text style={styles.infoTitle}>Total Invested</Text>
                         <Text style={styles.infoValue}>$ {totalInvested.toFixed(2)}</Text>
-                    </TouchableOpacity>,
+                    </View>,
 
-                    <TouchableOpacity style={styles.infoContainer}>
+                    <View style={styles.infoContainer}>
                         <Text style={styles.infoTitle}>Current Worth</Text>
                         <Text style={styles.infoValue}>$ {currentWorth.toFixed(2)}</Text>
-                    </TouchableOpacity>,
+                    </View>,
 
-                    <TouchableOpacity style={styles.infoContainer}>
+                    <View style={styles.infoContainer}>
                         <Text style={styles.infoTitle}>Balance</Text>
                         <Text style={styles.infoValue}>
                             $ <Text
@@ -63,9 +86,9 @@ const MainDashboard = () => {
                                 {currentWorth && (currentWorth - totalInvested).toFixed(2)}
                             </Text>
                         </Text>
-                    </TouchableOpacity>,
+                    </View>,
 
-                    <TouchableOpacity style={styles.infoContainer}>
+                    <View style={styles.infoContainer}>
                         <Text style={styles.infoTitle}>Variation</Text>
                         <Text
                             style={[
@@ -77,8 +100,9 @@ const MainDashboard = () => {
                         >
                             {currentWorth && (100 * (currentWorth / totalInvested - 1)).toFixed(2)}%
                         </Text>
-                    </TouchableOpacity>,
+                    </View>,
                 ]}
+                outterStyle={styles.outterInfoContainer}
             />
         </SafeAreaView>
     )
