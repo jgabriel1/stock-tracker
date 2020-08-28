@@ -1,10 +1,10 @@
 import React, { useContext } from 'react'
 import { Text, View, SafeAreaView } from 'react-native'
-import { VictoryPie, VictoryTheme } from 'victory-native'
 
 import usePeriodicEffect from '../../hooks/usePeriodicEffect'
 
 import FourBoxGrid from '../../components/FourBoxGrid'
+import PlatformAwareVictoryPie from './components/PlatformAwareVictoryPie'
 
 import DataContext from '../../store/dataContext'
 import {
@@ -39,8 +39,7 @@ const MainDashboard = () => {
         <SafeAreaView style={styles.container}>
             <View style={styles.chartContainer}>
                 <Text style={styles.chartTitle}>Inventory</Text>
-                <VictoryPie
-                    theme={VictoryTheme.material}
+                <PlatformAwareVictoryPie
                     padding={{ top: 100, bottom: 100, left: 100, right: 100, }}
                     data={currentWorthChartData}
                     labels={({ datum }) => `${datum.x}\n${datum.y.toFixed(1)}%`}
