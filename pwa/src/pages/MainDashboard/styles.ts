@@ -8,17 +8,29 @@ const styles = StyleSheet.create({
 
     chartContainer: {
         flex: 1,
-        margin: 16,
+        marginTop: 16,
+        marginHorizontal: 16,
         borderRadius: 16,
-        backgroundColor: '#fff',
+        backgroundColor: '#f1f1f1',
 
         justifyContent: 'center',
-        alignItems: 'center',
 
         shadowColor: '#000',
         shadowOpacity: 0.4,
         shadowRadius: 5,
         elevation: 15,
+    },
+
+    chartTitle: {
+        fontSize: 24,
+        marginLeft: 24,
+        marginTop: 16,
+        marginBottom: 16,
+        fontWeight: 'bold'
+    },
+
+    outterInfoContainer: {
+        flex: 0.66,
     },
 
     infoContainer: {
