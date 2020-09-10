@@ -11,13 +11,12 @@ import {
   getTotalInvested,
   getCurrentWorth,
   getAllTickers,
-  getCurrentWorthChartData
+  getCurrentWorthChartData,
 } from '../../store/selectors'
 
 import * as Yahoo from '../../services/yahooFinance/stockInfo'
 
 import styles from './styles'
-
 
 const MainDashboard = () => {
   const { state, dispatch } = useContext(DataContext)
@@ -27,20 +26,25 @@ const MainDashboard = () => {
   const currentWorth = getCurrentWorth(state)
   const currentWorthChartData = getCurrentWorthChartData(state)
 
-  usePeriodicEffect(() => {
-    if (state.isStocksDataReady) {
-      Yahoo.getStockInfo(tickers).then(yahoo => {
-        dispatch({ type: 'SET_YAHOO', payload: yahoo })
-      })
-    }
-  }, [tickers, state.isStocksDataReady], 30 * 1000, false)
+  usePeriodicEffect(
+    () => {
+      if (state.isStocksDataReady) {
+        Yahoo.getStockInfo(tickers).then(yahoo => {
+          dispatch({ type: 'SET_YAHOO', payload: yahoo })
+        })
+      }
+    },
+    [tickers, state.isStocksDataReady],
+    30 * 1000,
+    false,
+  )
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.chartContainer}>
         <Text style={styles.chartTitle}>Inventory</Text>
         <PlatformAwareVictoryPie
-          padding={{ top: 100, bottom: 100, left: 100, right: 100, }}
+          padding={{ top: 100, bottom: 100, left: 100, right: 100 }}
           data={currentWorthChartData}
           labels={({ datum }) => `${datum.x}\n${datum.y.toFixed(1)}%`}
           labelRadius={({ radius }) => 1.1 * (radius as number)}
@@ -55,7 +59,7 @@ const MainDashboard = () => {
               width: '100%',
               alignItems: 'center',
               justifyContent: 'center',
-            }
+            },
           }}
         />
       </View>
@@ -64,18 +68,22 @@ const MainDashboard = () => {
         nodes={[
           <View style={styles.infoContainer}>
             <Text style={styles.infoTitle}>Total Invested</Text>
-            <Text style={styles.infoValue}>$ {totalInvested.toFixed(2)}</Text>
+            <Text style={styles.infoValue}>
+              {`$ ${totalInvested.toFixed(2)}`}
+            </Text>
           </View>,
 
           <View style={styles.infoContainer}>
             <Text style={styles.infoTitle}>Current Worth</Text>
-            <Text style={styles.infoValue}>$ {currentWorth.toFixed(2)}</Text>
+            <Text style={styles.infoValue}>
+              {`$ ${currentWorth.toFixed(2)}`}
+            </Text>
           </View>,
 
           <View style={styles.infoContainer}>
             <Text style={styles.infoTitle}>Balance</Text>
             <Text style={styles.infoValue}>
-              $ <Text
+              <Text
                 style={
                   currentWorth > totalInvested
                     ? styles.greenText
@@ -94,11 +102,12 @@ const MainDashboard = () => {
                 styles.infoValue,
                 currentWorth > totalInvested
                   ? styles.greenText
-                  : styles.redText
+                  : styles.redText,
               ]}
             >
-              {currentWorth && (100 * (currentWorth / totalInvested - 1)).toFixed(2)}%
-                        </Text>
+              {currentWorth &&
+                (100 * (currentWorth / totalInvested - 1)).toFixed(2)}
+            </Text>
           </View>,
         ]}
         outterStyle={styles.outterInfoContainer}
