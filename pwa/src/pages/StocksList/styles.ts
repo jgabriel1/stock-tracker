@@ -1,93 +1,93 @@
-import { StyleSheet, Dimensions } from 'react-native'
+import { StyleSheet } from 'react-native'
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-    },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
 
-    listHeaderContainer: {
-        paddingHorizontal: 32,
-        marginTop: 32,
-        marginBottom: 16,
-    },
+  listHeaderContainer: {
+    paddingHorizontal: 32,
+    marginTop: 32,
+    marginBottom: 16,
+  },
 
-    listHeaderText: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        textAlign: 'left',
-    },
+  listHeaderText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    textAlign: 'left',
+  },
 
-    listContainer: {
-        flex: 1,
-        paddingTop: 16,
-        width: '95%',
-        alignSelf: 'center',
-    },
+  listContainer: {
+    flex: 1,
+    paddingTop: 16,
+    width: '95%',
+    alignSelf: 'center',
+  },
 
-    listItemContainer: {
-        shadowColor: '#000',
-        shadowOpacity: 0.4,
-        shadowRadius: 5,
-        elevation: 15,
+  listItemContainer: {
+    shadowColor: '#000',
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
+    elevation: 15,
 
-        marginBottom: 16,
-        backgroundColor: '#eee',
-        borderRadius: 16,
-        padding: 8,
-        flexDirection: 'row',
-        alignSelf: 'center',
-    },
+    marginBottom: 16,
+    backgroundColor: '#eee',
+    borderRadius: 16,
+    padding: 8,
+    flexDirection: 'row',
+    alignSelf: 'center',
+  },
 
-    tickerContainer: {
-        justifyContent: 'center',
-        paddingHorizontal: 4,
-        width: '16%',
-    },
+  tickerContainer: {
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+    width: '16%',
+  },
 
-    tickerText: {
-        fontWeight: 'bold',
-        textAlign: 'center',
-        textAlignVertical: 'center',
-        fontSize: 18,
-    },
+  tickerText: {
+    fontWeight: 'bold',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    fontSize: 18,
+  },
 
-    infoContainer: {
-        flex: 1,
-    },
+  infoContainer: {
+    flex: 1,
+  },
 
-    infoLabelsContainer: {
-        flexDirection: 'row',
-    },
+  infoLabelsContainer: {
+    flexDirection: 'row',
+  },
 
-    infoLabelItem: {
-        flex: 1,
-        paddingTop: 8,
-        alignItems: 'center',
-    },
+  infoLabelItem: {
+    flex: 1,
+    paddingTop: 8,
+    alignItems: 'center',
+  },
 
-    infoLabelText: {
-        fontSize: 12,
-        fontWeight: 'bold',
-    },
+  infoLabelText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
 
-    infoValuesContainer: {
-        flexDirection: 'row',
-    },
+  infoValuesContainer: {
+    flexDirection: 'row',
+  },
 
-    infoValueItem: {
-        flex: 1,
-        alignItems: 'center',
-        paddingVertical: 8,
-    },
+  infoValueItem: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
 
-    redText: {
-        color: '#d00',
-    },
+  redText: {
+    color: '#d00',
+  },
 
-    greenText: {
-        color: '#0a0'
-    },
+  greenText: {
+    color: '#0a0',
+  },
 })
 
 export default styles
