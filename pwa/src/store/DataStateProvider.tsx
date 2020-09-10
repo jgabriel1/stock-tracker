@@ -3,10 +3,7 @@ import useDataState from './useDataState'
 import DataContext from './dataContext'
 
 const DataStateProvider: React.FC = ({ children }) => (
-    <DataContext.Provider value={useDataState()}>
-        {children}
-    </DataContext.Provider>
+  <DataContext.Provider value={useDataState()}>{children}</DataContext.Provider>
 )
-
 
 export default DataStateProvider

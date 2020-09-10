@@ -1,15 +1,23 @@
 import { useCallback, useState } from 'react'
 
-export default (callback: (...args: any[]) => void | Promise<void>, delay: number) => {
-    const [id, setId] = useState(0)
+type Callback = (...args: any[]) => void | Promise<void>
 
-    return useCallback((...args: any[]) => {
-        clearTimeout(id)
+export default function useDebounce(
+  callback: Callback,
+  delay: number,
+): Callback {
+  const [id, setId] = useState(0)
 
-        const newId = setTimeout(async () => {
-            await callback(...args)
-        }, delay)
+  return useCallback(
+    (...args: any[]) => {
+      clearTimeout(id)
 
-        setId(newId)
-    }, [callback])
+      const newId = setTimeout(async () => {
+        await callback(...args)
+      }, delay)
+
+      setId(newId)
+    },
+    [callback, delay, id],
+  )
 }
