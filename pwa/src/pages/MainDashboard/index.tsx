@@ -18,7 +18,7 @@ import * as Yahoo from '../../services/yahooFinance/stockInfo'
 
 import styles from './styles'
 
-const MainDashboard = () => {
+const MainDashboard: React.FC = () => {
   const { state, dispatch } = useContext(DataContext)
 
   const tickers = getAllTickers(state)

@@ -1,6 +1,12 @@
 import React, { useState, useContext } from 'react'
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
-import { useNavigation, useRoute, RouteProp, StackActions, CommonActions } from '@react-navigation/native'
+import { Text, View, TextInput, TouchableOpacity } from 'react-native'
+import {
+  useNavigation,
+  useRoute,
+  RouteProp,
+  StackActions,
+  CommonActions,
+} from '@react-navigation/native'
 import { Switch } from 'react-native-switch'
 
 import Modal, { ModalProvider } from '../../components/Modal'
@@ -16,161 +22,135 @@ import DataContext from '../../store/dataContext'
 import { AppStackParamList } from '../../routes/AppStack'
 import lastValueOfArray from '../../utils/lastValueOfArray'
 
+import styles from './styles'
 
-const NewTransaction = () => {
-    const route = useRoute<RouteProp<AppStackParamList, 'NewTransaction'>>()
-    const { initialTicker, initialTransactionType } = route.params
+const NewTransaction: React.FC = () => {
+  const route = useRoute<RouteProp<AppStackParamList, 'NewTransaction'>>()
+  const { initialTicker, initialTransactionType } = route.params
 
-    const [transactionType, setTransactionType] = useState<'IN' | 'OUT'>(initialTransactionType || 'IN')
+  const [transactionType, setTransactionType] = useState<'IN' | 'OUT'>(
+    initialTransactionType || 'IN',
+  )
 
-    const [ticker, setTicker] = useState(initialTicker || '')
-    const [quantity, setQuantity] = useState('')
-    const [totalValue, setTotalValue] = useState('')
+  const [ticker, setTicker] = useState(initialTicker || '')
+  const [quantity, setQuantity] = useState('')
+  const [totalValue, setTotalValue] = useState('')
 
-    const [showStockPicker, setShowStockPicker] = useState(false)
+  const [showStockPicker, setShowStockPicker] = useState(false)
 
-    const { dispatch } = useContext(DataContext)
+  const { dispatch } = useContext(DataContext)
 
-    const navigation = useNavigation()
+  const navigation = useNavigation()
 
-    function toggleTransactionType(current: 'IN' | 'OUT'): 'IN' | 'OUT' {
-        const possibilities = ['IN', 'OUT']
-        const reversed = possibilities.filter(value => value !== current)[0]
+  function toggleTransactionType(current: 'IN' | 'OUT'): 'IN' | 'OUT' {
+    const possibilities = ['IN', 'OUT']
+    const reversed = possibilities.filter(value => value !== current)[0]
 
-        return reversed as 'IN' | 'OUT'
+    return reversed as 'IN' | 'OUT'
+  }
+
+  function navigateToStocksList() {
+    navigation.dispatch(state => {
+      const lastRoute = lastValueOfArray(state.routeNames)
+
+      if (lastRoute === 'Details') {
+        return StackActions.pop(2) // always brings back to StocksList
+      }
+      return CommonActions.navigate('Dashboard', { screen: 'StocksList' })
+    })
+  }
+
+  async function handleSubmitTransaction() {
+    const data = {
+      ticker,
+      quantity: (transactionType === 'OUT' ? -1 : 1) * Number(quantity),
+      total_value: (transactionType === 'OUT' ? -1 : 1) * Number(totalValue),
     }
 
-    async function handleSubmitTransaction() {
-        const data = {
-            ticker,
-            quantity: (transactionType === 'OUT' ? -1 : 1) * Number(quantity),
-            total_value: (transactionType === 'OUT' ? -1 : 1) * Number(totalValue),
-        }
+    await API.postNewTransaction(data)
+    const stocks = await API.getStocksData()
 
-        await API.postNewTransaction(data)
-        const stocks = await API.getStocksData()
+    navigateToStocksList()
 
-        navigateToStocksList()
+    dispatch({ type: 'SET_STOCKS', payload: stocks })
 
-        dispatch({ type: 'SET_STOCKS', payload: stocks })
+    const tickers = Array.from(stocks.keys())
+    const yahooStocks = await Yahoo.getStockInfo(tickers)
 
-        const tickers = Array.from(stocks.keys())
-        const yahooStocks = await Yahoo.getStockInfo(tickers)
+    dispatch({ type: 'SET_YAHOO', payload: yahooStocks })
+  }
 
-        dispatch({ type: 'SET_YAHOO', payload: yahooStocks })
-    }
+  return (
+    <ModalProvider>
+      <KeyboardView style={styles.container}>
+        <ReturnButton />
 
-    function navigateToStocksList() {
-        navigation.dispatch(state => {
-            const lastRoute = lastValueOfArray(state.routeNames)
+        <View style={styles.mainContent}>
+          <Text style={styles.title}>New Transaction</Text>
 
-            if (lastRoute === 'Details') {
-                return StackActions.pop(2) // always brings back to StocksList
-            } else {
-                return CommonActions.navigate('Dashboard', { screen: 'StocksList' })
-            }
-        })
-    }
+          <View style={{ marginBottom: 16 }}>
+            <Switch
+              value={transactionType === 'IN'}
+              onValueChange={() => setTransactionType(toggleTransactionType)}
+              activeText="In"
+              activeTextStyle={{
+                fontSize: 20,
+                fontWeight: 'bold',
+                color: '#000',
+              }}
+              backgroundActive="#fff"
+              inActiveText="Out"
+              inactiveTextStyle={{
+                fontSize: 20,
+                fontWeight: 'bold',
+                color: '#fff',
+              }}
+              backgroundInactive="#000"
+              circleSize={50}
+              switchRightPx={2}
+              switchWidthMultiplier={2.5}
+            />
+          </View>
 
-    return (
-        <ModalProvider>
-            <KeyboardView style={styles.container}>
+          <TouchableOpacity
+            onPress={() => setShowStockPicker(true)}
+            style={styles.input}
+          >
+            {ticker ? (
+              <Text style={{ fontSize: 16 }}>{ticker}</Text>
+            ) : (
+              <Text style={{ fontSize: 16, color: '#ccc' }}>Stock Ticker</Text>
+            )}
+          </TouchableOpacity>
 
-                <ReturnButton />
+          <TextInput
+            style={styles.input}
+            onChangeText={text => setQuantity(text)}
+            autoCapitalize="none"
+            placeholder="Quantity"
+            keyboardType="number-pad"
+          />
 
-                <View style={styles.mainContent}>
-                    <Text style={styles.title}>New Transaction</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={text => setTotalValue(text)}
+            autoCapitalize="none"
+            placeholder="Total Value"
+            keyboardType="number-pad"
+          />
 
-                    <View style={{ marginBottom: 16 }}>
-                        <Switch
-                            value={transactionType === 'IN'}
-                            onValueChange={() => setTransactionType(toggleTransactionType)}
-                            activeText={'In'}
-                            activeTextStyle={{ fontSize: 20, fontWeight: 'bold', color: '#000' }}
-                            backgroundActive={'#fff'}
-                            inActiveText={'Out'}
-                            inactiveTextStyle={{ fontSize: 20, fontWeight: 'bold', color: '#fff' }}
-                            backgroundInactive={'#000'}
-                            circleSize={50}
-                            switchRightPx={2}
-                            switchWidthMultiplier={2.5}
-                        />
-                    </View>
+          <Button text="Create" onPress={handleSubmitTransaction} />
+        </View>
 
-                    <TouchableOpacity onPress={() => setShowStockPicker(true)} style={styles.input}>
-                        {
-                            ticker ?
-                                <Text style={{ fontSize: 16 }}>{ticker}</Text>
-                                :
-                                <Text style={{ fontSize: 16, color: '#ccc' }}>Stock Ticker</Text>
-                        }
-                    </TouchableOpacity>
-
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={text => setQuantity(text)}
-                        autoCapitalize='none'
-                        placeholder='Quantity'
-                        keyboardType='number-pad'
-                    />
-
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={text => setTotalValue(text)}
-                        autoCapitalize='none'
-                        placeholder='Total Value'
-                        keyboardType='number-pad'
-                    />
-
-                    <Button text='Create' onPress={handleSubmitTransaction} />
-
-                </View>
-
-                <Modal visible={showStockPicker} onDismiss={() => setShowStockPicker(false)}>
-                    <StockPicker {...{ ticker, setTicker, setShowStockPicker }} />
-                </Modal>
-            </KeyboardView>
-        </ModalProvider>
-    )
+        <Modal
+          visible={showStockPicker}
+          onDismiss={() => setShowStockPicker(false)}
+        >
+          <StockPicker {...{ ticker, setTicker, setShowStockPicker }} />
+        </Modal>
+      </KeyboardView>
+    </ModalProvider>
+  )
 }
 
 export default NewTransaction
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-
-    headerContainer: {
-        alignItems: 'flex-start'
-    },
-
-    closeButton: {
-        marginRight: 24,
-        marginTop: 24
-    },
-
-    mainContent: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingTop: 8,
-        paddingHorizontal: 8,
-    },
-
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 32
-    },
-
-    input: {
-        borderWidth: 1,
-        borderColor: '#aaa',
-        borderRadius: 4,
-        padding: 16,
-        width: '80%',
-        fontSize: 16,
-        marginBottom: 16
-    },
-})
