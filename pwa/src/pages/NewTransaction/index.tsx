@@ -1,6 +1,6 @@
-import React, { useState, useContext, useCallback } from 'react'
+import React, { useState, useContext } from 'react'
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native'
+import { useNavigation, useRoute, RouteProp, StackActions, CommonActions } from '@react-navigation/native'
 import { Switch } from 'react-native-switch'
 
 import Modal, { ModalProvider } from '../../components/Modal'
@@ -13,7 +13,8 @@ import API from '../../services/api'
 import * as Yahoo from '../../services/yahooFinance/stockInfo'
 import DataContext from '../../store/dataContext'
 
-import { AppStackParamList } from '../../routes'
+import { AppStackParamList } from '../../routes/AppStack'
+import lastValueOfArray from '../../utils/lastValueOfArray'
 
 
 const NewTransaction = () => {
@@ -47,15 +48,28 @@ const NewTransaction = () => {
         }
 
         await API.postNewTransaction(data)
-
         const stocks = await API.getStocksData()
-        dispatch({ type: 'SET_STOCKS', payload: stocks })
 
-        navigation.navigate('Dashboard')
+        navigateToStocksList()
+
+        dispatch({ type: 'SET_STOCKS', payload: stocks })
 
         const tickers = Array.from(stocks.keys())
         const yahooStocks = await Yahoo.getStockInfo(tickers)
+
         dispatch({ type: 'SET_YAHOO', payload: yahooStocks })
+    }
+
+    function navigateToStocksList() {
+        navigation.dispatch(state => {
+            const lastRoute = lastValueOfArray(state.routeNames)
+
+            if (lastRoute === 'Details') {
+                return StackActions.pop(2) // always brings back to StocksList
+            } else {
+                return CommonActions.navigate('Dashboard', { screen: 'StocksList' })
+            }
+        })
     }
 
     return (

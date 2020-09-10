@@ -6,7 +6,7 @@ export default class API {
 
     // Backend connection.
     private static client = axios.create({
-        baseURL: 'http://192.168.2.2:8000'
+        baseURL: 'http://stock-tracker-backend.herokuapp.com/'
     })
 
     /**
