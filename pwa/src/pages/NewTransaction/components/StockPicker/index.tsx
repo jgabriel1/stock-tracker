@@ -28,10 +28,13 @@ const StockPicker = ({ setTicker, setShowStockPicker }: Props) => {
     }
   }, 500)
 
-  const handleSelectStock = useCallback((symbol: string) => {
-    setTicker(symbol)
-    setShowStockPicker(false)
-  }, [])
+  const handleSelectStock = useCallback(
+    (symbol: string) => {
+      setTicker(symbol)
+      setShowStockPicker(false)
+    },
+    [setShowStockPicker, setTicker],
+  )
 
   return (
     <View style={styles.container}>

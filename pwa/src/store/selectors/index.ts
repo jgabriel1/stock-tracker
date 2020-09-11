@@ -60,10 +60,10 @@ export const getTotalInvested = (state: DataState) =>
 export const getCurrentWorth = (state: DataState) =>
   state.isYahooDataReady
     ? getAllStocksData(state).reduce(
-      (accum, stock) =>
-        !stock.regularMarketPrice ? accum : accum + stock.currentWorth,
-      0,
-    )
+        (accum, stock) =>
+          !stock.regularMarketPrice ? accum : accum + stock.currentWorth,
+        0,
+      )
     : 0
 
 export const getTotalInvestedPerTicker = (state: DataState, ticker: string) => {
