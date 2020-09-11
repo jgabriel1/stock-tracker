@@ -98,15 +98,15 @@ const StockList: React.FC = () => {
                       </View>
                     </>
                   ) : (
-                    <>
-                      <View style={styles.infoValueItem}>
-                        <Text>-</Text>
-                      </View>
-                      <View style={styles.infoValueItem}>
-                        <Text>-</Text>
-                      </View>
-                    </>
-                  )}
+                      <>
+                        <View style={styles.infoValueItem}>
+                          <Text>-</Text>
+                        </View>
+                        <View style={styles.infoValueItem}>
+                          <Text>-</Text>
+                        </View>
+                      </>
+                    )}
                 </View>
               </View>
             </TouchableOpacity>
