@@ -17,6 +17,7 @@ python-multipart = "^0.0.5"
 pydantic = {extras = ["email"], version = "^1.5.1"}
 aiohttp = "^3.6.2"
 python-dotenv = "^0.14.0"
+motor = "^2.2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.4"
