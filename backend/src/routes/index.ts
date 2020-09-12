@@ -1,9 +1,8 @@
 import { Router } from 'express'
+import { authRouter } from './auth.routes'
 
 const routes = Router()
 
-routes.get('/', (request, response) => {
-  return response.send('Hello World1!')
-})
+routes.use('/auth', authRouter)
 
 export default routes

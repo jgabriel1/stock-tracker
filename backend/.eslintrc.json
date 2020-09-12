@@ -24,6 +24,7 @@
   ],
   "rules": {
     "prettier/prettier": "warn",
+    "no-useless-constructor": "off",
     "import/extensions": [
       "error",
       "ignorePackages",
