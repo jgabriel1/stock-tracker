@@ -1,7 +1,6 @@
 import { inject, injectable } from 'tsyringe'
 import { compare } from 'bcrypt'
 import { sign } from 'jsonwebtoken'
-import { AsyncLocalStorage } from 'async_hooks'
 import { UsersRepository } from '../repositories/UsersRepository'
 
 interface Request {

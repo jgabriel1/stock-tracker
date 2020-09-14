@@ -30,7 +30,7 @@ authRouter.post(
 
       const token = await authToken.execute({ username, password })
 
-      return response.json({ token })
+      return response.json({ access_token: token, token_type: 'bearer' })
     } catch (err) {
       return response.status(400).json({ message: err.message })
     }
