@@ -4,12 +4,18 @@ import { RegisterUserService } from '../services/RegisterUserService'
 
 const authRouter = Router()
 
-authRouter.get('/register', async (request, response) => {
-  const registerUser = container.resolve(RegisterUserService)
+authRouter.post('/register', async (request, response) => {
+  const { username, password, email } = request.body
 
-  const message = registerUser.execute()
+  try {
+    const registerUser = container.resolve(RegisterUserService)
 
-  return response.status(201).json({ message })
+    const newUser = await registerUser.execute({ username, password, email })
+
+    return response.status(201).json({ ...newUser })
+  } catch (err) {
+    return response.status(400).json({ message: err.message })
+  }
 })
 
 export { authRouter }

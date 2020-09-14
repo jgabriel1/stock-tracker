@@ -4,7 +4,7 @@
     "node": true
   },
   "extends": [
-    "standard",
+    "airbnb-base",
     "plugin:@typescript-eslint/recommended",
     "prettier/@typescript-eslint",
     "plugin:prettier/recommended"
@@ -24,7 +24,10 @@
   ],
   "rules": {
     "prettier/prettier": "warn",
+    "import/prefer-default-export": "off",
+    "class-methods-use-this": "off",
     "no-useless-constructor": "off",
+    "no-underscore-dangle": "off",
     "import/extensions": [
       "error",
       "ignorePackages",

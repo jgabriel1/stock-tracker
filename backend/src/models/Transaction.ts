@@ -1,4 +1,4 @@
-import { Schema, Document, Types, model } from 'mongoose'
+import { Schema, Document, Types, Model } from 'mongoose'
 
 export interface ITransaction extends Document {
   _id: Types.ObjectId
@@ -12,8 +12,7 @@ export interface ITransaction extends Document {
   updatedAt: Date
 }
 
-
-const TransactionSchema = new Schema<ITransaction>({
+export const TransactionSchema = new Schema<ITransaction>({
   stockId: { type: Types.ObjectId, ref: 'StockInfo' },
   creatorId: { type: Types.ObjectId, ref: 'User' },
   value: Number,
@@ -24,4 +23,4 @@ const TransactionSchema = new Schema<ITransaction>({
   updatedAt: Date,
 })
 
-export const Transaction = model<ITransaction>('Transaction', TransactionSchema)
+export type TransactionModel = Model<ITransaction>

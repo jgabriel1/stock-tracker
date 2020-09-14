@@ -1,4 +1,4 @@
-import { model, Schema, Types, Document } from "mongoose";
+import { Schema, Types, Document, Model } from 'mongoose'
 
 export interface IStockInfo extends Document {
   _id: Types.ObjectId
@@ -6,9 +6,9 @@ export interface IStockInfo extends Document {
   fullName: string
 }
 
-const StockInfoSchema = new Schema<IStockInfo>({
+export const StockInfoSchema = new Schema<IStockInfo>({
   ticker: { type: String, uppercase: true },
   fullName: String,
 })
 
-export const StockInfo = model<IStockInfo>('StockInfo', StockInfoSchema)
+export type StockInfoModel = Model<IStockInfo>
