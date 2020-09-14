@@ -33,7 +33,27 @@ export class UsersRepository extends BaseRepository<IUser> {
 
       return user
     } catch (err) {
-      throw new Error('Could not create user.')
+      throw new Error(`Error creating user: ${err.message}`)
     }
+  }
+
+  public async findById(userId: string): Promise<IUser> {
+    const user = await this.Model.findById(userId)
+
+    if (!user) {
+      throw new Error("This user doesn't exist.")
+    }
+
+    return user
+  }
+
+  public async findByName(name: string): Promise<IUser> {
+    const user = await this.Model.findOne({ username: name })
+
+    if (!user) {
+      throw new Error("This user doesn't exist.")
+    }
+
+    return user
   }
 }

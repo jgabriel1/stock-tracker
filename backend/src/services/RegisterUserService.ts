@@ -2,13 +2,13 @@ import { injectable, inject } from 'tsyringe'
 import { hash } from 'bcrypt'
 import { UsersRepository } from '../repositories/UsersRepository'
 
-interface IRequest {
+interface Request {
   username: string
   password: string
   email: string
 }
 
-interface IResponse {
+interface Response {
   _id: string
   username: string
   email: string
@@ -25,7 +25,7 @@ export class RegisterUserService {
     username,
     password,
     email,
-  }: IRequest): Promise<IResponse> {
+  }: Request): Promise<Response> {
     const hashedPassword = await hash(password, 4)
 
     const createdUser = await this.usersRepository.create({
