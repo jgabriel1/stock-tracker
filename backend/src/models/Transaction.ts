@@ -1,10 +1,11 @@
 import { Schema, Document, Types, Model } from 'mongoose'
 import { IStockInfo } from './StockInfo'
+import { IUser } from './User'
 
 export interface ITransaction extends Document {
   _id: Types.ObjectId
-  stockId: Types.ObjectId
-  creatorId: Types.ObjectId
+  stockId: IStockInfo | Types.ObjectId
+  creatorId: IUser | Types.ObjectId
   value: number
   quantity: number
   type: 'income' | 'outcome'

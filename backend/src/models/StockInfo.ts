@@ -4,8 +4,8 @@ export interface IStockInfo extends Document {
   _id: Types.ObjectId
   ticker: string
   fullName: string
-  createdAt: string
-  updatedAt: string
+  createdAt: Date
+  updatedAt: Date
 }
 
 export const StockInfoSchema = new Schema<IStockInfo>(

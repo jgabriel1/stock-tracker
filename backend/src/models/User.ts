@@ -7,7 +7,7 @@ export interface IUser extends Document {
   username: string
   email: string
   password: string
-  transactions: ITransaction[]
+  transactions: ITransaction[] | Types.ObjectId
   createdAt: Date
   updatedAt: Date
 }
