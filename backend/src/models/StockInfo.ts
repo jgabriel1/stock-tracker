@@ -1,4 +1,5 @@
-import { Schema, Types, Document, Model } from 'mongoose'
+import { Schema, Types, Document, Model, model } from 'mongoose'
+import { container } from 'tsyringe'
 
 export interface IStockInfo extends Document {
   _id: Types.ObjectId
@@ -8,7 +9,7 @@ export interface IStockInfo extends Document {
   updatedAt: string
 }
 
-export const StockInfoSchema = new Schema<IStockInfo>(
+const StockInfoSchema = new Schema<IStockInfo>(
   {
     ticker: {
       type: String,
@@ -25,3 +26,7 @@ export const StockInfoSchema = new Schema<IStockInfo>(
 )
 
 export type StockInfoModel = Model<IStockInfo>
+
+export const StockInfo = container.register<StockInfoModel>('StockInfo', {
+  useFactory: () => model<IStockInfo>('StockInfo', StockInfoSchema),
+})

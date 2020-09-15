@@ -1,4 +1,5 @@
-import { Schema, Document, Types, Model } from 'mongoose'
+import { Schema, Document, Types, Model, model } from 'mongoose'
+import { container } from 'tsyringe'
 
 export interface ITransaction extends Document {
   _id: Types.ObjectId
@@ -12,7 +13,7 @@ export interface ITransaction extends Document {
   updatedAt: Date
 }
 
-export const TransactionSchema = new Schema<ITransaction>(
+const TransactionSchema = new Schema<ITransaction>(
   {
     stockId: { type: Types.ObjectId, ref: 'StockInfo' },
     creatorId: { type: Types.ObjectId, ref: 'User' },
@@ -31,3 +32,7 @@ export const TransactionSchema = new Schema<ITransaction>(
 )
 
 export type TransactionModel = Model<ITransaction>
+
+export const Transaction = container.register<TransactionModel>('Transaction', {
+  useFactory: () => model<ITransaction>('Transaction', TransactionSchema),
+})
