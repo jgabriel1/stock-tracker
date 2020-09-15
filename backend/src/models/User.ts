@@ -1,5 +1,4 @@
-import { Schema, Document, Types, Model, model } from 'mongoose'
-import { container } from 'tsyringe'
+import { Schema, Document, Types, Model } from 'mongoose'
 
 import { ITransaction } from './Transaction'
 
@@ -13,7 +12,7 @@ export interface IUser extends Document {
   updatedAt: Date
 }
 
-const UserSchema = new Schema<IUser>(
+export const UserSchema = new Schema<IUser>(
   {
     username: {
       type: String,
@@ -37,7 +36,3 @@ const UserSchema = new Schema<IUser>(
 )
 
 export type UserModel = Model<IUser>
-
-export const User = container.register<UserModel>('User', {
-  useFactory: () => model<IUser>('User', UserSchema),
-})
