@@ -27,11 +27,7 @@ export class StockInfoRepository extends BaseRepository<IStockInfo> {
         fullName,
       })
 
-      console.log('attempted to create stock info')
-
       await stockInfo.save({ session })
-
-      console.log('created stock info')
 
       return stockInfo
     } catch (err) {

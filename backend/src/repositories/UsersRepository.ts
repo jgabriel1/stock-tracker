@@ -1,4 +1,4 @@
-import { ClientSession, Types } from 'mongoose'
+import { ClientSession } from 'mongoose'
 import { inject, injectable } from 'tsyringe'
 import { ITransaction } from '../models/Transaction'
 import { IUser, UserModel } from '../models/User'
