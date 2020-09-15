@@ -18,6 +18,7 @@ async function buildApp(): Promise<Express> {
       useNewUrlParser: true,
       useCreateIndex: true,
       useUnifiedTopology: true,
+      useFindAndModify: true,
       promiseLibrary: global.Promise,
     },
   )

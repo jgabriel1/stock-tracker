@@ -1,4 +1,6 @@
+import { ClientSession, Types } from 'mongoose'
 import { inject, injectable } from 'tsyringe'
+import { ITransaction } from '../models/Transaction'
 import { IUser, UserModel } from '../models/User'
 import { BaseRepository } from './BaseRepository'
 
@@ -6,6 +8,11 @@ interface CreateUserDTO {
   username: string
   password: string
   email: string
+}
+
+interface AddTransactionDTO {
+  userId: string
+  transaction: ITransaction
 }
 
 @injectable()
@@ -35,6 +42,16 @@ export class UsersRepository extends BaseRepository<IUser> {
     } catch (err) {
       throw new Error(`Error creating user: ${err.message}`)
     }
+  }
+
+  public async addTransaction(
+    { userId, transaction }: AddTransactionDTO,
+    session?: ClientSession,
+  ): Promise<void> {
+    await this.Model.findOneAndUpdate(
+      { _id: userId },
+      { $push: { transactions: transaction } },
+    ).session(session || null)
   }
 
   public async findById(userId: string): Promise<IUser> {
