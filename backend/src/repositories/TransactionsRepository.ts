@@ -68,4 +68,14 @@ export class TransactionsRepository extends BaseRepository<ITransaction> {
 
     return transactions
   }
+
+  public async findById(transactionId: string): Promise<ITransaction> {
+    const transaction = await this.Model.findById(transactionId)
+
+    if (!transaction) {
+      throw new Error('This transaction does not exist.')
+    }
+
+    return transaction
+  }
 }

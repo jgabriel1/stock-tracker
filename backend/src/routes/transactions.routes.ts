@@ -3,6 +3,7 @@ import { container } from 'tsyringe'
 import { checkAuthentication } from '../middlewares/checkAuthentication'
 import { CreateTransactionService } from '../services/CreateTransactionService'
 import { ListTransactionsService } from '../services/ListTransactionsService'
+import { TransactionExtraCostsService } from '../services/TransactionExtraCostsService'
 
 const transactionsRouter = Router()
 
@@ -49,6 +50,21 @@ transactionsRouter.get('/', async (request, response) => {
     })
 
     return response.json(transactions)
+  } catch (err) {
+    return response.status(400).json({ message: err.message })
+  }
+})
+
+transactionsRouter.patch('/:id', async (request, response) => {
+  try {
+    const { id: transactionId } = request.params
+    const { value } = request.body
+
+    const updateExtraCosts = container.resolve(TransactionExtraCostsService)
+
+    await updateExtraCosts.execute({ transactionId, value })
+
+    return response.status(204).send()
   } catch (err) {
     return response.status(400).json({ message: err.message })
   }
