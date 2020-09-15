@@ -27,17 +27,11 @@ export class CreateTransactionService {
     private stockInfoRepository: StockInfoRepository,
   ) { }
 
-  private async checkIfStockExists(ticker: string): Promise<IStockInfo | null> {
+  private async getStockId(ticker: string, fullName: string): Promise<string> {
     const stockInfo = await this.stockInfoRepository.findByTicker(
       ticker,
       this.session,
     )
-
-    return stockInfo
-  }
-
-  private async getStockId(ticker: string, fullName: string): Promise<string> {
-    const stockInfo = await this.checkIfStockExists(ticker)
 
     if (!stockInfo) {
       const newStockInfo = await this.stockInfoRepository.create(

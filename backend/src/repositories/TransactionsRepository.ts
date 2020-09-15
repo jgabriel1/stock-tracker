@@ -11,6 +11,13 @@ interface CreateTransactionDTO {
   type: 'income' | 'outcome'
 }
 
+interface FindTransactionsDTO {
+  userId: string
+  tickerId: string
+  from?: Date
+  to?: Date
+}
+
 @injectable()
 export class TransactionsRepository extends BaseRepository<ITransaction> {
   constructor(
@@ -40,5 +47,25 @@ export class TransactionsRepository extends BaseRepository<ITransaction> {
       await session?.abortTransaction()
       throw new Error(`Error creating transaction: ${err.message}`)
     }
+  }
+
+  public async findByStockId({
+    userId,
+    tickerId,
+    from,
+    to,
+  }: FindTransactionsDTO): Promise<ITransaction[]> {
+    const datesFilters = {
+      ...(from && { $gte: from }),
+      ...(to && { $lte: to }),
+    }
+
+    const transactions = await this.Model.find({
+      creatorId: userId,
+      stockId: tickerId,
+      createdAt: { ...datesFilters },
+    })
+
+    return transactions
   }
 }
