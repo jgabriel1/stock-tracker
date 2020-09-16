@@ -1,4 +1,4 @@
-import { ClientSession } from 'mongoose'
+import { ClientSession, Types } from 'mongoose'
 import { inject, injectable } from 'tsyringe'
 import { ITransaction, TransactionModel } from '../models/Transaction'
 import { BaseRepository } from './BaseRepository'
@@ -17,6 +17,8 @@ interface FindTransactionsDTO {
   from?: Date
   to?: Date
 }
+
+// interface StockWalletDTO { }
 
 @injectable()
 export class TransactionsRepository extends BaseRepository<ITransaction> {
@@ -77,5 +79,47 @@ export class TransactionsRepository extends BaseRepository<ITransaction> {
     }
 
     return transaction
+  }
+
+  public async getStocksWallet(userId: string): Promise<void> {
+    console.log(userId)
+
+    const test = await this.Model.aggregate([
+      { $match: { creatorId: Types.ObjectId(userId) } },
+      {
+        $group: {
+          _id: '$stockId',
+          totalInvested: {
+            $sum: { $cond: [{ $eq: ['$type', 'income'] }, '$value', 0] },
+          },
+
+          totalSharesBought: {
+            $sum: { $cond: [{ $eq: ['$type', 'income'] }, '$quantity', 0] },
+          },
+
+          totalSharesSold: {
+            $sum: { $cond: [{ $eq: ['$type', 'outcome'] }, '$quantity', 0] },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          stockId: '$_id',
+
+          totalInvested: 1,
+
+          currentlyOwnedShares: {
+            $subtract: ['$totalSharesBought', '$totalSharesSold'],
+          },
+
+          averageBoughtPrice: {
+            $divide: ['$totalInvested', '$totalSharesBought'],
+          },
+        },
+      },
+    ])
+
+    console.log(test)
   }
 }
