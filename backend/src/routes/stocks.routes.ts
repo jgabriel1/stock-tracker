@@ -1,18 +1,24 @@
 import { Router } from 'express'
 import { container } from 'tsyringe'
 import { checkAuthentication } from '../middlewares/checkAuthentication'
-import { TransactionsRepository } from '../repositories/TransactionsRepository'
+import { StocksWalletService } from '../services/StocksWalletService'
 
 const stocksRouter = Router()
 
 stocksRouter.use(checkAuthentication)
 
 stocksRouter.get('/', async (request, response) => {
-  const transactionsRepo = container.resolve(TransactionsRepository)
+  try {
+    const { _id: userId } = request.user
 
-  await transactionsRepo.getStocksWallet(request.user._id)
+    const stocksWallet = container.resolve(StocksWalletService)
 
-  return response.send()
+    const stocks = await stocksWallet.execute({ userId })
+
+    return response.json(stocks)
+  } catch (err) {
+    return response.status(400).json({ message: err.message })
+  }
 })
 
 export { stocksRouter }

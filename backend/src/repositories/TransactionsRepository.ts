@@ -18,7 +18,7 @@ interface FindTransactionsDTO {
   to?: Date
 }
 
-interface StockWalletDTO {
+export interface StockWalletDTO {
   stockId: string
   ticker: string
   fullName: string
