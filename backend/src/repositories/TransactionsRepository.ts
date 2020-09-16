@@ -18,7 +18,14 @@ interface FindTransactionsDTO {
   to?: Date
 }
 
-// interface StockWalletDTO { }
+interface StockWalletDTO {
+  stockId: string
+  ticker: string
+  fullName: string
+  totalInvested: number
+  currentlyOwnedShares: number
+  averageBoughtPrice: number
+}
 
 @injectable()
 export class TransactionsRepository extends BaseRepository<ITransaction> {
@@ -81,45 +88,56 @@ export class TransactionsRepository extends BaseRepository<ITransaction> {
     return transaction
   }
 
-  public async getStocksWallet(userId: string): Promise<void> {
-    console.log(userId)
-
-    const test = await this.Model.aggregate([
-      { $match: { creatorId: Types.ObjectId(userId) } },
-      {
-        $group: {
-          _id: '$stockId',
-          totalInvested: {
-            $sum: { $cond: [{ $eq: ['$type', 'income'] }, '$value', 0] },
-          },
-
-          totalSharesBought: {
-            $sum: { $cond: [{ $eq: ['$type', 'income'] }, '$quantity', 0] },
-          },
-
-          totalSharesSold: {
-            $sum: { $cond: [{ $eq: ['$type', 'outcome'] }, '$quantity', 0] },
-          },
+  public async getStocksWallet(userId: string): Promise<StockWalletDTO[]> {
+    const stocks = await this.Model.aggregate()
+      .match({ creatorId: Types.ObjectId(userId) })
+      .group({
+        _id: '$stockId',
+        totalInvested: {
+          $sum: { $cond: [{ $eq: ['$type', 'income'] }, '$value', 0] },
         },
-      },
-      {
-        $project: {
-          _id: 0,
-          stockId: '$_id',
 
-          totalInvested: 1,
-
-          currentlyOwnedShares: {
-            $subtract: ['$totalSharesBought', '$totalSharesSold'],
-          },
-
-          averageBoughtPrice: {
-            $divide: ['$totalInvested', '$totalSharesBought'],
-          },
+        totalSharesBought: {
+          $sum: { $cond: [{ $eq: ['$type', 'income'] }, '$quantity', 0] },
         },
-      },
-    ])
 
-    console.log(test)
+        totalSharesSold: {
+          $sum: { $cond: [{ $eq: ['$type', 'outcome'] }, '$quantity', 0] },
+        },
+      })
+      .project({
+        _id: 0,
+        stockId: '$_id',
+
+        totalInvested: 1,
+
+        currentlyOwnedShares: {
+          $subtract: ['$totalSharesBought', '$totalSharesSold'],
+        },
+
+        averageBoughtPrice: {
+          $divide: ['$totalInvested', '$totalSharesBought'],
+        },
+      })
+      .lookup({
+        from: 'stockinfos',
+        localField: 'stockId',
+        foreignField: '_id',
+        as: 'stock',
+      })
+      .addFields({
+        stockInfo: { $arrayElemAt: ['$stock', 0] },
+      })
+      .addFields({
+        ticker: '$stockInfo.ticker',
+        fullName: '$stockInfo.fullName',
+      })
+      .project({
+        stockInfo: 0,
+        stock: 0,
+      })
+    // .sort({ totalInvested: -1 }) maybe sort, don't know yet
+
+    return stocks
   }
 }
