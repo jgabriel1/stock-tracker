@@ -1,4 +1,5 @@
 import { inject, injectable } from 'tsyringe'
+import { AppError } from '../errors/AppError'
 import { IStockInfo } from '../models/StockInfo'
 import { ITransaction } from '../models/Transaction'
 import { StockInfoRepository } from '../repositories/StockInfoRepository'
@@ -28,7 +29,7 @@ export class ListTransactionsService {
     const stockInfo = await this.stockInfoRepository.findByTicker(ticker)
 
     if (!stockInfo) {
-      throw new Error('That ticker does not exist.')
+      throw new AppError('That ticker does not exist.')
     }
 
     return stockInfo
@@ -44,7 +45,7 @@ export class ListTransactionsService {
     const parsedTo = to ? new Date(to) : undefined
 
     if (!ticker) {
-      throw new Error('Ticker is missing.')
+      throw new AppError('Ticker is missing.')
     }
 
     const { _id: tickerId } = await this.getStockInfo(ticker)

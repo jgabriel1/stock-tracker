@@ -1,5 +1,6 @@
 import { ClientSession } from 'mongoose'
 import { inject, injectable } from 'tsyringe'
+import { AppError } from '../errors/AppError'
 import { ITransaction } from '../models/Transaction'
 import { IUser, UserModel } from '../models/User'
 import { BaseRepository } from './BaseRepository'
@@ -40,7 +41,7 @@ export class UsersRepository extends BaseRepository<IUser> {
 
       return user
     } catch (err) {
-      throw new Error(`Error creating user: ${err.message}`)
+      throw new AppError(`Error creating user: ${err.message}`, 500)
     }
   }
 
@@ -58,7 +59,7 @@ export class UsersRepository extends BaseRepository<IUser> {
     const user = await this.Model.findById(userId)
 
     if (!user) {
-      throw new Error("This user doesn't exist.")
+      throw new AppError("This user doesn't exist.", 404)
     }
 
     return user
@@ -68,7 +69,7 @@ export class UsersRepository extends BaseRepository<IUser> {
     const user = await this.Model.findOne({ username: name })
 
     if (!user) {
-      throw new Error("This user doesn't exist.")
+      throw new AppError("This user doesn't exist.", 404)
     }
 
     return user

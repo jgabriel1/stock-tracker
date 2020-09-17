@@ -1,5 +1,6 @@
 import { ClientSession, Types } from 'mongoose'
 import { inject, injectable } from 'tsyringe'
+import { AppError } from '../errors/AppError'
 import { ITransaction, TransactionModel } from '../models/Transaction'
 import { BaseRepository } from './BaseRepository'
 
@@ -54,7 +55,7 @@ export class TransactionsRepository extends BaseRepository<ITransaction> {
       return transaction
     } catch (err) {
       await session?.abortTransaction()
-      throw new Error(`Error creating transaction: ${err.message}`)
+      throw new AppError(`Error creating transaction: ${err.message}`, 500)
     }
   }
 
@@ -82,7 +83,7 @@ export class TransactionsRepository extends BaseRepository<ITransaction> {
     const transaction = await this.Model.findById(transactionId)
 
     if (!transaction) {
-      throw new Error('This transaction does not exist.')
+      throw new AppError('This transaction does not exist.', 404)
     }
 
     return transaction
