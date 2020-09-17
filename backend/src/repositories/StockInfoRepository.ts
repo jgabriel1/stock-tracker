@@ -1,6 +1,6 @@
 import { ClientSession } from 'mongoose'
 import { inject, injectable } from 'tsyringe'
-import { AppError } from '../errors/AppError'
+import { HttpException } from '../errors/HttpException'
 import { IStockInfo, StockInfoModel } from '../models/StockInfo'
 import { BaseRepository } from './BaseRepository'
 
@@ -33,7 +33,7 @@ export class StockInfoRepository extends BaseRepository<IStockInfo> {
       return stockInfo
     } catch (err) {
       await session?.abortTransaction()
-      throw new AppError(`Error creating stock info: ${err.message}`, 500)
+      throw new HttpException(`Error creating stock info: ${err.message}`, 500)
     }
   }
 

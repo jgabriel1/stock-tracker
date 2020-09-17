@@ -2,7 +2,7 @@ import { inject, injectable } from 'tsyringe'
 import { compare } from 'bcrypt'
 import { sign } from 'jsonwebtoken'
 import { UsersRepository } from '../repositories/UsersRepository'
-import { AppError } from '../errors/AppError'
+import { HttpException } from '../errors/HttpException'
 
 interface Request {
   username: string
@@ -42,7 +42,7 @@ export class AuthTokenService {
     )
 
     if (!passwordsMatch) {
-      throw new AppError('Wrong username/password combination.', 401)
+      throw new HttpException('Wrong username/password combination.', 401)
     }
 
     const token = AuthTokenService.generateSignedToken({

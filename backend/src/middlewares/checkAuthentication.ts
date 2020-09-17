@@ -1,6 +1,6 @@
 import { verify } from 'jsonwebtoken'
 import { Request, Response, NextFunction } from 'express'
-import { AppError } from '../errors/AppError'
+import { HttpException } from '../errors/HttpException'
 
 interface TokenPayload {
   _id: string
@@ -16,7 +16,7 @@ export function checkAuthentication(
   const { authorization } = request.headers
 
   if (!authorization) {
-    throw new AppError('Missing authorization headers.', 401)
+    throw new HttpException('Missing authorization headers.', 401)
   }
 
   // headers format: "Bearer tokenhere123456"
@@ -29,6 +29,6 @@ export function checkAuthentication(
 
     return next()
   } catch {
-    throw new AppError('Invalid credentials.', 401)
+    throw new HttpException('Invalid credentials.', 401)
   }
 }
