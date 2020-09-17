@@ -3,9 +3,13 @@ import './models'
 
 import express, { Express } from 'express'
 
+import 'express-async-errors'
+
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import routes from './routes'
+
+import { errorHandler } from './middlewares/errorHandler'
 
 async function buildApp(): Promise<Express> {
   dotenv.config()
@@ -23,7 +27,10 @@ async function buildApp(): Promise<Express> {
     },
   )
 
+  app.use(errorHandler)
+
   app.use(express.json())
+
   app.use(routes)
 
   return app
