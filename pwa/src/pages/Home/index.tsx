@@ -1,10 +1,9 @@
 import React from 'react'
-import { Text, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
 import Button from '../../components/Button'
 
-import styles from './styles'
+import { Container, Title, TitleText, TitleDescription } from './styles'
 
 const Home: React.FC = () => {
   const navigation = useNavigation()
@@ -18,19 +17,19 @@ const Home: React.FC = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.titleText}>Stock Tracker</Text>
-        <Text style={styles.titleDescription}>
+    <Container>
+      <Title>
+        <TitleText>Stock Tracker</TitleText>
+        <TitleDescription>
           An app to track the stocks you own and project your gains.
-        </Text>
-      </View>
+        </TitleDescription>
+      </Title>
 
       <>
         <Button text="Login" onPress={navigateToLogin} />
         <Button text="Register" onPress={navigateToRegister} />
       </>
-    </View>
+    </Container>
   )
 }
 
