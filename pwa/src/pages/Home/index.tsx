@@ -21,13 +21,13 @@ const Home: React.FC = () => {
       <Title>
         <TitleText>Stock Tracker</TitleText>
         <TitleDescription>
-          An app to track the stocks you own and project your gains.
+          Um app para manter controle das suas ações e seus ganhos.
         </TitleDescription>
       </Title>
 
       <>
         <Button text="Login" onPress={navigateToLogin} />
-        <Button text="Register" onPress={navigateToRegister} />
+        <Button text="Cadastre-se" onPress={navigateToRegister} />
       </>
     </Container>
   )
