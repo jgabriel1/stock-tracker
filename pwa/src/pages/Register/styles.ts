@@ -1,21 +1,26 @@
-import { StyleSheet } from 'react-native'
+import styled from 'styled-components/native'
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+export const Header = styled.View`
+  height: 80px;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`
+export const Title = styled.Text`
+  font-size: 24px;
+`
 
-  input: {
-    borderWidth: 1,
-    borderColor: '#aaa',
-    borderRadius: 4,
-    padding: 16,
-    width: '80%',
-    fontSize: 16,
-    marginBottom: 16,
-  },
-})
+export const Content = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding: 0 30px;
+`
 
-export default styles
+export const FieldSet = styled.View`
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+`
