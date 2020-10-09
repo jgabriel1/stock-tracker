@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useNavigation } from '@react-navigation/native'
 
 import Button from '../../components/Button'
@@ -8,13 +8,13 @@ import { Container, Title, TitleText, TitleDescription } from './styles'
 const Home: React.FC = () => {
   const navigation = useNavigation()
 
-  function navigateToLogin() {
+  const navigateToLogin = useCallback(() => {
     navigation.navigate('Login')
-  }
+  }, [navigation])
 
-  function navigateToRegister() {
+  const navigateToRegister = useCallback(() => {
     navigation.navigate('Register')
-  }
+  }, [navigation])
 
   return (
     <Container>

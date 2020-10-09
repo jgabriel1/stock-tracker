@@ -4,11 +4,11 @@ import { useNavigation } from '@react-navigation/native'
 import Button from '../../components/Button'
 import KeyboardView from '../../components/KeyboardView'
 import ReturnButton from '../../components/ReturnButton'
+import Input from '../../components/Input'
 
 import API from '../../services/api'
 
 import { Header, Title, Content, FieldSet } from './styles'
-import Input from '../../components/Input'
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState('')
@@ -56,7 +56,7 @@ const Register: React.FC = () => {
           />
         </FieldSet>
 
-        <Button text="Register" onPress={handleSubmitRegistration} />
+        <Button text="Enviar" onPress={handleSubmitRegistration} />
       </Content>
     </KeyboardView>
   )
