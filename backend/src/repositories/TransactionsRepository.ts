@@ -141,4 +141,62 @@ export class TransactionsRepository extends BaseRepository<ITransaction> {
 
     return stocks
   }
+
+  public async getStockWalletById(
+    userId: string,
+    stockId: string,
+  ): Promise<StockWalletDTO> {
+    const [stock] = await this.Model.aggregate()
+      .match({
+        creatorId: Types.ObjectId(userId),
+        stockId: Types.ObjectId(stockId),
+      })
+      .group({
+        _id: '$stockId',
+        totalInvested: {
+          $sum: { $cond: [{ $eq: ['$type', 'income'] }, '$value', 0] },
+        },
+
+        totalSharesBought: {
+          $sum: { $cond: [{ $eq: ['$type', 'income'] }, '$quantity', 0] },
+        },
+
+        totalSharesSold: {
+          $sum: { $cond: [{ $eq: ['$type', 'outcome'] }, '$quantity', 0] },
+        },
+      })
+      .project({
+        _id: 0,
+        stockId: '$_id',
+
+        totalInvested: 1,
+
+        currentlyOwnedShares: {
+          $subtract: ['$totalSharesBought', '$totalSharesSold'],
+        },
+
+        averageBoughtPrice: {
+          $divide: ['$totalInvested', '$totalSharesBought'],
+        },
+      })
+      .lookup({
+        from: 'stockinfos',
+        localField: 'stockId',
+        foreignField: '_id',
+        as: 'stock',
+      })
+      .addFields({
+        stockInfo: { $arrayElemAt: ['$stock', 0] },
+      })
+      .addFields({
+        ticker: '$stockInfo.ticker',
+        fullName: '$stockInfo.fullName',
+      })
+      .project({
+        stockInfo: 0,
+        stock: 0,
+      })
+
+    return stock
+  }
 }

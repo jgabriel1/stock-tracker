@@ -1,6 +1,6 @@
 import { ClientSession, startSession } from 'mongoose'
 import { inject, injectable } from 'tsyringe'
-import { IStockInfo } from '../models/StockInfo'
+import { HttpException } from '../errors/HttpException'
 import { StockInfoRepository } from '../repositories/StockInfoRepository'
 import { TransactionsRepository } from '../repositories/TransactionsRepository'
 import { UsersRepository } from '../repositories/UsersRepository'
@@ -25,7 +25,7 @@ export class CreateTransactionService {
     private transactionsRepository: TransactionsRepository,
     @inject(StockInfoRepository)
     private stockInfoRepository: StockInfoRepository,
-  ) { }
+  ) {}
 
   private async getStockId(ticker: string, fullName: string): Promise<string> {
     const stockInfo = await this.stockInfoRepository.findByTicker(
@@ -67,7 +67,22 @@ export class CreateTransactionService {
     // create it and also return the id
     const stockId = await this.getStockId(stockTicker, stockFullName)
 
-    // 2 - call transaction repo and create it returning void.
+    // 2 - In case of an outcome transaction, don't allow it to be created if it
+    // is greater than that sotck's balance itself.
+    if (type === 'outcome') {
+      const stock = await this.transactionsRepository.getStockWalletById(
+        userId,
+        stockId,
+      )
+
+      if (stock.currentlyOwnedShares < quantity) {
+        throw new HttpException(
+          'Cannot create an outcome transaction for more shares than you own.',
+        )
+      }
+    }
+
+    // 3 - call transaction repo and create it returning void.
     const newTransaction = await this.transactionsRepository.create(
       {
         stockId,

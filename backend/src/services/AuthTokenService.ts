@@ -20,7 +20,7 @@ export class AuthTokenService {
   constructor(
     @inject(UsersRepository)
     private usersRepository: UsersRepository,
-  ) { }
+  ) {}
 
   private static async checkPassword(
     password: string,
