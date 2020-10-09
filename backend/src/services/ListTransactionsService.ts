@@ -23,7 +23,7 @@ export class ListTransactionsService {
     private transactionsRepository: TransactionsRepository,
     @inject(StockInfoRepository)
     private stockInfoRepository: StockInfoRepository,
-  ) { }
+  ) {}
 
   private async getStockInfo(ticker: string): Promise<IStockInfo> {
     const stockInfo = await this.stockInfoRepository.findByTicker(ticker)

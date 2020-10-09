@@ -1,4 +1,5 @@
 import { Router } from 'express'
+
 import { authRouter } from './auth.routes'
 import { stocksRouter } from './stocks.routes'
 import { transactionsRouter } from './transactions.routes'

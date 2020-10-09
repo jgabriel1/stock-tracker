@@ -19,7 +19,7 @@ export class RegisterUserService {
   constructor(
     @inject(UsersRepository)
     private usersRepository: UsersRepository,
-  ) { }
+  ) {}
 
   public async execute({
     username,

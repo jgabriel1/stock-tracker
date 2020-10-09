@@ -1,73 +1,16 @@
 import { Router } from 'express'
-import { container } from 'tsyringe'
+
 import { checkAuthentication } from '../middlewares/checkAuthentication'
-import { CreateTransactionService } from '../services/CreateTransactionService'
-import { ListTransactionsService } from '../services/ListTransactionsService'
-import { TransactionExtraCostsService } from '../services/TransactionExtraCostsService'
+import { TransactionsController } from '../controllers/TransactionsController'
+
+const transactionsController = new TransactionsController()
 
 const transactionsRouter = Router()
 
 transactionsRouter.use(checkAuthentication)
 
-transactionsRouter.post('/', async (request, response) => {
-  try {
-    const { quantity, type, value, stockTicker, stockFullName } = request.body
-
-    const createTransaction = container.resolve(CreateTransactionService)
-
-    await createTransaction.execute({
-      userId: request.user._id,
-      quantity,
-      type,
-      value,
-      stockTicker,
-      stockFullName,
-    })
-
-    return response.status(204).send()
-  } catch (err) {
-    return response.status(400).json({ message: err.message })
-  }
-})
-
-transactionsRouter.get('/', async (request, response) => {
-  try {
-    const { ticker, from, to } = request.query as {
-      ticker?: string
-      from?: string
-      to?: string
-    }
-
-    const { _id: userId } = request.user
-
-    const listTransactions = container.resolve(ListTransactionsService)
-
-    const transactions = await listTransactions.execute({
-      userId,
-      ticker,
-      from,
-      to,
-    })
-
-    return response.json(transactions)
-  } catch (err) {
-    return response.status(400).json({ message: err.message })
-  }
-})
-
-transactionsRouter.patch('/:id', async (request, response) => {
-  try {
-    const { id: transactionId } = request.params
-    const { value } = request.body
-
-    const updateExtraCosts = container.resolve(TransactionExtraCostsService)
-
-    await updateExtraCosts.execute({ transactionId, value })
-
-    return response.status(204).send()
-  } catch (err) {
-    return response.status(400).json({ message: err.message })
-  }
-})
+transactionsRouter.post('/', transactionsController.create)
+transactionsRouter.get('/', transactionsController.index)
+transactionsRouter.patch('/:id', transactionsController.update)
 
 export { transactionsRouter }

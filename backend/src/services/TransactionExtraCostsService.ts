@@ -11,7 +11,7 @@ export class TransactionExtraCostsService {
   constructor(
     @inject(TransactionsRepository)
     private transactionsRepository: TransactionsRepository,
-  ) { }
+  ) {}
 
   public async execute({ transactionId, value }: Request): Promise<void> {
     const transaction = await this.transactionsRepository.findById(

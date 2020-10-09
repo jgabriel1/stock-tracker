@@ -23,7 +23,7 @@ export class StocksWalletService {
   constructor(
     @inject(TransactionsRepository)
     private transactionsRepository: TransactionsRepository,
-  ) { }
+  ) {}
 
   public async execute({ userId }: Request): Promise<Response> {
     const stocksArray = await this.transactionsRepository.getStocksWallet(
