@@ -43,7 +43,7 @@ const Login: React.FC = () => {
       <Content>
         <FieldSet>
           <Input
-            placeholder="Nome"
+            placeholder="Usuário"
             value={username}
             onChangeText={text => setUsername(text)}
             autoCapitalize="none"

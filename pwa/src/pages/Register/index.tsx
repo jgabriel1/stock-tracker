@@ -33,14 +33,14 @@ const Register: React.FC = () => {
       <Content>
         <FieldSet>
           <Input
-            placeholder="Username"
+            placeholder="Usuário"
             value={username}
             onChangeText={text => setUsername(text)}
             autoCapitalize="none"
           />
 
           <Input
-            placeholder="Email"
+            placeholder="E-mail"
             value={email}
             onChangeText={text => setEmail(text)}
             autoCapitalize="none"
@@ -48,7 +48,7 @@ const Register: React.FC = () => {
           />
 
           <Input
-            placeholder="Password"
+            placeholder="Senha"
             value={password}
             onChangeText={text => setPassword(text)}
             autoCapitalize="none"
