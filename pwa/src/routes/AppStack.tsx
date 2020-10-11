@@ -32,7 +32,14 @@ const Routes: React.FC = () => {
   return (
     <DataStateProvider>
       <NavigationContainer>
-        <Navigator headerMode="none">
+        <Navigator
+          screenOptions={{
+            headerShown: false,
+            cardStyle: {
+              backgroundColor: '#ededed',
+            },
+          }}
+        >
           <Screen name="Home" component={Home} />
           <Screen name="Login" component={Login} />
           <Screen name="Register" component={Register} />
