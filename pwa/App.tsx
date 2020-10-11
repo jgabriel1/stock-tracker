@@ -2,16 +2,19 @@ import React from 'react'
 import { StatusBar } from 'react-native'
 
 import Routes from './src/routes/AppStack'
+import AppProvider from './src/hooks'
 
-export default function App() {
-    return (
-        <>
-            <StatusBar
-                barStyle='dark-content'
-                backgroundColor='transparent'
-                translucent
-            />
-            <Routes />
-        </>
-    )
+const App: React.FC = () => {
+  return (
+    <AppProvider>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent
+      />
+      <Routes />
+    </AppProvider>
+  )
 }
+
+export default App
