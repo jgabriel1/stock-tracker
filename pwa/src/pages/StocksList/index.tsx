@@ -34,7 +34,7 @@ const StockList: React.FC = () => {
           const { regularMarketPrice } = stock
           const potentialProfit = regularMarketPrice
             ? (regularMarketPrice - average_bought_price) *
-            currently_owned_shares
+              currently_owned_shares
             : 0
 
           return (

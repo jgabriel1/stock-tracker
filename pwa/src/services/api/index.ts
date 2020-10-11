@@ -2,6 +2,10 @@ import axios from 'axios'
 import { getAuthToken, setAuthToken } from '../../utils/tokenHandler'
 import { Stock, Transaction } from './types'
 
+export const api = axios.create({
+  baseURL: 'http://stock-tracker-backend.herokuapp.com/',
+})
+
 export default class API {
   // Backend connection.
   private static client = axios.create({
