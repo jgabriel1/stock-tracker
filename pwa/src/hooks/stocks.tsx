@@ -12,8 +12,8 @@ import { getStockInfo } from '../services/yahooFinance/stockInfo'
 interface BackendData {
   ticker: string
   fullName: string
-  currentlyOwnedShares: number
-  averageBoughtPrice: number
+  currently_owned_shares: number
+  average_bought_price: number
 }
 
 interface BackendResponse {
@@ -70,10 +70,10 @@ export const StocksProvider: React.FC = ({ children }) => {
       const external = externalData.get(ticker)
 
       const totalInvested =
-        backend.currentlyOwnedShares * backend.averageBoughtPrice
+        backend.currently_owned_shares * backend.average_bought_price
 
       const regularMarketPrice = external ? external.regularMarketPrice : 0
-      const currentWorth = regularMarketPrice * backend.currentlyOwnedShares
+      const currentWorth = regularMarketPrice * backend.currently_owned_shares
 
       return {
         // General backend data:
@@ -81,8 +81,8 @@ export const StocksProvider: React.FC = ({ children }) => {
         fullName: backend.fullName,
 
         // Backend data only dependent:
-        currentlyOwnedShares: backend.currentlyOwnedShares,
-        averageBoughtPrice: backend.averageBoughtPrice,
+        currently_owned_shares: backend.currently_owned_shares,
+        average_bought_price: backend.average_bought_price,
         totalInvested,
 
         // External data dependent:
