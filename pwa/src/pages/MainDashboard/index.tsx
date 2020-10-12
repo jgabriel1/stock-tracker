@@ -1,11 +1,18 @@
 import React, { useMemo } from 'react'
-import { Text, View, SafeAreaView } from 'react-native'
 
 import FourBoxGrid from '../../components/FourBoxGrid'
 import PlatformAwareVictoryPie from './components/PlatformAwareVictoryPie'
 
-import styles, { Container, Header } from './styles'
 import { useStocks } from '../../hooks/stocks'
+
+import {
+  Container,
+  Header,
+  InfoContainer,
+  InfoTitle,
+  InfoValue,
+  ColoredText,
+} from './styles'
 
 const MainDashboard: React.FC = () => {
   const { currentWorth, totalInvested, stocksData } = useStocks()
@@ -35,12 +42,11 @@ const MainDashboard: React.FC = () => {
     )
   }, [currentWorth, stocksData])
 
-  // TODO: refactor to use styled components
   return (
     <Container>
       <Header />
       <PlatformAwareVictoryPie
-        padding={{ top: 100, bottom: 100, left: 100, right: 100 }}
+        padding={{ top: 80, bottom: 80, left: 80, right: 80 }}
         data={currentWorthChartData}
         labels={({ datum }) => `${datum.x}\n${datum.y.toFixed(1)}%`}
         labelRadius={({ radius }) => 1.1 * (radius as number)}
@@ -54,58 +60,42 @@ const MainDashboard: React.FC = () => {
             flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
-            borderWidth: 1,
           },
         }}
       />
 
       <FourBoxGrid
         nodes={[
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoTitle}>Total Invested</Text>
-            <Text style={styles.infoValue}>
-              {`$ ${totalInvested.toFixed(2)}`}
-            </Text>
-          </View>,
+          <InfoContainer>
+            <InfoTitle>Total Invested</InfoTitle>
+            <InfoValue>{`$ ${totalInvested.toFixed(2)}`}</InfoValue>
+          </InfoContainer>,
 
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoTitle}>Current Worth</Text>
-            <Text style={styles.infoValue}>
-              {`$ ${currentWorth.toFixed(2)}`}
-            </Text>
-          </View>,
+          <InfoContainer>
+            <InfoTitle>Current Worth</InfoTitle>
+            <InfoValue>{`$ ${currentWorth.toFixed(2)}`}</InfoValue>
+          </InfoContainer>,
 
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoTitle}>Balance</Text>
-            <Text style={styles.infoValue}>
-              <Text
-                style={
-                  currentWorth > totalInvested
-                    ? styles.greenText
-                    : styles.redText
-                }
-              >
+          <InfoContainer>
+            <InfoTitle>Balance</InfoTitle>
+            <InfoValue>
+              <ColoredText isPositive={currentWorth > totalInvested}>
                 {currentWorth && (currentWorth - totalInvested).toFixed(2)}
-              </Text>
-            </Text>
-          </View>,
+              </ColoredText>
+            </InfoValue>
+          </InfoContainer>,
 
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoTitle}>Variation</Text>
-            <Text
-              style={[
-                styles.infoValue,
-                currentWorth > totalInvested
-                  ? styles.greenText
-                  : styles.redText,
-              ]}
-            >
-              {currentWorth &&
-                (100 * (currentWorth / totalInvested - 1)).toFixed(2)}
-            </Text>
-          </View>,
+          <InfoContainer>
+            <InfoTitle>Variation</InfoTitle>
+            <InfoValue>
+              <ColoredText isPositive={currentWorth > totalInvested}>
+                {currentWorth &&
+                  (100 * (currentWorth / totalInvested - 1)).toFixed(2)}
+              </ColoredText>
+            </InfoValue>
+          </InfoContainer>,
         ]}
-        outterStyle={styles.outterInfoContainer}
+        outterStyle={{ flex: 0.66 }}
       />
     </Container>
   )
