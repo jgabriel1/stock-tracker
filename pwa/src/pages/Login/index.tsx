@@ -15,7 +15,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('')
 
   const { signIn } = useAuth()
-  const { loadBackendData, loadExternalData } = useStocks()
+  const { loadBackendData } = useStocks()
 
   const navigation = useNavigation()
 
@@ -26,16 +26,7 @@ const Login: React.FC = () => {
     await loadBackendData()
 
     navigation.navigate('Dashboard')
-
-    await loadExternalData()
-  }, [
-    loadBackendData,
-    loadExternalData,
-    navigation,
-    password,
-    signIn,
-    username,
-  ])
+  }, [loadBackendData, navigation, password, signIn, username])
 
   return (
     <KeyboardView>

@@ -2,6 +2,7 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
@@ -11,7 +12,7 @@ import { getStockInfo } from '../services/yahooFinance/stockInfo'
 
 interface BackendData {
   ticker: string
-  fullName: string
+  fullName?: string
   currently_owned_shares: number
   average_bought_price: number
 }
@@ -33,17 +34,11 @@ interface StockData extends BackendData, Partial<ExternalData> {
   totalInvested?: number
 }
 
-// interface ChartData {
-//   x: string
-//   y: number
-// }
-
 interface StocksContextData {
   stocksData: StockData[]
   tickers: string[]
   totalInvested: number
   currentWorth: number
-  // currentWorthChartData: ChartData[]
 
   loadBackendData(): Promise<void>
   loadExternalData(): Promise<void>
@@ -78,7 +73,7 @@ export const StocksProvider: React.FC = ({ children }) => {
       return {
         // General backend data:
         ticker,
-        fullName: backend.fullName,
+        fullName: backend.fullName || ticker,
 
         // Backend data only dependent:
         currently_owned_shares: backend.currently_owned_shares,
@@ -114,6 +109,15 @@ export const StocksProvider: React.FC = ({ children }) => {
     const data = await getStockInfo(tickers)
 
     setExternalData(data)
+  }, [tickers])
+
+  // create useEffect to handle fetching external data for loaded stocks.
+  // this will ensure that the request will only be made when the state is actually
+  // updated.
+  useEffect(() => {
+    if (tickers.length > 0) {
+      getStockInfo(tickers).then(setExternalData)
+    }
   }, [tickers])
 
   return (
