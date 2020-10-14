@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useCallback } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Text, View, SafeAreaView } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
@@ -9,15 +9,13 @@ import ReturnButton from '../../components/ReturnButton'
 import MainStockInfo from './components/MainStockInfo'
 import TransactionList from './components/TransactionList'
 
-import API from '../../services/api'
+import { api } from '../../services/api'
 import { Transaction } from '../../services/api/types'
-
-import DataContext from '../../store/dataContext'
-import { getStockData } from '../../store/selectors'
 
 import { AppStackParamList } from '../../routes/AppStack'
 
 import styles from './styles'
+import { useStocks } from '../../hooks/stocks'
 
 const Detail: React.FC = () => {
   const [transactionList, setTransactionList] = useState<Transaction[]>([])
@@ -27,8 +25,9 @@ const Detail: React.FC = () => {
     params: { ticker },
   } = useRoute<RouteProp<AppStackParamList, 'Detail'>>()
 
-  const { state } = useContext(DataContext)
-  const stockData = getStockData(state, ticker)
+  const { getStockData } = useStocks()
+
+  const stockData = getStockData(ticker)
 
   const navigateToNewTransactionWith = useCallback(
     (type: 'IN' | 'OUT') => {
@@ -41,7 +40,10 @@ const Detail: React.FC = () => {
   )
 
   useEffect(() => {
-    API.getTransactionsFor(ticker).then(setTransactionList)
+    api.get('transactions', { params: { ticker } }).then(response => {
+      const { transactions } = response.data
+      setTransactionList(transactions)
+    })
   }, [ticker])
 
   return (

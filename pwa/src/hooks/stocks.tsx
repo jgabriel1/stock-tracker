@@ -29,9 +29,14 @@ interface ExternalData {
   chartPreviousClose: number
 }
 
-interface StockData extends BackendData, Partial<ExternalData> {
-  currentWorth?: number
-  totalInvested?: number
+interface StockData {
+  ticker: string
+  fullName: string
+  currently_owned_shares: number
+  average_bought_price: number
+  regularMarketPrice: number
+  currentWorth: number
+  totalInvested: number
 }
 
 interface StocksContextData {
@@ -40,6 +45,7 @@ interface StocksContextData {
   totalInvested: number
   currentWorth: number
 
+  getStockData(ticker: string): StockData
   loadBackendData(): Promise<void>
   loadExternalData(): Promise<void>
 }
@@ -95,6 +101,12 @@ export const StocksProvider: React.FC = ({ children }) => {
     return stocksData.reduce((accum, stock) => accum + stock.currentWorth, 0)
   }, [stocksData])
 
+  const getStockData = useCallback(
+    (ticker: string) =>
+      stocksData.find(stock => stock.ticker === ticker) || ({} as StockData),
+    [stocksData],
+  )
+
   const loadBackendData = useCallback(async () => {
     const response = await api.get<BackendResponse>('stocks')
 
@@ -111,9 +123,6 @@ export const StocksProvider: React.FC = ({ children }) => {
     setExternalData(data)
   }, [tickers])
 
-  // create useEffect to handle fetching external data for loaded stocks.
-  // this will ensure that the request will only be made when the state is actually
-  // updated.
   useEffect(() => {
     if (tickers.length > 0) {
       getStockInfo(tickers).then(setExternalData)
@@ -127,6 +136,7 @@ export const StocksProvider: React.FC = ({ children }) => {
         stocksData,
         totalInvested,
         currentWorth,
+        getStockData,
         loadBackendData,
         loadExternalData,
       }}
