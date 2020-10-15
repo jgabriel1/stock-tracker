@@ -1,12 +1,8 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react'
-import { View } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
-import { Feather as Icon } from '@expo/vector-icons'
 
 import ReturnButton from '../../components/ReturnButton'
-import MainStockInfo from './components/MainStockInfo'
 import TransactionList from './components/TransactionList'
 
 import { api } from '../../services/api'
@@ -14,7 +10,7 @@ import { Transaction } from '../../services/api/types'
 
 import { AppStackParamList } from '../../routes/AppStack'
 
-import styles, {
+import {
   ColoredText,
   Container,
   Content,
