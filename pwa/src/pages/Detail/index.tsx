@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react'
-import { Text, View, SafeAreaView } from 'react-native'
+import React, { useEffect, useState, useCallback, useMemo } from 'react'
+import { View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
@@ -14,8 +14,21 @@ import { Transaction } from '../../services/api/types'
 
 import { AppStackParamList } from '../../routes/AppStack'
 
-import styles from './styles'
+import styles, {
+  ColoredText,
+  Container,
+  Content,
+  FullName,
+  Header,
+  InfoItem,
+  InfoLabel,
+  InfosContainer,
+  InfoValue,
+  Title,
+} from './styles'
 import { useStocks } from '../../hooks/stocks'
+import { useNewTransaction } from '../../hooks/newTransaction'
+import formatToReal from '../../utils/formatToReal'
 
 const Detail: React.FC = () => {
   const [transactionList, setTransactionList] = useState<Transaction[]>([])
@@ -26,6 +39,7 @@ const Detail: React.FC = () => {
   } = useRoute<RouteProp<AppStackParamList, 'Detail'>>()
 
   const { getStockData } = useStocks()
+  const { setTransactionType } = useNewTransaction()
 
   const stockData = getStockData(ticker)
 
@@ -46,42 +60,64 @@ const Detail: React.FC = () => {
     })
   }, [ticker])
 
+  const variation = useMemo(() => {
+    const { regularMarketPrice, average_bought_price } = stockData
+
+    const value = regularMarketPrice / average_bought_price
+
+    return `${value.toFixed(2).replace('.', ',')}%`
+  }, [stockData])
+
+  const isPositive = useMemo(() => {
+    return stockData.average_bought_price < stockData.regularMarketPrice
+  }, [stockData])
+
   return (
-    <SafeAreaView style={styles.outerContainer}>
-      <ReturnButton />
+    <Container>
+      <Header>
+        <ReturnButton />
+        <Title>{ticker}</Title>
+      </Header>
 
-      <View style={styles.container}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{ticker}</Text>
-        </View>
+      <Content>
+        <FullName>{stockData.fullName}</FullName>
 
-        {stockData.regularMarketPrice && (
-          <MainStockInfo
-            averageBoughtPrice={stockData.average_bought_price}
-            currentlyOwnedShares={stockData.currently_owned_shares}
-            regularMarketPrice={stockData.regularMarketPrice}
-          />
-        )}
+        <InfosContainer>
+          <InfoItem>
+            <InfoLabel>Valor Atual:</InfoLabel>
+            <InfoValue>{formatToReal(stockData.currentWorth)}</InfoValue>
+          </InfoItem>
 
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity
-            onPress={() => navigateToNewTransactionWith('IN')}
-            containerStyle={styles.button}
-          >
-            <Icon name="plus" size={32} color="#eee" />
-          </TouchableOpacity>
+          <InfoItem>
+            <InfoLabel>Total investido:</InfoLabel>
+            <InfoValue>{formatToReal(stockData.totalInvested)}</InfoValue>
+          </InfoItem>
+        </InfosContainer>
 
-          <TouchableOpacity
-            onPress={() => navigateToNewTransactionWith('OUT')}
-            containerStyle={styles.button}
-          >
-            <Icon name="minus" size={32} color="#eee" />
-          </TouchableOpacity>
-        </View>
+        <InfosContainer>
+          <InfoItem>
+            <InfoLabel>Valor atual:</InfoLabel>
+            <InfoValue>
+              {formatToReal(stockData.average_bought_price)}
+            </InfoValue>
+          </InfoItem>
+
+          <InfoItem>
+            <InfoLabel>Valor médio de compra:</InfoLabel>
+            <InfoValue>{formatToReal(stockData.regularMarketPrice)}</InfoValue>
+          </InfoItem>
+        </InfosContainer>
+
+        <InfoItem>
+          <InfoLabel>Variação:</InfoLabel>
+          <InfoValue>
+            <ColoredText isPositive={isPositive}>{variation}</ColoredText>
+          </InfoValue>
+        </InfoItem>
 
         <TransactionList transactionList={transactionList} />
-      </View>
-    </SafeAreaView>
+      </Content>
+    </Container>
   )
 }
 
