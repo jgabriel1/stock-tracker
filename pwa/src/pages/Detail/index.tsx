@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
+import { Feather } from '@expo/vector-icons'
 
 import ReturnButton from '../../components/ReturnButton'
 import TransactionList from './components/TransactionList'
@@ -9,6 +10,11 @@ import { api } from '../../services/api'
 import { Transaction } from '../../services/api/types'
 
 import { AppStackParamList } from '../../routes/AppStack'
+
+import { useStocks } from '../../hooks/stocks'
+import { useNewTransaction } from '../../hooks/newTransaction'
+
+import formatToReal from '../../utils/formatToReal'
 
 import {
   ColoredText,
@@ -21,10 +27,13 @@ import {
   InfosContainer,
   InfoValue,
   Title,
+  NewTransactionContainer,
+  NewTransactionTitle,
+  NewTransactionButtonsContainer,
+  NewTransactionButtonText,
+  NewTransactionButtonLeft,
+  NewTransactionButtonRight,
 } from './styles'
-import { useStocks } from '../../hooks/stocks'
-import { useNewTransaction } from '../../hooks/newTransaction'
-import formatToReal from '../../utils/formatToReal'
 
 const Detail: React.FC = () => {
   const [transactionList, setTransactionList] = useState<Transaction[]>([])
@@ -61,7 +70,9 @@ const Detail: React.FC = () => {
 
     const value = regularMarketPrice / average_bought_price
 
-    return `${value.toFixed(2).replace('.', ',')}%`
+    const signal = regularMarketPrice > average_bought_price ? '+' : '-'
+
+    return `${signal}${value.toFixed(2).replace('.', ',')}%`
   }, [stockData])
 
   const isPositive = useMemo(() => {
@@ -105,11 +116,35 @@ const Detail: React.FC = () => {
         </InfosContainer>
 
         <InfoItem>
-          <InfoLabel>Variação:</InfoLabel>
+          <InfoLabel>Variação Total:</InfoLabel>
           <InfoValue>
             <ColoredText isPositive={isPositive}>{variation}</ColoredText>
           </InfoValue>
         </InfoItem>
+
+        <NewTransactionContainer>
+          <NewTransactionTitle>Nova transação</NewTransactionTitle>
+
+          <NewTransactionButtonsContainer>
+            <NewTransactionButtonLeft
+              activeOpacity={0.9}
+              onPress={() => console.log('entrada')}
+            >
+              <Feather name="plus" color="#ededed" size={24} />
+
+              <NewTransactionButtonText>Entrada</NewTransactionButtonText>
+            </NewTransactionButtonLeft>
+
+            <NewTransactionButtonRight
+              activeOpacity={0.9}
+              onPress={() => console.log('saída')}
+            >
+              <NewTransactionButtonText>Saída</NewTransactionButtonText>
+
+              <Feather name="minus" color="#ededed" size={24} />
+            </NewTransactionButtonRight>
+          </NewTransactionButtonsContainer>
+        </NewTransactionContainer>
 
         <TransactionList transactionList={transactionList} />
       </Content>
