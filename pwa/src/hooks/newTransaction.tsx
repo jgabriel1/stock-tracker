@@ -38,7 +38,7 @@ const NewTransactionContext = createContext<NewTransactionContextData>(
   {} as NewTransactionContextData,
 )
 
-export const TransactionProvider: React.FC = ({ children }) => {
+export const NewTransactionProvider: React.FC = ({ children }) => {
   const [transaction, setTransaction] = useReducer<TransactionReducer>(
     (state, action) => {
       switch (action.type) {

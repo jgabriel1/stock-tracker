@@ -1,12 +1,9 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { Feather } from '@expo/vector-icons'
 
 import ReturnButton from '../../components/ReturnButton'
 import TransactionList from './components/TransactionList'
-
-import { api } from '../../services/api'
-import { Transaction } from '../../services/api/types'
 
 import { AppStackParamList } from '../../routes/AppStack'
 
@@ -34,27 +31,44 @@ import {
   NewTransactionButtonRight,
 } from './styles'
 
+/*
+  TODO:
+  - Make the new transaction buttons into a floating button in the bottom
+  right or middle of the screen.
+  - Make the info block slide to the side with a future chart component. Or
+  put it below the chart.
+*/
+
 type DetailRouteProps = RouteProp<AppStackParamList, 'Detail'>
 
 const Detail: React.FC = () => {
   const navigation = useNavigation()
-  const {
-    params: { ticker },
-  } = useRoute<DetailRouteProps>()
+
+  const route = useRoute<DetailRouteProps>()
+  const { ticker } = route.params
 
   const { getStockData } = useStocks()
-  const { setTransactionType } = useNewTransaction()
+  const { setTransactionType, setTransactionStock } = useNewTransaction()
 
-  const stockData = getStockData(ticker)
+  const stockData = useMemo(() => getStockData(ticker), [getStockData, ticker])
 
-  const navigateToNewTransactionWith = useCallback(
-    (type: 'IN' | 'OUT') => {
-      navigation.navigate('NewTransaction', {
-        initialTicker: ticker,
-        initialTransactionType: type,
+  const navigateToNewTransaction = useCallback(
+    (type: 'income' | 'outcome') => {
+      setTransactionType(type)
+      setTransactionStock({
+        ticker,
+        fullName: stockData.fullName,
       })
+
+      navigation.navigate('NewTransaction', {})
     },
-    [navigation, ticker],
+    [
+      navigation,
+      setTransactionStock,
+      setTransactionType,
+      stockData.fullName,
+      ticker,
+    ],
   )
 
   const variation = useMemo(() => {
@@ -120,7 +134,7 @@ const Detail: React.FC = () => {
           <NewTransactionButtonsContainer>
             <NewTransactionButtonLeft
               activeOpacity={0.9}
-              onPress={() => console.log('entrada')}
+              onPress={() => navigateToNewTransaction('income')}
             >
               <Feather name="plus" color="#ededed" size={24} />
 
@@ -129,7 +143,7 @@ const Detail: React.FC = () => {
 
             <NewTransactionButtonRight
               activeOpacity={0.9}
-              onPress={() => console.log('saída')}
+              onPress={() => navigateToNewTransaction('outcome')}
             >
               <NewTransactionButtonText>Saída</NewTransactionButtonText>
 
