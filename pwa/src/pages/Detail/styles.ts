@@ -22,7 +22,7 @@ export const Title = styled.Text`
   font-weight: bold;
 `
 
-export const Content = styled.View`
+export const Content = styled.ScrollView`
   flex: 1;
   padding: 0 30px 0;
 `

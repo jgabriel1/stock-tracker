@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
-import { StackNavigationProp } from '@react-navigation/stack'
 import { Feather } from '@expo/vector-icons'
 
 import ReturnButton from '../../components/ReturnButton'
@@ -35,13 +34,13 @@ import {
   NewTransactionButtonRight,
 } from './styles'
 
-const Detail: React.FC = () => {
-  const [transactionList, setTransactionList] = useState<Transaction[]>([])
+type DetailRouteProps = RouteProp<AppStackParamList, 'Detail'>
 
-  const navigation = useNavigation<StackNavigationProp<AppStackParamList>>()
+const Detail: React.FC = () => {
+  const navigation = useNavigation()
   const {
     params: { ticker },
-  } = useRoute<RouteProp<AppStackParamList, 'Detail'>>()
+  } = useRoute<DetailRouteProps>()
 
   const { getStockData } = useStocks()
   const { setTransactionType } = useNewTransaction()
@@ -57,13 +56,6 @@ const Detail: React.FC = () => {
     },
     [navigation, ticker],
   )
-
-  useEffect(() => {
-    api.get('transactions', { params: { ticker } }).then(response => {
-      const { transactions } = response.data
-      setTransactionList(transactions)
-    })
-  }, [ticker])
 
   const variation = useMemo(() => {
     const { regularMarketPrice, average_bought_price } = stockData
@@ -146,7 +138,7 @@ const Detail: React.FC = () => {
           </NewTransactionButtonsContainer>
         </NewTransactionContainer>
 
-        <TransactionList transactionList={transactionList} />
+        <TransactionList ticker={ticker} />
       </Content>
     </Container>
   )
