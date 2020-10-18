@@ -4,6 +4,7 @@ import React, {
   useReducer,
   Reducer,
   useCallback,
+  useMemo,
 } from 'react'
 
 import { api } from '../services/api'
@@ -29,8 +30,9 @@ interface CreateTransactionForm {
 }
 
 interface NewTransactionContextData {
-  setTransactionType(transactionType: 'income' | 'outcome'): void
+  transactionStock: TransactionStock
   setTransactionStock({ ticker, fullName }: TransactionStock): void
+  setTransactionType(transactionType: 'income' | 'outcome'): void
   submitCreateTransaction(data: CreateTransactionForm): Promise<void>
 }
 
@@ -87,6 +89,10 @@ export const NewTransactionProvider: React.FC = ({ children }) => {
     },
     [transaction],
   )
+
+  const transactionStock = useMemo(() => {
+    return transaction.stock
+  }, [transaction.stock])
   /*
     TODO:
     - in regards to the create transaction form, the function will recieve the
@@ -102,6 +108,7 @@ export const NewTransactionProvider: React.FC = ({ children }) => {
   return (
     <NewTransactionContext.Provider
       value={{
+        transactionStock,
         setTransactionType,
         setTransactionStock,
         submitCreateTransaction,
