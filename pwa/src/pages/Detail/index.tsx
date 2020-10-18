@@ -110,14 +110,14 @@ const Detail: React.FC = () => {
         <InfosContainer>
           <InfoItem>
             <InfoLabel>Valor atual:</InfoLabel>
-            <InfoValue>
-              {formatToReal(stockData.average_bought_price)}
-            </InfoValue>
+            <InfoValue>{formatToReal(stockData.regularMarketPrice)}</InfoValue>
           </InfoItem>
 
           <InfoItem>
             <InfoLabel>Valor médio de compra:</InfoLabel>
-            <InfoValue>{formatToReal(stockData.regularMarketPrice)}</InfoValue>
+            <InfoValue>
+              {formatToReal(stockData.average_bought_price)}
+            </InfoValue>
           </InfoItem>
         </InfosContainer>
 
