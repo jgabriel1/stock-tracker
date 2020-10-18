@@ -16,9 +16,11 @@ import ReturnButton from '../../components/ReturnButton'
 import lastValueOfArray from '../../utils/lastValueOfArray'
 
 import { Container, Content, Header, Title } from './styles'
+import { useStocks } from '../../hooks/stocks'
 
 const NewTransaction: React.FC = () => {
-  const { resetTransactionState } = useNewTransaction()
+  const { resetTransactionState, submitCreateTransaction } = useNewTransaction()
+  const { loadBackendData } = useStocks()
 
   const [quantity, setQuantity] = useState('')
   const [totalValue, setTotalValue] = useState('')
@@ -36,6 +38,23 @@ const NewTransaction: React.FC = () => {
       return CommonActions.navigate('Dashboard', { screen: 'StocksList' })
     })
   }, [navigation])
+
+  const handleSubmitTransactionForm = useCallback(async () => {
+    await submitCreateTransaction({
+      quantity: Number(quantity),
+      totalValue: Number(totalValue),
+    })
+
+    await loadBackendData()
+
+    navigateToStocksList()
+  }, [
+    loadBackendData,
+    navigateToStocksList,
+    quantity,
+    totalValue,
+    submitCreateTransaction,
+  ])
 
   useEffect(() => {
     return navigation.addListener('blur', () => {
@@ -70,7 +89,7 @@ const NewTransaction: React.FC = () => {
           keyboardType="number-pad"
         />
 
-        <Button text="Cadastrar" onPress={() => {}} />
+        <Button text="Cadastrar" onPress={handleSubmitTransactionForm} />
       </Content>
     </Container>
   )
