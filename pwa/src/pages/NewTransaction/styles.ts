@@ -17,9 +17,11 @@ export const Title = styled.Text`
   font-size: 24px;
 `
 
-export const Content = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  padding: 30px;
+export const Content = styled.ScrollView.attrs({
+  contentContainerStyle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+})`
+  padding: 48px 30px 0;
 `

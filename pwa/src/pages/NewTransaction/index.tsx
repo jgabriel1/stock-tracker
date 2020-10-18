@@ -20,6 +20,7 @@ import lastValueOfArray from '../../utils/lastValueOfArray'
 
 import { Container, Content, Header, Title } from './styles'
 import Input from '../../components/Input'
+import ChooseStock from './components/ChooseStock'
 
 const NewTransaction: React.FC = () => {
   const route = useRoute<RouteProp<AppStackParamList, 'NewTransaction'>>()
@@ -92,7 +93,9 @@ const NewTransaction: React.FC = () => {
         <Title>Nova Transação</Title>
       </Header>
 
-      <Content>
+      <Content showsVerticalScrollIndicator={false}>
+        <ChooseStock />
+
         <Switch
           value={transactionType === 'IN'}
           onValueChange={() => setTransactionType(toggleTransactionType)}

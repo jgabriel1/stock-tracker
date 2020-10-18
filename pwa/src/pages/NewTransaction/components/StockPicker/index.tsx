@@ -1,7 +1,7 @@
 import React, { useState, SetStateAction, Dispatch, useCallback } from 'react'
 import { Text, View, TextInput, FlatList, TouchableOpacity } from 'react-native'
 
-import useDebounce from '../../../../hooks/useDebounce'
+import useDebounce from '../../../../utils/hooks/useDebounce'
 
 import {
   getSearchQuery,
@@ -19,14 +19,18 @@ interface Props {
 const StockPicker = ({ setTicker, setShowStockPicker }: Props) => {
   const [answerList, setAnswerList] = useState<YahooSearchAnswer[]>([])
 
-  const debouncedQuery = useDebounce(async (text: string) => {
-    if (text.length > 1) {
-      const answers = await getSearchQuery(text)
-      setAnswerList(answers)
-    } else {
-      setAnswerList([])
-    }
-  }, 500)
+  const debouncedQuery = useDebounce(
+    async (text: string) => {
+      if (text.length > 1) {
+        const answers = await getSearchQuery(text)
+        setAnswerList(answers)
+      } else {
+        setAnswerList([])
+      }
+    },
+    [],
+    500,
+  )
 
   const handleSelectStock = useCallback(
     (symbol: string) => {
