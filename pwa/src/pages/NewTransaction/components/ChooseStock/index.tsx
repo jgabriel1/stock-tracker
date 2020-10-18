@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { FlatList, Text, View } from 'react-native'
 
 import Input from '../../../../components/Input'
 import { useNewTransaction } from '../../../../hooks/newTransaction'
@@ -30,12 +29,18 @@ interface TransactionStockInfo {
 }
 
 const ChooseStock: React.FC = () => {
+  const { transactionStock, setTransactionStock } = useNewTransaction()
+
   const [answerList, setAnswerList] = useState<YahooSearchAnswer[]>([])
   const [chosenStock, setChosenStock] = useState<TransactionStockInfo | null>(
-    null,
-  )
+    () => {
+      if (transactionStock.ticker) {
+        return transactionStock
+      }
 
-  const { transactionStock, setTransactionStock } = useNewTransaction()
+      return null
+    },
+  )
 
   const debouncedQuery = useDebounce(
     async (text: string) => {
@@ -53,12 +58,6 @@ const ChooseStock: React.FC = () => {
   const handleSelectStock = useCallback((stock: TransactionStockInfo) => {
     setChosenStock(stock)
   }, [])
-
-  useEffect(() => {
-    if (transactionStock.ticker) {
-      setChosenStock(transactionStock)
-    }
-  }, [transactionStock])
 
   useEffect(() => {
     if (chosenStock) {
