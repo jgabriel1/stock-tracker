@@ -31,9 +31,11 @@ interface CreateTransactionForm {
 
 interface NewTransactionContextData {
   transactionStock: TransactionStock
+  transactionType: 'income' | 'outcome'
   setTransactionStock({ ticker, fullName }: TransactionStock): void
   setTransactionType(transactionType: 'income' | 'outcome'): void
   submitCreateTransaction(data: CreateTransactionForm): Promise<void>
+  resetTransactionState(): void
 }
 
 const NewTransactionContext = createContext<NewTransactionContextData>(
@@ -90,28 +92,27 @@ export const NewTransactionProvider: React.FC = ({ children }) => {
     [transaction],
   )
 
+  const resetTransactionState = useCallback(() => {
+    setTransaction({ type: 'RESET' })
+  }, [])
+
   const transactionStock = useMemo(() => {
     return transaction.stock
   }, [transaction.stock])
-  /*
-    TODO:
-    - in regards to the create transaction form, the function will recieve the
-    form data part of the data to be sent:
-    createTransaction({
-      quantity: 10,
-      unitPrice: 100.00,
-    })
 
-    - the ticker and income | outcome type information will be saved in this
-    component as state;
-  */
+  const transactionType = useMemo(() => {
+    return transaction.type
+  }, [transaction.type])
+
   return (
     <NewTransactionContext.Provider
       value={{
         transactionStock,
+        transactionType,
         setTransactionType,
         setTransactionStock,
         submitCreateTransaction,
+        resetTransactionState,
       }}
     >
       {children}
