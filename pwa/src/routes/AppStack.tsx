@@ -9,7 +9,6 @@ import Register from '../pages/Register'
 import NewTransaction from '../pages/NewTransaction'
 import Detail from '../pages/Detail'
 
-import DataStateProvider from '../store/DataStateProvider'
 import DashboardTabs from './DashboardTabs'
 
 export type AppStackParamList = {
@@ -30,27 +29,25 @@ const { Navigator, Screen } = createStackNavigator<AppStackParamList>()
 
 const Routes: React.FC = () => {
   return (
-    <DataStateProvider>
-      <NavigationContainer>
-        <Navigator
-          screenOptions={{
-            headerShown: false,
-            cardStyle: {
-              backgroundColor: '#ededed',
-            },
-          }}
-        >
-          <Screen name="Home" component={Home} />
-          <Screen name="Login" component={Login} />
-          <Screen name="Register" component={Register} />
+    <NavigationContainer>
+      <Navigator
+        screenOptions={{
+          headerShown: false,
+          cardStyle: {
+            backgroundColor: '#ededed',
+          },
+        }}
+      >
+        <Screen name="Home" component={Home} />
+        <Screen name="Login" component={Login} />
+        <Screen name="Register" component={Register} />
 
-          <Screen name="Dashboard" component={DashboardTabs} />
+        <Screen name="Dashboard" component={DashboardTabs} />
 
-          <Screen name="NewTransaction" component={NewTransaction} />
-          <Screen name="Detail" component={Detail} />
-        </Navigator>
-      </NavigationContainer>
-    </DataStateProvider>
+        <Screen name="NewTransaction" component={NewTransaction} />
+        <Screen name="Detail" component={Detail} />
+      </Navigator>
+    </NavigationContainer>
   )
 }
 
