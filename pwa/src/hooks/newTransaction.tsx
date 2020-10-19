@@ -20,6 +20,7 @@ type TransactionReducer = Reducer<
     stock: TransactionStock
   },
   | { type: 'SET_TYPE'; payload: 'income' | 'outcome' }
+  | { type: 'TOGGLE_TYPE' }
   | { type: 'SET_STOCK'; payload: TransactionStock }
   | { type: 'RESET' }
 >
@@ -33,6 +34,7 @@ interface NewTransactionContextData {
   transactionStock: TransactionStock
   transactionType: 'income' | 'outcome'
   setTransactionStock({ ticker, fullName }: TransactionStock): void
+  toggleTransactionType(): void
   setTransactionType(transactionType: 'income' | 'outcome'): void
   submitCreateTransaction(data: CreateTransactionForm): Promise<void>
   resetTransactionState(): void
@@ -48,6 +50,11 @@ export const NewTransactionProvider: React.FC = ({ children }) => {
       switch (action.type) {
         case 'SET_TYPE':
           return { ...state, type: action.payload }
+        case 'TOGGLE_TYPE':
+          return {
+            ...state,
+            type: state.type === 'income' ? 'outcome' : 'income',
+          }
         case 'SET_STOCK':
           return { ...state, stock: action.payload }
         case 'RESET':
@@ -68,6 +75,10 @@ export const NewTransactionProvider: React.FC = ({ children }) => {
     },
     [],
   )
+
+  const toggleTransactionType = useCallback(() => {
+    setTransaction({ type: 'TOGGLE_TYPE' })
+  }, [])
 
   const setTransactionStock = useCallback(
     ({ ticker, fullName }: TransactionStock) => {
@@ -110,6 +121,7 @@ export const NewTransactionProvider: React.FC = ({ children }) => {
         transactionStock,
         transactionType,
         setTransactionType,
+        toggleTransactionType,
         setTransactionStock,
         submitCreateTransaction,
         resetTransactionState,

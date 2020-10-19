@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback } from 'react'
 import { useNewTransaction } from '../../../../hooks/newTransaction'
 
 import {
@@ -9,36 +9,26 @@ import {
 } from './styles'
 
 const TypeToggleButton = () => {
-  const { transactionType, setTransactionType } = useNewTransaction()
-
-  const [selectedType, setSelectedType] = useState<'income' | 'outcome'>(
-    transactionType,
-  )
+  const { transactionType, toggleTransactionType } = useNewTransaction()
 
   const handleToggleTransactionType = useCallback(() => {
-    setSelectedType(current => {
-      return current === 'income' ? 'outcome' : 'income'
-    })
-  }, [])
-
-  useEffect(() => {
-    setTransactionType(selectedType)
-  }, [selectedType, setTransactionType])
+    toggleTransactionType()
+  }, [toggleTransactionType])
 
   return (
     <Container onPress={handleToggleTransactionType}>
       <Content>
         <TypeTextBackgroundContainer
-          isActive={selectedType === 'income'}
+          isActive={transactionType === 'income'}
           side="left"
         >
-          <TypeText isActive={selectedType === 'income'}>Entrada</TypeText>
+          <TypeText isActive={transactionType === 'income'}>Entrada</TypeText>
         </TypeTextBackgroundContainer>
         <TypeTextBackgroundContainer
-          isActive={selectedType === 'outcome'}
+          isActive={transactionType === 'outcome'}
           side="right"
         >
-          <TypeText isActive={selectedType === 'outcome'}>Saída</TypeText>
+          <TypeText isActive={transactionType === 'outcome'}>Saída</TypeText>
         </TypeTextBackgroundContainer>
       </Content>
     </Container>

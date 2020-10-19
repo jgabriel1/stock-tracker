@@ -32,7 +32,7 @@ const DashboardTabs: React.FC = () => {
         },
         inactiveBackgroundColor: '#fafafc',
         activeBackgroundColor: '#ebebeb',
-        inactiveTintColor: '#777',
+        inactiveTintColor: '#999',
         activeTintColor: '#000',
       }}
     >
@@ -45,7 +45,7 @@ const DashboardTabs: React.FC = () => {
             focused ? (
               <Icon name="monitor" size={size} color="#000" />
             ) : (
-              <Icon name="monitor" size={size} color="#777" />
+              <Icon name="monitor" size={size} color="#999" />
             ),
         }}
       />
@@ -56,9 +56,9 @@ const DashboardTabs: React.FC = () => {
           tabBarLabel: 'Listagem',
           tabBarIcon: ({ size, focused }) =>
             focused ? (
-              <Icon name="list" size={size} />
+              <Icon name="list" size={size} color="#000" />
             ) : (
-              <Icon name="list" size={size} color="#cccccc" />
+              <Icon name="list" size={size} color="#999" />
             ),
         }}
       />
