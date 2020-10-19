@@ -28,14 +28,9 @@ const NewTransaction: React.FC = () => {
   const navigation = useNavigation()
 
   const navigateToStocksList = useCallback(() => {
-    navigation.dispatch(state => {
-      const lastRoute = lastValueOfArray(state.routeNames)
-
-      if (lastRoute === 'Details') {
-        return StackActions.pop(2) // always brings back to StocksList
-      }
-
-      return CommonActions.navigate('Dashboard', { screen: 'StocksList' })
+    navigation.reset({
+      routes: [{ name: 'Dashboard', params: { screen: 'StocksList' } }],
+      index: 0,
     })
   }, [navigation])
 
