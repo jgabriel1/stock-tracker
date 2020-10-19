@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react'
 
+import { useStocks } from '../../hooks/stocks'
+
 import FourBoxGrid from '../../components/FourBoxGrid'
 import PlatformAwareVictoryPie from './components/PlatformAwareVictoryPie'
 
-import { useStocks } from '../../hooks/stocks'
+import formatToReal from '../../utils/formatToReal'
 
 import {
   Container,
@@ -67,30 +69,30 @@ const MainDashboard: React.FC = () => {
       <FourBoxGrid
         nodes={[
           <InfoContainer>
-            <InfoTitle>Total Invested</InfoTitle>
-            <InfoValue>{`$ ${totalInvested.toFixed(2)}`}</InfoValue>
+            <InfoTitle>Total investido</InfoTitle>
+            <InfoValue>{formatToReal(totalInvested)}</InfoValue>
           </InfoContainer>,
 
           <InfoContainer>
-            <InfoTitle>Current Worth</InfoTitle>
-            <InfoValue>{`$ ${currentWorth.toFixed(2)}`}</InfoValue>
+            <InfoTitle>Valor atual</InfoTitle>
+            <InfoValue>{formatToReal(currentWorth)}</InfoValue>
           </InfoContainer>,
 
           <InfoContainer>
-            <InfoTitle>Balance</InfoTitle>
+            <InfoTitle>Saldo</InfoTitle>
             <InfoValue>
               <ColoredText isPositive={currentWorth > totalInvested}>
-                {currentWorth && (currentWorth - totalInvested).toFixed(2)}
+                {currentWorth && formatToReal(currentWorth - totalInvested)}
               </ColoredText>
             </InfoValue>
           </InfoContainer>,
 
           <InfoContainer>
-            <InfoTitle>Variation</InfoTitle>
+            <InfoTitle>Variação</InfoTitle>
             <InfoValue>
               <ColoredText isPositive={currentWorth > totalInvested}>
                 {currentWorth &&
-                  (100 * (currentWorth / totalInvested - 1)).toFixed(2)}
+                  `${(100 * (currentWorth / totalInvested - 1)).toFixed(2)}%`}
               </ColoredText>
             </InfoValue>
           </InfoContainer>,

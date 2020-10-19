@@ -74,7 +74,7 @@ const Detail: React.FC = () => {
   const variation = useMemo(() => {
     const { regularMarketPrice, average_bought_price } = stockData
 
-    const value = regularMarketPrice / average_bought_price
+    const value = 100 * (regularMarketPrice / average_bought_price - 1)
 
     const signal = regularMarketPrice > average_bought_price ? '+' : '-'
 

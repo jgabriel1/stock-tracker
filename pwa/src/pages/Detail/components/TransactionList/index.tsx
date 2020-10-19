@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react'
+
 import { api } from '../../../../services/api'
+
 import formatDate from '../../../../utils/formatDate'
 import formatToReal from '../../../../utils/formatToReal'
 
@@ -36,9 +38,7 @@ const TransactionList: React.FC<TransactionListProps> = ({ ticker }) => {
     return transactions.map(transaction => {
       const isEntry = transaction.total_value > 0
 
-      const formattedPrice = `${isEntry ? '+' : '-'} ${formatToReal(
-        transaction.total_value,
-      )}`
+      const formattedPrice = `${formatToReal(transaction.total_value)}`
 
       return {
         ...transaction,

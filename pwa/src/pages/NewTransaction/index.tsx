@@ -1,10 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import {
-  useNavigation,
-  StackActions,
-  CommonActions,
-} from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 
+import { useStocks } from '../../hooks/stocks'
 import { useNewTransaction } from '../../hooks/newTransaction'
 
 import ChooseStock from './components/ChooseStock'
@@ -13,10 +10,7 @@ import Input from '../../components/Input'
 import Button from '../../components/Button'
 import ReturnButton from '../../components/ReturnButton'
 
-import lastValueOfArray from '../../utils/lastValueOfArray'
-
 import { Container, Content, Header, Title } from './styles'
-import { useStocks } from '../../hooks/stocks'
 
 const NewTransaction: React.FC = () => {
   const { resetTransactionState, submitCreateTransaction } = useNewTransaction()

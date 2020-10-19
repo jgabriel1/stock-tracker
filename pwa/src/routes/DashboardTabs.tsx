@@ -27,29 +27,39 @@ const DashboardTabs: React.FC = () => {
           height: Platform.OS === 'ios' ? 24 : 20,
         },
         labelStyle: {
-          fontSize: 13,
+          fontSize: 14,
           marginLeft: 16,
         },
         inactiveBackgroundColor: '#fafafc',
         activeBackgroundColor: '#ebebeb',
-        inactiveTintColor: '#cccccc',
-        activeTintColor: '#32264d',
+        inactiveTintColor: '#777',
+        activeTintColor: '#000',
       }}
     >
       <Screen
         name="MainDashboard"
         component={MainDashboard}
         options={{
-          tabBarLabel: 'Dashboard',
-          tabBarIcon: ({ size }) => <Icon name="monitor" size={size} />,
+          tabBarLabel: 'Painel',
+          tabBarIcon: ({ size, focused }) =>
+            focused ? (
+              <Icon name="monitor" size={size} color="#000" />
+            ) : (
+              <Icon name="monitor" size={size} color="#777" />
+            ),
         }}
       />
       <Screen
         name="StocksList"
         component={StocksList}
         options={{
-          tabBarLabel: 'Stocks List',
-          tabBarIcon: ({ size }) => <Icon name="list" size={size} />,
+          tabBarLabel: 'Listagem',
+          tabBarIcon: ({ size, focused }) =>
+            focused ? (
+              <Icon name="list" size={size} />
+            ) : (
+              <Icon name="list" size={size} color="#cccccc" />
+            ),
         }}
       />
     </Navigator>
