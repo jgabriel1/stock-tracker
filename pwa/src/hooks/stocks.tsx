@@ -9,6 +9,7 @@ import React, {
 
 import { api } from '../services/api'
 import { getStockInfo } from '../services/yahooFinance/stockInfo'
+import { useAuth } from './auth'
 
 interface BackendData {
   ticker: string
@@ -53,6 +54,8 @@ interface StocksContextData {
 const StocksContext = createContext<StocksContextData>({} as StocksContextData)
 
 export const StocksProvider: React.FC = ({ children }) => {
+  const { token } = useAuth()
+
   const [backendData, setBackendData] = useState<Map<string, BackendData>>(
     new Map(),
   )
@@ -122,6 +125,12 @@ export const StocksProvider: React.FC = ({ children }) => {
 
     setExternalData(data)
   }, [tickers])
+
+  useEffect(() => {
+    if (token) {
+      loadBackendData()
+    }
+  }, [loadBackendData, token])
 
   useEffect(() => {
     if (tickers.length > 0) {
