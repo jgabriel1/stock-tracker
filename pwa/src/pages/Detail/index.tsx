@@ -60,7 +60,7 @@ const Detail: React.FC = () => {
         fullName: stockData.fullName,
       })
 
-      navigation.navigate('NewTransaction', {})
+      navigation.navigate('NewTransaction')
     },
     [
       navigation,

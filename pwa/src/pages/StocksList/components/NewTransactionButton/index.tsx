@@ -1,19 +1,16 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { StackNavigationProp } from '@react-navigation/stack'
 
 import { Feather } from '@expo/vector-icons'
-
-import { AppStackParamList } from '../../../../routes/AppStack'
 
 import { Container, ButtonText } from './styles'
 
 const NewTransactionButton: React.FC = () => {
-  const navigation = useNavigation<StackNavigationProp<AppStackParamList>>()
+  const navigation = useNavigation()
 
-  function handleNavigateToNewTransaction() {
-    navigation.navigate('NewTransaction', {})
-  }
+  const handleNavigateToNewTransaction = useCallback(() => {
+    navigation.navigate('NewTransaction')
+  }, [navigation])
 
   return (
     <Container onPress={handleNavigateToNewTransaction}>
