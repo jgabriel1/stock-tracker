@@ -6,6 +6,8 @@ import { useStocks } from '../../hooks/stocks'
 
 import NewTransactionButton from './components/NewTransactionButton'
 
+import formatToReal from '../../utils/formatToReal'
+
 import {
   ColoredText,
   Container,
@@ -86,17 +88,17 @@ const StockList: React.FC = () => {
                   </StockInfoValueItem>
 
                   <StockInfoValueItem>
-                    <Text>{average_bought_price.toFixed(2)}</Text>
+                    <Text>{formatToReal(average_bought_price)}</Text>
                   </StockInfoValueItem>
 
                   {regularMarketPrice ? (
                     <>
                       <StockInfoValueItem>
-                        <Text>{regularMarketPrice.toFixed(2)}</Text>
+                        <Text>{formatToReal(regularMarketPrice)}</Text>
                       </StockInfoValueItem>
                       <StockInfoValueItem>
                         <ColoredText isPositive={potentialProfit > 0}>
-                          {potentialProfit.toFixed(2)}
+                          {formatToReal(potentialProfit)}
                         </ColoredText>
                       </StockInfoValueItem>
                     </>
