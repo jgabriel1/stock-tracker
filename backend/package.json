@@ -8,7 +8,9 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "tsnd --transpile-only ./src/server.ts --ignore-watch node_modules"
+    "dev": "tsnd --transpile-only ./src/server.ts --ignore-watch node_modules",
+    "postinstall": "tsc",
+    "start": "node dist/server.js"
   },
   "license": "MIT",
   "devDependencies": {
