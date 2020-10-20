@@ -7,9 +7,10 @@ import React, {
   useState,
 } from 'react'
 
+import { useAuth } from './auth'
+
 import { api } from '../services/api'
 import { getStockInfo } from '../services/yahooFinance/stockInfo'
-import { useAuth } from './auth'
 
 interface BackendData {
   ticker: string
@@ -45,6 +46,7 @@ interface StocksContextData {
   tickers: string[]
   totalInvested: number
   currentWorth: number
+  loadingStocks: boolean
 
   getStockData(ticker: string): StockData
   loadBackendData(): Promise<void>
@@ -104,6 +106,10 @@ export const StocksProvider: React.FC = ({ children }) => {
     return stocksData.reduce((accum, stock) => accum + stock.currentWorth, 0)
   }, [stocksData])
 
+  const loadingStocks = useMemo(() => {
+    return externalData.size === 0
+  }, [externalData.size])
+
   const getStockData = useCallback(
     (ticker: string) =>
       stocksData.find(stock => stock.ticker === ticker) || ({} as StockData),
@@ -145,6 +151,7 @@ export const StocksProvider: React.FC = ({ children }) => {
         stocksData,
         totalInvested,
         currentWorth,
+        loadingStocks,
         getStockData,
         loadBackendData,
         loadExternalData,

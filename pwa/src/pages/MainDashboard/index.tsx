@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react'
+import { ActivityIndicator } from 'react-native'
 
 import { useStocks } from '../../hooks/stocks'
 
@@ -17,7 +18,7 @@ import {
 } from './styles'
 
 const MainDashboard: React.FC = () => {
-  const { currentWorth, totalInvested, stocksData } = useStocks()
+  const { currentWorth, totalInvested, stocksData, loadingStocks } = useStocks()
 
   const currentWorthChartData = useMemo(() => {
     const chartDataMap = new Map<string, number>()
@@ -44,27 +45,49 @@ const MainDashboard: React.FC = () => {
     )
   }, [currentWorth, stocksData])
 
+  const variation = useMemo(() => {
+    return (
+      currentWorth &&
+      `${(100 * (currentWorth / totalInvested - 1))
+        .toFixed(2)
+        .replace('.', ',')}%`
+    )
+  }, [currentWorth, totalInvested])
+
   return (
     <Container>
       <Header />
-      <PlatformAwareVictoryPie
-        padding={{ top: 80, bottom: 80, left: 80, right: 80 }}
-        data={currentWorthChartData}
-        labels={({ datum }) => `${datum.x}\n${datum.y.toFixed(1)}%`}
-        labelRadius={({ radius }) => 1.1 * (radius as number)}
-        // labelComponent??
-        style={{
-          labels: {
-            fontSize: 14,
-            textAlign: 'center',
-          },
-          parent: {
+
+      {loadingStocks ? (
+        <ActivityIndicator
+          style={{
             flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
-          },
-        }}
-      />
+          }}
+          size={40}
+          color="#3a3a3a"
+        />
+      ) : (
+        <PlatformAwareVictoryPie
+          padding={{ top: 80, bottom: 80, left: 80, right: 80 }}
+          data={currentWorthChartData}
+          labels={({ datum }) => `${datum.x}\n${datum.y.toFixed(1)}%`}
+          labelRadius={({ radius }) => 1.1 * (radius as number)}
+          // labelComponent??
+          style={{
+            labels: {
+              fontSize: 14,
+              textAlign: 'center',
+            },
+            parent: {
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+            },
+          }}
+        />
+      )}
 
       <FourBoxGrid
         nodes={[
@@ -91,8 +114,7 @@ const MainDashboard: React.FC = () => {
             <InfoTitle>Variação</InfoTitle>
             <InfoValue>
               <ColoredText isPositive={currentWorth > totalInvested}>
-                {currentWorth &&
-                  `${(100 * (currentWorth / totalInvested - 1)).toFixed(2)}%`}
+                {variation}
               </ColoredText>
             </InfoValue>
           </InfoContainer>,
