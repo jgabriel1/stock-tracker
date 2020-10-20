@@ -1,50 +1,76 @@
-import React, { useContext } from 'react'
-import { Text, View, SafeAreaView } from 'react-native'
+import React, { useMemo } from 'react'
+import { ActivityIndicator } from 'react-native'
 
-import usePeriodicEffect from '../../hooks/usePeriodicEffect'
+import { useStocks } from '../../hooks/stocks'
 
 import FourBoxGrid from '../../components/FourBoxGrid'
 import PlatformAwareVictoryPie from './components/PlatformAwareVictoryPie'
 
-import DataContext from '../../store/dataContext'
+import formatToReal from '../../utils/formatToReal'
+
 import {
-  getTotalInvested,
-  getCurrentWorth,
-  getAllTickers,
-  getCurrentWorthChartData,
-} from '../../store/selectors'
-
-import * as Yahoo from '../../services/yahooFinance/stockInfo'
-
-import styles from './styles'
+  Container,
+  Header,
+  InfoContainer,
+  InfoTitle,
+  InfoValue,
+  ColoredText,
+} from './styles'
 
 const MainDashboard: React.FC = () => {
-  const { state, dispatch } = useContext(DataContext)
+  const { currentWorth, totalInvested, stocksData, loadingStocks } = useStocks()
 
-  const tickers = getAllTickers(state)
-  const totalInvested = getTotalInvested(state)
-  const currentWorth = getCurrentWorth(state)
-  const currentWorthChartData = getCurrentWorthChartData(state)
+  const currentWorthChartData = useMemo(() => {
+    const chartDataMap = new Map<string, number>()
 
-  usePeriodicEffect(
-    () => {
-      if (state.isStocksDataReady) {
-        Yahoo.getStockInfo(tickers).then(yahoo => {
-          dispatch({ type: 'SET_YAHOO', payload: yahoo })
-        })
+    stocksData.forEach(stock => {
+      if (chartDataMap.size <= 5) {
+        chartDataMap.set(stock.ticker, stock.currentWorth || 0)
+      } else if (chartDataMap.has('Outro')) {
+        const accumulated = chartDataMap.get('Outro') as number
+        chartDataMap.set('Outro', accumulated + (stock.currentWorth || 0))
+      } else {
+        chartDataMap.set('Outro', stock.currentWorth || 0)
       }
-    },
-    [tickers, state.isStocksDataReady],
-    30 * 1000,
-    false,
-  )
+    })
+
+    return Array.from(chartDataMap.entries()).map(
+      ([ticker, stockCurrentWorth]) => {
+        const percentValue = (100 * stockCurrentWorth) / currentWorth
+        return {
+          x: ticker,
+          y: percentValue,
+        }
+      },
+    )
+  }, [currentWorth, stocksData])
+
+  const variation = useMemo(() => {
+    return (
+      currentWorth &&
+      `${(100 * (currentWorth / totalInvested - 1))
+        .toFixed(2)
+        .replace('.', ',')}%`
+    )
+  }, [currentWorth, totalInvested])
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.chartContainer}>
-        <Text style={styles.chartTitle}>Inventory</Text>
+    <Container>
+      <Header />
+
+      {loadingStocks ? (
+        <ActivityIndicator
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          size={40}
+          color="#3a3a3a"
+        />
+      ) : (
         <PlatformAwareVictoryPie
-          padding={{ top: 100, bottom: 100, left: 100, right: 100 }}
+          padding={{ top: 80, bottom: 80, left: 80, right: 80 }}
           data={currentWorthChartData}
           labels={({ datum }) => `${datum.x}\n${datum.y.toFixed(1)}%`}
           labelRadius={({ radius }) => 1.1 * (radius as number)}
@@ -56,63 +82,46 @@ const MainDashboard: React.FC = () => {
             },
             parent: {
               flex: 1,
-              width: '100%',
               alignItems: 'center',
               justifyContent: 'center',
             },
           }}
         />
-      </View>
+      )}
 
       <FourBoxGrid
         nodes={[
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoTitle}>Total Invested</Text>
-            <Text style={styles.infoValue}>
-              {`$ ${totalInvested.toFixed(2)}`}
-            </Text>
-          </View>,
+          <InfoContainer>
+            <InfoTitle>Total investido</InfoTitle>
+            <InfoValue>{formatToReal(totalInvested)}</InfoValue>
+          </InfoContainer>,
 
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoTitle}>Current Worth</Text>
-            <Text style={styles.infoValue}>
-              {`$ ${currentWorth.toFixed(2)}`}
-            </Text>
-          </View>,
+          <InfoContainer>
+            <InfoTitle>Valor atual</InfoTitle>
+            <InfoValue>{formatToReal(currentWorth)}</InfoValue>
+          </InfoContainer>,
 
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoTitle}>Balance</Text>
-            <Text style={styles.infoValue}>
-              <Text
-                style={
-                  currentWorth > totalInvested
-                    ? styles.greenText
-                    : styles.redText
-                }
-              >
-                {currentWorth && (currentWorth - totalInvested).toFixed(2)}
-              </Text>
-            </Text>
-          </View>,
+          <InfoContainer>
+            <InfoTitle>Saldo</InfoTitle>
+            <InfoValue>
+              <ColoredText isPositive={currentWorth > totalInvested}>
+                {currentWorth && formatToReal(currentWorth - totalInvested)}
+              </ColoredText>
+            </InfoValue>
+          </InfoContainer>,
 
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoTitle}>Variation</Text>
-            <Text
-              style={[
-                styles.infoValue,
-                currentWorth > totalInvested
-                  ? styles.greenText
-                  : styles.redText,
-              ]}
-            >
-              {currentWorth &&
-                (100 * (currentWorth / totalInvested - 1)).toFixed(2)}
-            </Text>
-          </View>,
+          <InfoContainer>
+            <InfoTitle>Variação</InfoTitle>
+            <InfoValue>
+              <ColoredText isPositive={currentWorth > totalInvested}>
+                {variation}
+              </ColoredText>
+            </InfoValue>
+          </InfoContainer>,
         ]}
-        outterStyle={styles.outterInfoContainer}
+        outterStyle={{ flex: 0.66 }}
       />
-    </SafeAreaView>
+    </Container>
   )
 }
 

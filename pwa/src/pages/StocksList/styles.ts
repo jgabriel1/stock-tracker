@@ -1,93 +1,81 @@
-import { StyleSheet } from 'react-native'
+import styled from 'styled-components/native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-  },
+interface ColoredTextProps {
+  isPositive: boolean
+}
 
-  listHeaderContainer: {
-    paddingHorizontal: 32,
-    marginTop: 32,
-    marginBottom: 16,
-  },
+export const Container = styled(SafeAreaView)`
+  flex: 1;
+  justify-content: center;
+  padding: 0 30px;
+  background: #ededed;
+`
 
-  listHeaderText: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'left',
-  },
+export const TitleContainer = styled.View`
+  margin-top: 32px;
+  margin-bottom: 32px;
+`
 
-  listContainer: {
-    flex: 1,
-    paddingTop: 16,
-    width: '95%',
-    alignSelf: 'center',
-  },
+export const TitleText = styled.Text`
+  font-size: 28px;
+  font-weight: bold;
+  text-align: left;
+`
 
-  listItemContainer: {
-    shadowColor: '#000',
-    shadowOpacity: 0.4,
-    shadowRadius: 5,
-    elevation: 15,
+export const StockItemContainer = styled.TouchableOpacity`
+  background: #fff;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  padding: 8px;
+  width: 100%;
 
-    marginBottom: 16,
-    backgroundColor: '#eee',
-    borderRadius: 16,
-    padding: 8,
-    flexDirection: 'row',
-    alignSelf: 'center',
-  },
+  align-self: center;
+`
 
-  tickerContainer: {
-    justifyContent: 'center',
-    paddingHorizontal: 4,
-    width: '16%',
-  },
+export const StockIdentificationContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  padding: 8px;
+`
 
-  tickerText: {
-    fontWeight: 'bold',
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    fontSize: 18,
-  },
+export const StockTickerText = styled.Text`
+  font-size: 24px;
+  font-weight: bold;
+  width: 80px;
+`
 
-  infoContainer: {
-    flex: 1,
-  },
+export const StockFullNameText = styled.Text`
+  font-size: 16px;
+`
 
-  infoLabelsContainer: {
-    flexDirection: 'row',
-  },
+export const StockInfoContainer = styled.View``
 
-  infoLabelItem: {
-    flex: 1,
-    paddingTop: 8,
-    alignItems: 'center',
-  },
+export const StockInfoLabelsContainer = styled.View`
+  flex-direction: row;
+`
 
-  infoLabelText: {
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
+export const StockInfoLabelItem = styled.View`
+  flex: 1;
+  padding-top: 8px;
+  align-items: center;
+`
 
-  infoValuesContainer: {
-    flexDirection: 'row',
-  },
+export const StockInfoLabelText = styled.Text`
+  font-size: 14px;
+  font-weight: bold;
+`
 
-  infoValueItem: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
+export const StockInfoValuesContainer = styled.View`
+  flex-direction: row;
+`
 
-  redText: {
-    color: '#d00',
-  },
+export const StockInfoValueItem = styled.View`
+  flex: 1;
+  align-items: center;
+  padding: 8px 0;
+`
 
-  greenText: {
-    color: '#0a0',
-  },
-})
-
-export default styles
+export const ColoredText = styled.Text<ColoredTextProps>`
+  color: ${props => (props.isPositive ? '#0a0' : '#d00')};
+`

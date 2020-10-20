@@ -6,7 +6,7 @@ import KeyboardView from '../../components/KeyboardView'
 import ReturnButton from '../../components/ReturnButton'
 import Input from '../../components/Input'
 
-import API from '../../services/api'
+import { api } from '../../services/api'
 
 import { Header, Title, Content, FieldSet } from './styles'
 
@@ -17,10 +17,16 @@ const Register: React.FC = () => {
 
   const navigation = useNavigation()
 
-  const handleSubmitRegistration = useCallback(() => {
-    API.postRegister(username, email, password).then(() =>
-      navigation.navigate('Login'),
-    )
+  const handleSubmitRegistration = useCallback(async () => {
+    const data = {
+      username,
+      email,
+      password,
+    }
+
+    await api.post('register', data)
+
+    navigation.navigate('Login')
   }, [email, navigation, password, username])
 
   return (

@@ -7,7 +7,7 @@ import Register from '../pages/Register'
 
 const { Navigator, Screen } = createStackNavigator()
 
-const AuthRotues: React.FC = () => (
+const AuthStack: React.FC = () => (
   <Navigator
     screenOptions={{
       headerShown: false,
@@ -22,4 +22,4 @@ const AuthRotues: React.FC = () => (
   </Navigator>
 )
 
-export default AuthRotues
+export default AuthStack

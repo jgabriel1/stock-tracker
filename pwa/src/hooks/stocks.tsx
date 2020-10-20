@@ -2,16 +2,19 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
+
+import { useAuth } from './auth'
 
 import { api } from '../services/api'
 import { getStockInfo } from '../services/yahooFinance/stockInfo'
 
 interface BackendData {
   ticker: string
-  fullName: string
+  fullName?: string
   currently_owned_shares: number
   average_bought_price: number
 }
@@ -28,23 +31,24 @@ interface ExternalData {
   chartPreviousClose: number
 }
 
-interface StockData extends BackendData, Partial<ExternalData> {
-  currentWorth?: number
-  totalInvested?: number
+interface StockData {
+  ticker: string
+  fullName: string
+  currently_owned_shares: number
+  average_bought_price: number
+  regularMarketPrice: number
+  currentWorth: number
+  totalInvested: number
 }
-
-// interface ChartData {
-//   x: string
-//   y: number
-// }
 
 interface StocksContextData {
   stocksData: StockData[]
   tickers: string[]
   totalInvested: number
   currentWorth: number
-  // currentWorthChartData: ChartData[]
+  loadingStocks: boolean
 
+  getStockData(ticker: string): StockData
   loadBackendData(): Promise<void>
   loadExternalData(): Promise<void>
 }
@@ -52,6 +56,8 @@ interface StocksContextData {
 const StocksContext = createContext<StocksContextData>({} as StocksContextData)
 
 export const StocksProvider: React.FC = ({ children }) => {
+  const { token } = useAuth()
+
   const [backendData, setBackendData] = useState<Map<string, BackendData>>(
     new Map(),
   )
@@ -78,7 +84,7 @@ export const StocksProvider: React.FC = ({ children }) => {
       return {
         // General backend data:
         ticker,
-        fullName: backend.fullName,
+        fullName: backend.fullName || ticker,
 
         // Backend data only dependent:
         currently_owned_shares: backend.currently_owned_shares,
@@ -100,6 +106,16 @@ export const StocksProvider: React.FC = ({ children }) => {
     return stocksData.reduce((accum, stock) => accum + stock.currentWorth, 0)
   }, [stocksData])
 
+  const loadingStocks = useMemo(() => {
+    return externalData.size === 0
+  }, [externalData.size])
+
+  const getStockData = useCallback(
+    (ticker: string) =>
+      stocksData.find(stock => stock.ticker === ticker) || ({} as StockData),
+    [stocksData],
+  )
+
   const loadBackendData = useCallback(async () => {
     const response = await api.get<BackendResponse>('stocks')
 
@@ -116,6 +132,18 @@ export const StocksProvider: React.FC = ({ children }) => {
     setExternalData(data)
   }, [tickers])
 
+  useEffect(() => {
+    if (token) {
+      loadBackendData()
+    }
+  }, [loadBackendData, token])
+
+  useEffect(() => {
+    if (tickers.length > 0) {
+      getStockInfo(tickers).then(setExternalData)
+    }
+  }, [tickers])
+
   return (
     <StocksContext.Provider
       value={{
@@ -123,6 +151,8 @@ export const StocksProvider: React.FC = ({ children }) => {
         stocksData,
         totalInvested,
         currentWorth,
+        loadingStocks,
+        getStockData,
         loadBackendData,
         loadExternalData,
       }}
