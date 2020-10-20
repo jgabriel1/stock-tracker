@@ -25,3 +25,10 @@ export const Content = styled.ScrollView.attrs({
 })`
   padding: 48px 30px 0;
 `
+
+export const FieldSet = styled.View`
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+`

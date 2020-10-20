@@ -10,7 +10,7 @@ import Input from '../../components/Input'
 import Button from '../../components/Button'
 import ReturnButton from '../../components/ReturnButton'
 
-import { Container, Content, Header, Title } from './styles'
+import { Container, Content, FieldSet, Header, Title } from './styles'
 
 const NewTransaction: React.FC = () => {
   const { resetTransactionState, submitCreateTransaction } = useNewTransaction()
@@ -64,19 +64,21 @@ const NewTransaction: React.FC = () => {
 
         <TypeToggleButton />
 
-        <Input
-          onChangeText={text => setQuantity(text)}
-          autoCapitalize="none"
-          placeholder="Quantidade"
-          keyboardType="number-pad"
-        />
+        <FieldSet>
+          <Input
+            onChangeText={text => setQuantity(text)}
+            autoCapitalize="none"
+            placeholder="Quantidade"
+            keyboardType="number-pad"
+          />
 
-        <Input
-          onChangeText={text => setTotalValue(text)}
-          autoCapitalize="none"
-          placeholder="Valor total"
-          keyboardType="number-pad"
-        />
+          <Input
+            onChangeText={text => setTotalValue(text)}
+            autoCapitalize="none"
+            placeholder="Valor total"
+            keyboardType="number-pad"
+          />
+        </FieldSet>
 
         <Button text="Cadastrar" onPress={handleSubmitTransactionForm} />
       </Content>
