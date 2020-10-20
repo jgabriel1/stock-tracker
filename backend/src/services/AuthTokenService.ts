@@ -3,6 +3,7 @@ import { compare } from 'bcrypt'
 import { sign } from 'jsonwebtoken'
 import { UsersRepository } from '../repositories/UsersRepository'
 import { HttpException } from '../errors/HttpException'
+import tokenConfig from '../config/token'
 
 interface Request {
   username: string
@@ -30,7 +31,9 @@ export class AuthTokenService {
   }
 
   private static generateSignedToken(payload: TokenPayload): string {
-    return sign(payload, 'supersecret123', { algorithm: 'HS256' })
+    return sign(payload, tokenConfig.SECRET, {
+      algorithm: tokenConfig.ALGORITHM,
+    })
   }
 
   public async execute({ username, password }: Request): Promise<string> {

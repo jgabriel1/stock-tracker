@@ -31,6 +31,8 @@ async function buildApp(): Promise<Express> {
 
   app.use(routes)
 
+  app.get('/', (_, response) => response.json({ PING: 'PONG' }))
+
   app.use(errorHandler)
 
   return app

@@ -2,6 +2,8 @@ import { verify } from 'jsonwebtoken'
 import { Request, Response, NextFunction } from 'express'
 import { HttpException } from '../errors/HttpException'
 
+import tokenConfig from '../config/token'
+
 interface TokenPayload {
   _id: string
   username: string
@@ -23,7 +25,9 @@ export function checkAuthentication(
   const [, token] = authorization.split(' ')
 
   try {
-    const payload = verify(token, 'supersecret123', { algorithms: ['HS256'] })
+    const payload = verify(token, tokenConfig.SECRET, {
+      algorithms: [tokenConfig.ALGORITHM],
+    })
 
     request.user = payload as TokenPayload
 
