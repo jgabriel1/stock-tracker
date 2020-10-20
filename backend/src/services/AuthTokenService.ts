@@ -36,6 +36,10 @@ export class AuthTokenService {
   public async execute({ username, password }: Request): Promise<string> {
     const user = await this.usersRepository.findByName(username)
 
+    if (!user) {
+      throw new HttpException('This user does not exist.')
+    }
+
     const passwordsMatch = await AuthTokenService.checkPassword(
       password,
       user.password,

@@ -65,12 +65,14 @@ export class UsersRepository extends BaseRepository<IUser> {
     return user
   }
 
-  public async findByName(name: string): Promise<IUser> {
+  public async findByName(name: string): Promise<IUser | null> {
     const user = await this.Model.findOne({ username: name })
 
-    if (!user) {
-      throw new HttpException("This user doesn't exist.", 404)
-    }
+    return user
+  }
+
+  public async findByEmail(email: string): Promise<IUser | null> {
+    const user = await this.Model.findOne({ email })
 
     return user
   }

@@ -27,11 +27,11 @@ async function buildApp(): Promise<Express> {
     },
   )
 
-  app.use(errorHandler)
-
   app.use(express.json())
 
   app.use(routes)
+
+  app.use(errorHandler)
 
   return app
 }
