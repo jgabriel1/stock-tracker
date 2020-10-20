@@ -9,7 +9,7 @@ const NewTransactionButton: React.FC = () => {
   const navigation = useNavigation()
 
   const handleNavigateToNewTransaction = useCallback(() => {
-    navigation.navigate('NewTransaction')
+    navigation.navigate('CreateTransaction')
   }, [navigation])
 
   return (

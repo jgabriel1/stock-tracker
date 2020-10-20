@@ -2,7 +2,7 @@ import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
-import NewTransaction from '../pages/NewTransaction'
+import CreateTransaction from '../pages/CreateTransaction'
 import Detail from '../pages/Detail'
 
 import DashboardTabs from './DashboardTabs'
@@ -12,7 +12,7 @@ export type AppStackParamList = {
   Detail: {
     ticker: string
   }
-  NewTransaction: undefined
+  CreateTransaction: undefined
 }
 
 const { Navigator, Screen } = createStackNavigator<AppStackParamList>()
@@ -30,7 +30,7 @@ const AppStack: React.FC = () => {
       >
         <Screen name="Dashboard" component={DashboardTabs} />
 
-        <Screen name="NewTransaction" component={NewTransaction} />
+        <Screen name="CreateTransaction" component={CreateTransaction} />
         <Screen name="Detail" component={Detail} />
       </Navigator>
     </NavigationContainer>

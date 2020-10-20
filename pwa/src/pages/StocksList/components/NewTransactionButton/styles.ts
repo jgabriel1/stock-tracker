@@ -6,7 +6,7 @@ export const Container = styled(RectButton)`
   bottom: 0;
   width: 80%;
   align-self: center;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
   padding: 0 16px;
 
   flex-direction: row;
