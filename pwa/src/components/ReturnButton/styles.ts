@@ -1,15 +1,9 @@
-import { StyleSheet } from 'react-native'
+import styled from 'styled-components/native'
+import { BorderlessButton } from 'react-native-gesture-handler'
 
-const styles = StyleSheet.create({
-  button: {
-    marginTop: 12,
-    marginLeft: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderRadius: 32,
-    alignSelf: 'flex-start',
-    position: 'relative',
-  },
-})
-
-export default styles
+export const Container = styled(BorderlessButton)`
+  padding: 8px 8px;
+  border-radius: 32px;
+  position: absolute;
+  left: 4px;
+`

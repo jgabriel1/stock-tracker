@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native'
 const styles = StyleSheet.create({
   outterContainer: {
     flex: 1,
-    margin: 16,
+    marginVertical: 16,
     flexDirection: 'row',
     flexWrap: 'wrap',
   },

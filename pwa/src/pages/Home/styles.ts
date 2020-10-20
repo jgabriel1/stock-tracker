@@ -1,47 +1,24 @@
-import { StyleSheet } from 'react-native'
+import styled from 'styled-components/native'
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-  },
+export const Container = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 0 30px;
+`
 
-  titleContainer: {
-    width: '80%',
-    paddingBottom: 96,
-  },
+export const Title = styled.View`
+  width: 96%;
+  padding-bottom: 84px;
+`
 
-  titleText: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    paddingBottom: 32,
-  },
+export const TitleText = styled.Text`
+  font-size: 36px;
+  font-weight: bold;
+  padding-bottom: 32px;
+`
 
-  titleDescription: {
-    fontSize: 14,
-  },
-
-  buttonContainer: {
-    width: '80%',
-  },
-
-  button: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#999',
-    height: 48,
-    borderRadius: 4,
-    marginBottom: 16,
-  },
-
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
-  },
-})
-
-export default styles
+export const TitleDescription = styled.Text`
+  font-size: 16px;
+  line-height: 24px;
+`

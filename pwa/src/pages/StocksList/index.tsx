@@ -1,32 +1,49 @@
-import React, { useContext } from 'react'
-import { Text, View, TouchableOpacity, FlatList } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import React, { useCallback } from 'react'
+import { Text, FlatList } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 
-import DataContext from '../../store/dataContext'
-import { getAllStocksData } from '../../store/selectors'
+import { useStocks } from '../../hooks/stocks'
 
 import NewTransactionButton from './components/NewTransactionButton'
 
-import styles from './styles'
+import formatToReal from '../../utils/formatToReal'
+
+import {
+  ColoredText,
+  Container,
+  StockFullNameText,
+  StockIdentificationContainer,
+  StockInfoContainer,
+  StockInfoLabelItem,
+  StockInfoLabelsContainer,
+  StockInfoLabelText,
+  StockInfoValueItem,
+  StockInfoValuesContainer,
+  StockItemContainer,
+  StockTickerText,
+  TitleContainer,
+  TitleText,
+} from './styles'
 
 const StockList: React.FC = () => {
-  const { state } = useContext(DataContext)
-  const stocksList = getAllStocksData(state)
+  const { stocksData } = useStocks()
 
   const navigation = useNavigation()
 
-  function navigateToDetail(ticker: string): void {
-    navigation.navigate('Detail', { ticker })
-  }
+  const navigateToDetail = useCallback(
+    (ticker: string) => {
+      navigation.navigate('Detail', { ticker })
+    },
+    [navigation],
+  )
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.listHeaderContainer}>
-        <Text style={styles.listHeaderText}>My Stocks</Text>
-      </View>
+    <Container>
+      <TitleContainer>
+        <TitleText>Minhas ações</TitleText>
+      </TitleContainer>
       <FlatList
-        data={stocksList}
+        data={stocksData}
         keyExtractor={item => item.ticker}
         renderItem={({ item: stock }) => {
           const { ticker, currently_owned_shares, average_bought_price } = stock
@@ -34,90 +51,78 @@ const StockList: React.FC = () => {
           const { regularMarketPrice } = stock
           const potentialProfit = regularMarketPrice
             ? (regularMarketPrice - average_bought_price) *
-            currently_owned_shares
+              currently_owned_shares
             : 0
 
           return (
-            <TouchableOpacity
-              style={styles.listItemContainer}
-              onPress={() => navigateToDetail(ticker)}
-            >
-              <View style={styles.tickerContainer}>
-                <Text
-                  style={styles.tickerText}
-                  adjustsFontSizeToFit
-                  numberOfLines={1}
-                >
+            <StockItemContainer onPress={() => navigateToDetail(ticker)}>
+              <StockIdentificationContainer>
+                <StockTickerText adjustsFontSizeToFit numberOfLines={1}>
                   {ticker}
-                </Text>
-              </View>
+                </StockTickerText>
+                <StockFullNameText>{stock.fullName}</StockFullNameText>
+              </StockIdentificationContainer>
 
-              <View style={styles.infoContainer}>
-                <View style={styles.infoLabelsContainer}>
-                  <View style={styles.infoLabelItem}>
-                    <Text style={styles.infoLabelText}>Owned</Text>
-                  </View>
+              <StockInfoContainer>
+                <StockInfoLabelsContainer>
+                  <StockInfoLabelItem>
+                    <StockInfoLabelText>Quant.</StockInfoLabelText>
+                  </StockInfoLabelItem>
 
-                  <View style={styles.infoLabelItem}>
-                    <Text style={styles.infoLabelText}>Bought at</Text>
-                  </View>
+                  <StockInfoLabelItem>
+                    <StockInfoLabelText>Compra</StockInfoLabelText>
+                  </StockInfoLabelItem>
 
-                  <View style={styles.infoLabelItem}>
-                    <Text style={styles.infoLabelText}>Current</Text>
-                  </View>
+                  <StockInfoLabelItem>
+                    <StockInfoLabelText>Atual</StockInfoLabelText>
+                  </StockInfoLabelItem>
 
-                  <View style={styles.infoLabelItem}>
-                    <Text style={styles.infoLabelText}>Balance</Text>
-                  </View>
-                </View>
+                  <StockInfoLabelItem>
+                    <StockInfoLabelText>Variação</StockInfoLabelText>
+                  </StockInfoLabelItem>
+                </StockInfoLabelsContainer>
 
-                <View style={styles.infoValuesContainer}>
-                  <View style={styles.infoValueItem}>
+                <StockInfoValuesContainer>
+                  <StockInfoValueItem>
                     <Text>{currently_owned_shares}</Text>
-                  </View>
+                  </StockInfoValueItem>
 
-                  <View style={styles.infoValueItem}>
-                    <Text>{average_bought_price.toFixed(2)}</Text>
-                  </View>
+                  <StockInfoValueItem>
+                    <Text>{formatToReal(average_bought_price)}</Text>
+                  </StockInfoValueItem>
 
                   {regularMarketPrice ? (
                     <>
-                      <View style={styles.infoValueItem}>
-                        <Text>{regularMarketPrice.toFixed(2)}</Text>
-                      </View>
-                      <View style={styles.infoValueItem}>
-                        <Text
-                          style={[
-                            potentialProfit > 0
-                              ? styles.greenText
-                              : styles.redText,
-                          ]}
-                        >
-                          {potentialProfit.toFixed(2)}
-                        </Text>
-                      </View>
+                      <StockInfoValueItem>
+                        <Text>{formatToReal(regularMarketPrice)}</Text>
+                      </StockInfoValueItem>
+                      <StockInfoValueItem>
+                        <ColoredText isPositive={potentialProfit > 0}>
+                          {formatToReal(potentialProfit)}
+                        </ColoredText>
+                      </StockInfoValueItem>
                     </>
                   ) : (
                     <>
-                      <View style={styles.infoValueItem}>
+                      <StockInfoValueItem>
                         <Text>-</Text>
-                      </View>
-                      <View style={styles.infoValueItem}>
+                      </StockInfoValueItem>
+                      <StockInfoValueItem>
                         <Text>-</Text>
-                      </View>
+                      </StockInfoValueItem>
                     </>
                   )}
-                </View>
-              </View>
-            </TouchableOpacity>
+                </StockInfoValuesContainer>
+              </StockInfoContainer>
+            </StockItemContainer>
           )
         }}
         scrollEnabled
         alwaysBounceVertical
-        contentContainerStyle={styles.listContainer}
+        // contentContainerStyle={styles.listContainer}
       />
       <NewTransactionButton />
-    </SafeAreaView>
+    </Container>
   )
 }
 

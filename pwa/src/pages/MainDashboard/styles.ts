@@ -1,61 +1,36 @@
-import { StyleSheet } from 'react-native'
+import styled from 'styled-components/native'
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-  },
+interface ColoredTextProps {
+  isPositive: boolean
+}
 
-  chartContainer: {
-    flex: 1,
-    marginTop: 16,
-    marginHorizontal: 16,
-    borderRadius: 16,
-    backgroundColor: '#f1f1f1',
+export const Container = styled.SafeAreaView`
+  flex: 1;
+  justify-content: center;
+  background: #ededed;
 
-    justifyContent: 'center',
+  padding: 0 30px;
+`
+export const Header = styled.View`
+  height: 40px;
+`
 
-    shadowColor: '#000',
-    shadowOpacity: 0.4,
-    shadowRadius: 5,
-    elevation: 15,
-  },
+export const InfoContainer = styled.View`
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+`
 
-  chartTitle: {
-    fontSize: 24,
-    marginLeft: 24,
-    marginTop: 16,
-    marginBottom: 16,
-    fontWeight: 'bold',
-  },
+export const InfoTitle = styled.Text`
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: bold;
+`
 
-  outterInfoContainer: {
-    flex: 0.66,
-  },
+export const InfoValue = styled.Text`
+  font-size: 18px;
+`
 
-  infoContainer: {
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  infoTitle: {
-    marginBottom: 16,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-
-  infoValue: {
-    fontSize: 18,
-  },
-
-  redText: {
-    color: '#d00',
-  },
-
-  greenText: {
-    color: '#0a0',
-  },
-})
-
-export default styles
+export const ColoredText = styled.Text<ColoredTextProps>`
+  color: ${props => (props.isPositive ? '#0a0' : '#d00')};
+`

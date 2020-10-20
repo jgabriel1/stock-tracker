@@ -1,36 +1,35 @@
-import React from 'react'
-import { Text, View } from 'react-native'
+import React, { useCallback } from 'react'
 import { useNavigation } from '@react-navigation/native'
 
 import Button from '../../components/Button'
 
-import styles from './styles'
+import { Container, Title, TitleText, TitleDescription } from './styles'
 
 const Home: React.FC = () => {
   const navigation = useNavigation()
 
-  function navigateToLogin() {
+  const navigateToLogin = useCallback(() => {
     navigation.navigate('Login')
-  }
+  }, [navigation])
 
-  function navigateToRegister() {
+  const navigateToRegister = useCallback(() => {
     navigation.navigate('Register')
-  }
+  }, [navigation])
 
   return (
-    <View style={styles.container}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.titleText}>Stock Tracker</Text>
-        <Text style={styles.titleDescription}>
-          An app to track the stocks you own and project your gains.
-        </Text>
-      </View>
+    <Container>
+      <Title>
+        <TitleText>Stock Tracker</TitleText>
+        <TitleDescription>
+          Um app para manter controle das suas ações e seus ganhos.
+        </TitleDescription>
+      </Title>
 
       <>
         <Button text="Login" onPress={navigateToLogin} />
-        <Button text="Register" onPress={navigateToRegister} />
+        <Button text="Cadastre-se" onPress={navigateToRegister} />
       </>
-    </View>
+    </Container>
   )
 }
 

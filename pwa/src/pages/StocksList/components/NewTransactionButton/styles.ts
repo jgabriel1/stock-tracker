@@ -1,38 +1,33 @@
-import { StyleSheet } from 'react-native'
+import styled from 'styled-components/native'
+import { RectButton } from 'react-native-gesture-handler'
 
-const styles = StyleSheet.create({
-  buttonContainer: {
-    position: 'absolute',
-    bottom: 0,
-    width: '66%',
-    alignSelf: 'center',
-    marginBottom: 16,
+export const Container = styled(RectButton)`
+  position: absolute;
+  bottom: 0;
+  width: 80%;
+  align-self: center;
+  margin-bottom: 24px;
+  padding: 0 16px;
 
-    flexDirection: 'row',
-    alignItems: 'center',
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#555',
-  },
+  height: 50px;
+  border-radius: 25px;
+  background-color: #3a3a3a;
+`
 
-  buttonIconContainer: {
-    alignItems: 'center',
-    marginLeft: 16,
-  },
+export const ButtonTextContainer = styled.View``
 
-  buttonTextContainer: {
-    flex: 1,
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+export const ButtonText = styled.Text`
+  flex: 1;
 
-  buttonText: {
-    fontSize: 20,
-    color: '#fff',
-    fontWeight: '600',
-  },
-})
+  font-size: 20px;
+  color: #ededed;
+  font-weight: 600;
 
-export default styles
+  margin-left: 32px;
+  align-items: center;
+  justify-content: center;
+`
