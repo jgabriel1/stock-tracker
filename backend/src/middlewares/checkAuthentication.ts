@@ -32,7 +32,7 @@ export function checkAuthentication(
     request.user = payload as TokenPayload
 
     return next()
-  } catch {
+  } catch (error) {
     throw new HttpException('Invalid credentials.', 401)
   }
 }
