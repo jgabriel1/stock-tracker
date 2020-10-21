@@ -1,4 +1,3 @@
-import { ClientSession, startSession } from 'mongoose'
 import { inject, injectable } from 'tsyringe'
 import { HttpException } from '../errors/HttpException'
 import { StockInfoRepository } from '../repositories/StockInfoRepository'
@@ -16,8 +15,6 @@ interface Request {
 
 @injectable()
 export class CreateTransactionService {
-  private session?: ClientSession
-
   constructor(
     @inject(UsersRepository)
     private usersRepository: UsersRepository,
@@ -27,32 +24,6 @@ export class CreateTransactionService {
     private stockInfoRepository: StockInfoRepository,
   ) {}
 
-  private async getStockId(ticker: string, fullName: string): Promise<string> {
-    const stockInfo = await this.stockInfoRepository.findByTicker(
-      ticker,
-      this.session,
-    )
-
-    if (!stockInfo) {
-      const newStockInfo = await this.stockInfoRepository.create(
-        {
-          ticker,
-          fullName,
-        },
-        this.session,
-      )
-
-      return newStockInfo._id.toHexString()
-    }
-
-    return stockInfo._id.toHexString()
-  }
-
-  private async beginTransaction(): Promise<void> {
-    this.session = await startSession()
-    this.session.startTransaction()
-  }
-
   public async execute({
     userId,
     stockTicker,
@@ -61,11 +32,31 @@ export class CreateTransactionService {
     quantity,
     type,
   }: Request): Promise<void> {
-    this.beginTransaction()
+    await this.transactionsRepository.beginTransaction()
+    const { session } = this.transactionsRepository
 
     // 1 - check if stock already exists while grabbing it's id, if it doesn't exist,
     // create it and also return the id
-    const stockId = await this.getStockId(stockTicker, stockFullName)
+    let stockId: string
+
+    const stockAlreadyExists = await this.stockInfoRepository.findByTicker(
+      stockTicker,
+      session,
+    )
+
+    if (stockAlreadyExists) {
+      stockId = stockAlreadyExists._id.toHexString()
+    } else {
+      const newStockInfo = await this.stockInfoRepository.create(
+        {
+          ticker: stockTicker,
+          fullName: stockFullName,
+        },
+        session,
+      )
+
+      stockId = newStockInfo._id.toHexString()
+    }
 
     // 2 - In case of an outcome transaction, don't allow it to be created if it
     // is greater than that sotck's balance itself.
@@ -91,7 +82,7 @@ export class CreateTransactionService {
         type,
         creatorId: userId,
       },
-      this.session,
+      session,
     )
 
     await this.usersRepository.addTransaction(
@@ -99,9 +90,9 @@ export class CreateTransactionService {
         userId,
         transaction: newTransaction,
       },
-      this.session,
+      session,
     )
 
-    await this.session?.commitTransaction()
+    await session?.commitTransaction()
   }
 }
