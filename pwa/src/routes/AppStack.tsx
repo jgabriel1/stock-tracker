@@ -1,5 +1,4 @@
 import React from 'react'
-import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import CreateTransaction from '../pages/CreateTransaction'
@@ -19,21 +18,19 @@ const { Navigator, Screen } = createStackNavigator<AppStackParamList>()
 
 const AppStack: React.FC = () => {
   return (
-    <NavigationContainer>
-      <Navigator
-        screenOptions={{
-          headerShown: false,
-          cardStyle: {
-            backgroundColor: '#ededed',
-          },
-        }}
-      >
-        <Screen name="Dashboard" component={DashboardTabs} />
+    <Navigator
+      screenOptions={{
+        headerShown: false,
+        cardStyle: {
+          backgroundColor: '#ededed',
+        },
+      }}
+    >
+      <Screen name="Dashboard" component={DashboardTabs} />
 
-        <Screen name="CreateTransaction" component={CreateTransaction} />
-        <Screen name="Detail" component={Detail} />
-      </Navigator>
-    </NavigationContainer>
+      <Screen name="CreateTransaction" component={CreateTransaction} />
+      <Screen name="Detail" component={Detail} />
+    </Navigator>
   )
 }
 
