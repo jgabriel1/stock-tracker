@@ -6,6 +6,7 @@ import {
   Content,
   TypeText,
   TypeTextBackgroundContainer,
+  TypeBackgroundMovingBlock,
 } from './styles'
 
 const TypeToggleButton = () => {
@@ -18,16 +19,11 @@ const TypeToggleButton = () => {
   return (
     <Container onPress={handleToggleTransactionType}>
       <Content>
-        <TypeTextBackgroundContainer
-          isActive={transactionType === 'income'}
-          side="left"
-        >
+        <TypeBackgroundMovingBlock isActive={transactionType === 'income'} />
+        <TypeTextBackgroundContainer>
           <TypeText isActive={transactionType === 'income'}>Entrada</TypeText>
         </TypeTextBackgroundContainer>
-        <TypeTextBackgroundContainer
-          isActive={transactionType === 'outcome'}
-          side="right"
-        >
+        <TypeTextBackgroundContainer>
           <TypeText isActive={transactionType === 'outcome'}>Saída</TypeText>
         </TypeTextBackgroundContainer>
       </Content>

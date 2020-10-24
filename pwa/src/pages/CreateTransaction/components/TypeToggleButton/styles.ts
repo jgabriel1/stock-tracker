@@ -1,12 +1,7 @@
-import styled, { css } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 interface TypeTextProps {
   isActive: boolean
-}
-
-interface TypeTextContainerProps {
-  isActive: boolean
-  side: 'left' | 'right'
 }
 
 export const Container = styled.TouchableWithoutFeedback``
@@ -20,25 +15,23 @@ export const Content = styled.View`
   margin-bottom: 32px;
   border-radius: 60px;
   border: 1px solid #a2a2a2;
+  position: relative;
 `
 
-export const TypeTextBackgroundContainer = styled.View<TypeTextContainerProps>`
+export const TypeBackgroundMovingBlock = styled.View<TypeTextProps>`
+  position: absolute;
+  height: 100%;
+  width: 50%;
+  border-radius: 30px;
+  background: #3a3a3a;
+
+  left: ${({ isActive }) => (isActive ? 0 : 50)}%;
+`
+
+export const TypeTextBackgroundContainer = styled.View`
   width: 50%;
   justify-content: center;
   align-items: center;
-
-  background-color: ${({ isActive }) => (isActive ? '#3a3a3a' : '#ededed')};
-
-  ${({ side }) =>
-    side === 'left'
-      ? css`
-          border-top-left-radius: 30px;
-          border-bottom-left-radius: 30px;
-        `
-      : css`
-          border-top-right-radius: 30px;
-          border-bottom-right-radius: 30px;
-        `}
 `
 
 export const TypeText = styled.Text<TypeTextProps>`
