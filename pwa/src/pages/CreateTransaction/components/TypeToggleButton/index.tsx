@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react'
+import { useSharedValue } from 'react-native-reanimated'
 import { useNewTransaction } from '../../../../hooks/newTransaction'
 
 import {
@@ -11,6 +12,8 @@ import {
 
 const TypeToggleButton = () => {
   const { transactionType, toggleTransactionType } = useNewTransaction()
+
+  const offset = useSharedValue(0)
 
   const handleToggleTransactionType = useCallback(() => {
     toggleTransactionType()

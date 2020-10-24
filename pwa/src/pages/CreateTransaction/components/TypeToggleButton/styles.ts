@@ -25,7 +25,7 @@ export const TypeBackgroundMovingBlock = styled.View<TypeTextProps>`
   border-radius: 30px;
   background: #3a3a3a;
 
-  left: ${({ isActive }) => (isActive ? 0 : 50)}%;
+  left: 0;
 `
 
 export const TypeTextBackgroundContainer = styled.View`
