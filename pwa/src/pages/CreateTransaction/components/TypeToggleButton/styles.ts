@@ -1,4 +1,5 @@
 import styled from 'styled-components/native'
+import Animated from 'react-native-reanimated'
 
 interface TypeTextProps {
   isActive: boolean
@@ -18,7 +19,7 @@ export const Content = styled.View`
   position: relative;
 `
 
-export const TypeBackgroundMovingBlock = styled.View<TypeTextProps>`
+export const TypeBackgroundMovingBlock = styled(Animated.View)`
   position: absolute;
   height: 100%;
   width: 50%;
@@ -34,8 +35,6 @@ export const TypeTextBackgroundContainer = styled.View`
   align-items: center;
 `
 
-export const TypeText = styled.Text<TypeTextProps>`
+export const TypeText = styled(Animated.Text)`
   font-size: 18px;
-
-  color: ${({ isActive }) => (isActive ? '#ededed' : '#3a3a3a')};
 `
