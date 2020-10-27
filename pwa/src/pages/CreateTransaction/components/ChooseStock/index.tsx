@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { View } from 'react-native'
-import { useSharedValue } from 'react-native-reanimated'
+import {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated'
 
 import Input from '../../../../components/Input'
 import { useNewTransaction } from '../../../../hooks/newTransaction'
@@ -46,18 +50,46 @@ const ChooseStock: React.FC = () => {
     },
   )
 
-  const responseListHeight = useSharedValue(0)
+  const responseListAnimationHeight = useSharedValue(-1000)
+
+  const responseListMarginAnimationStyle = useAnimatedStyle(() => {
+    const marginTop = withTiming(responseListAnimationHeight.value, {
+      duration: 200,
+      easing: Easing.quad,
+    })
+
+    return {
+      marginTop,
+    }
+  })
+
+  const fireResponseListDropAnimation = useCallback(
+    (action: 'OPEN' | 'CLOSE') => {
+      switch (action) {
+        case 'OPEN':
+          responseListAnimationHeight.value = 0
+          break
+        case 'CLOSE':
+        default:
+          responseListAnimationHeight.value = -1000
+          break
+      }
+    },
+    [responseListAnimationHeight.value],
+  )
 
   const debouncedQuery = useDebounce(
     async (text: string) => {
       if (text.length > 1) {
         const answers = await getSearchQuery(text)
         setAnswerList(answers)
+        fireResponseListDropAnimation('OPEN')
       } else {
+        fireResponseListDropAnimation('CLOSE')
         setAnswerList([])
       }
     },
-    [],
+    [fireResponseListDropAnimation],
     500,
   )
 
@@ -92,7 +124,7 @@ const ChooseStock: React.FC = () => {
         />
       </InputContainer>
 
-      <ResponseItemListContainer>
+      <ResponseItemListContainer style={responseListMarginAnimationStyle}>
         {answerList.map(answer => (
           <ItemContainer
             key={answer.symbol}

@@ -28,10 +28,9 @@ export const InputContainer = styled.View`
 `
 
 export const ResponseItemListContainer = styled(Animated.View)`
-  background: #fff;
   z-index: -1;
   elevation: -1;
-  margin: -400% 0 -64px;
+  margin: 0 0 -64px;
 `
 
 export const ItemContainer = styled.TouchableOpacity`
@@ -41,6 +40,8 @@ export const ItemContainer = styled.TouchableOpacity`
   border-radius: 30px;
   padding: 20px 24px;
   justify-content: center;
+  z-index: -1;
+  elevation: -1;
 `
 
 export const ItemNameContainer = styled.View`
