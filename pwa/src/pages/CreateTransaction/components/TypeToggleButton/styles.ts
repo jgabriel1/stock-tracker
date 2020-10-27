@@ -1,12 +1,8 @@
-import styled, { css } from 'styled-components/native'
+import styled from 'styled-components/native'
+import Animated from 'react-native-reanimated'
 
 interface TypeTextProps {
   isActive: boolean
-}
-
-interface TypeTextContainerProps {
-  isActive: boolean
-  side: 'left' | 'right'
 }
 
 export const Container = styled.TouchableWithoutFeedback``
@@ -17,32 +13,29 @@ export const Content = styled.View`
   justify-content: space-between;
   align-items: stretch;
   flex-direction: row;
+  margin-top: 72px;
   margin-bottom: 32px;
   border-radius: 60px;
   border: 1px solid #a2a2a2;
+  position: relative;
 `
 
-export const TypeTextBackgroundContainer = styled.View<TypeTextContainerProps>`
+export const TypeBackgroundMovingBlock = styled(Animated.View)`
+  position: absolute;
+  height: 100%;
+  width: 50%;
+  border-radius: 30px;
+  background: #3a3a3a;
+
+  left: 0;
+`
+
+export const TypeTextBackgroundContainer = styled.View`
   width: 50%;
   justify-content: center;
   align-items: center;
-
-  background-color: ${({ isActive }) => (isActive ? '#3a3a3a' : '#ededed')};
-
-  ${({ side }) =>
-    side === 'left'
-      ? css`
-          border-top-left-radius: 30px;
-          border-bottom-left-radius: 30px;
-        `
-      : css`
-          border-top-right-radius: 30px;
-          border-bottom-right-radius: 30px;
-        `}
 `
 
-export const TypeText = styled.Text<TypeTextProps>`
+export const TypeText = styled(Animated.Text)`
   font-size: 18px;
-
-  color: ${({ isActive }) => (isActive ? '#ededed' : '#3a3a3a')};
 `

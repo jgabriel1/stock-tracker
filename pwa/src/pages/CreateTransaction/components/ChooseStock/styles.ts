@@ -1,4 +1,5 @@
 import styled from 'styled-components/native'
+import Animated from 'react-native-reanimated'
 
 export const Container = styled.View`
   width: 100%;
@@ -7,7 +8,7 @@ export const Container = styled.View`
 
 export const ChosenStockInfoContainer = styled.View`
   width: 100%;
-  margin-bottom: 32px;
+  margin-bottom: -32px;
 `
 
 export const ChosenStockTicker = styled.Text`
@@ -20,6 +21,18 @@ export const ChosenStockFullName = styled.Text`
   font-size: 32px;
 `
 
+export const InputContainer = styled.View`
+  background-color: #ededed;
+  height: 60px;
+  margin-bottom: 16px;
+`
+
+export const ResponseItemListContainer = styled(Animated.View)`
+  z-index: -1;
+  elevation: -1;
+  margin: 0 0 -64px;
+`
+
 export const ItemContainer = styled.TouchableOpacity`
   margin-bottom: 16px;
   background: #ededed;
@@ -27,6 +40,8 @@ export const ItemContainer = styled.TouchableOpacity`
   border-radius: 30px;
   padding: 20px 24px;
   justify-content: center;
+  z-index: -1;
+  elevation: -1;
 `
 
 export const ItemNameContainer = styled.View`
