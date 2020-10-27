@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { View } from 'react-native'
+import { useSharedValue } from 'react-native-reanimated'
 
 import Input from '../../../../components/Input'
 import { useNewTransaction } from '../../../../hooks/newTransaction'
@@ -14,6 +16,8 @@ import {
   ChosenStockInfoContainer,
   ChosenStockTicker,
   Container,
+  InputContainer,
+  ResponseItemListContainer,
   ItemContainer,
   ItemFullName,
   ItemInfoContainer,
@@ -41,6 +45,8 @@ const ChooseStock: React.FC = () => {
       return null
     },
   )
+
+  const responseListHeight = useSharedValue(0)
 
   const debouncedQuery = useDebounce(
     async (text: string) => {
@@ -77,38 +83,43 @@ const ChooseStock: React.FC = () => {
 
   return (
     <Container>
-      <Input
-        autoCapitalize="none"
-        placeholder="Buscar ação..."
-        onChangeText={debouncedQuery}
-      />
+      <InputContainer>
+        <Input
+          autoCapitalize="none"
+          placeholder="Buscar ação..."
+          onChangeText={debouncedQuery}
+          style={{ marginBottom: 16, backgroundColor: '#ededed' }}
+        />
+      </InputContainer>
 
-      {answerList.map(answer => (
-        <ItemContainer
-          key={answer.symbol}
-          onPress={() =>
-            handleSelectStock({
-              ticker: answer.symbol,
-              fullName: answer.longname || answer.symbol,
-            })
-          }
-        >
-          <ItemNameContainer>
-            <ItemFullName>{answer.longname || answer.symbol}</ItemFullName>
-            <ItemTicker>{answer.symbol}</ItemTicker>
-          </ItemNameContainer>
+      <ResponseItemListContainer>
+        {answerList.map(answer => (
+          <ItemContainer
+            key={answer.symbol}
+            onPress={() =>
+              handleSelectStock({
+                ticker: answer.symbol,
+                fullName: answer.longname || answer.symbol,
+              })
+            }
+          >
+            <ItemNameContainer>
+              <ItemFullName>{answer.longname || answer.symbol}</ItemFullName>
+              <ItemTicker>{answer.symbol}</ItemTicker>
+            </ItemNameContainer>
 
-          <ItemInfoContainer>
-            <ItemInfoLabel>Bolsa:</ItemInfoLabel>
-            <ItemInfoValue>{answer.exchange}</ItemInfoValue>
-          </ItemInfoContainer>
+            <ItemInfoContainer>
+              <ItemInfoLabel>Bolsa:</ItemInfoLabel>
+              <ItemInfoValue>{answer.exchange}</ItemInfoValue>
+            </ItemInfoContainer>
 
-          <ItemInfoContainer>
-            <ItemInfoLabel>Disponibilidade:</ItemInfoLabel>
-            <ItemInfoValue>{answer.typeDisp}</ItemInfoValue>
-          </ItemInfoContainer>
-        </ItemContainer>
-      ))}
+            <ItemInfoContainer>
+              <ItemInfoLabel>Disponibilidade:</ItemInfoLabel>
+              <ItemInfoValue>{answer.typeDisp}</ItemInfoValue>
+            </ItemInfoContainer>
+          </ItemContainer>
+        ))}
+      </ResponseItemListContainer>
     </Container>
   )
 }

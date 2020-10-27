@@ -1,4 +1,5 @@
 import styled from 'styled-components/native'
+import Animated from 'react-native-reanimated'
 
 export const Container = styled.View`
   width: 100%;
@@ -18,6 +19,19 @@ export const ChosenStockTicker = styled.Text`
 
 export const ChosenStockFullName = styled.Text`
   font-size: 32px;
+`
+
+export const InputContainer = styled.View`
+  background-color: #ededed;
+  height: 60;
+  margin-bottom: 16;
+`
+
+export const ResponseItemListContainer = styled(Animated.View)`
+  background: #fff;
+  z-index: -1;
+  elevation: -1;
+  margin: -400% 0 -64px;
 `
 
 export const ItemContainer = styled.TouchableOpacity`

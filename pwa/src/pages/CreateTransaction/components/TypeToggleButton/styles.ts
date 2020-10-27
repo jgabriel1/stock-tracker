@@ -13,6 +13,7 @@ export const Content = styled.View`
   justify-content: space-between;
   align-items: stretch;
   flex-direction: row;
+  margin-top: 72px;
   margin-bottom: 32px;
   border-radius: 60px;
   border: 1px solid #a2a2a2;
