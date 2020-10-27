@@ -8,7 +8,7 @@ export const Container = styled.View`
 
 export const ChosenStockInfoContainer = styled.View`
   width: 100%;
-  margin-bottom: 32px;
+  margin-bottom: -32px;
 `
 
 export const ChosenStockTicker = styled.Text`
