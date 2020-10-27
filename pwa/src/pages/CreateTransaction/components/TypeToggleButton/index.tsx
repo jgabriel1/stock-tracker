@@ -1,14 +1,13 @@
 import React, { useCallback, useMemo } from 'react'
-import { Dimensions, TextStyle } from 'react-native'
+import { TextStyle } from 'react-native'
 import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
   interpolateColors,
   EasingNode,
   useValue,
 } from 'react-native-reanimated'
+
 import { useNewTransaction } from '../../../../hooks/newTransaction'
+import useToggleButtonAnimation from './useToggleButtonAnimation'
 
 import {
   Container,
@@ -18,26 +17,15 @@ import {
   TypeBackgroundMovingBlock,
 } from './styles'
 
-const TOGGLE_BUTTON_OFFSET = (Dimensions.get('window').width - 60) / 2 - 1
-
 const TypeToggleButton = () => {
   const { transactionType, toggleTransactionType } = useNewTransaction()
 
-  const offset = useSharedValue(transactionType === 'income' ? 0 : 1)
+  const {
+    blockAnimatedStyle,
+    toggleButtonAnimation,
+  } = useToggleButtonAnimation(transactionType)
 
   const colorShift = useValue<number>(transactionType === 'income' ? 0 : 1)
-
-  const blockAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      left: withTiming(offset.value * TOGGLE_BUTTON_OFFSET, {
-        duration: 200,
-      }),
-    }
-  })
-
-  const toggleButtonAnimation = useCallback(() => {
-    offset.value = offset.value === 0 ? 1 : 0
-  }, [offset.value])
 
   const colorShiftAnimation = useCallback(() => {
     Animated.timing(colorShift, {
