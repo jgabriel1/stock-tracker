@@ -1,19 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-  Easing,
-} from 'react-native-reanimated'
 
-import Input from '../../../../components/Input'
 import { useNewTransaction } from '../../../../hooks/newTransaction'
+import useResponseListAnimation from './useResponseListAnimation'
+import useDebounce from '../../../../utils/hooks/useDebounce'
+
 import {
   getSearchQuery,
   YahooSearchAnswer,
 } from '../../../../services/yahooFinance/stockSearch'
 
-import useDebounce from '../../../../utils/hooks/useDebounce'
+import Input from '../../../../components/Input'
 
 import {
   ChosenStockFullName,
@@ -50,33 +46,10 @@ const ChooseStock: React.FC = () => {
     },
   )
 
-  const responseListAnimationHeight = useSharedValue(-1000)
-
-  const responseListMarginAnimationStyle = useAnimatedStyle(() => {
-    const marginTop = withTiming(responseListAnimationHeight.value, {
-      duration: 200,
-      easing: Easing.quad,
-    })
-
-    return {
-      marginTop,
-    }
-  })
-
-  const fireResponseListDropAnimation = useCallback(
-    (action: 'OPEN' | 'CLOSE') => {
-      switch (action) {
-        case 'OPEN':
-          responseListAnimationHeight.value = 0
-          break
-        case 'CLOSE':
-        default:
-          responseListAnimationHeight.value = -1000
-          break
-      }
-    },
-    [responseListAnimationHeight.value],
-  )
+  const {
+    fireResponseListDropAnimation,
+    responseListMarginAnimationStyle,
+  } = useResponseListAnimation()
 
   const debouncedQuery = useDebounce(
     async (text: string) => {
