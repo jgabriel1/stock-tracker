@@ -23,8 +23,8 @@ export const ChosenStockFullName = styled.Text`
 
 export const InputContainer = styled.View`
   background-color: #ededed;
-  height: 60;
-  margin-bottom: 16;
+  height: 60px;
+  margin-bottom: 16px;
 `
 
 export const ResponseItemListContainer = styled(Animated.View)`
