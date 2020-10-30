@@ -21,7 +21,41 @@ interface IApiAuthTokenResponse {
   access_token: string
 }
 
-function setClientAuthToken(token: string): void {
+interface IApiTransaction {
+  _id: string
+  value: number
+  quantity: number
+  type: 'income' | 'outcome'
+  createdAt: string
+  extraCosts?: number
+}
+
+interface IApiTransactionsResponse {
+  transactions: Array<IApiTransaction>
+}
+
+interface IApiCreateTransactionData {
+  type: 'income' | 'outcome'
+  value: number
+  quantity: number
+  stockTicker: string
+  stockFullName: string
+}
+
+interface IApiStock {
+  stockId: string
+  ticker: string
+  fullName: string
+  totalInvested: number
+  currentlyOwnedShares: number
+  averageBoughtPrice: number
+}
+
+interface IApiListStocksResponse {
+  stocks: Map<string, IApiStock>
+}
+
+function setClientAuthHeader(token: string): void {
   client.defaults.headers.authorization = token
 }
 
@@ -60,10 +94,49 @@ async function postAuthToken({ username, password }: IApiAuthTokenData) {
   }
 }
 
+async function getTransactions(ticker: string) {
+  const params = {
+    ticker: ticker.toUpperCase(),
+  }
+
+  const response = await client.get<IApiTransactionsResponse>('transactions', {
+    params,
+  })
+
+  return response.data.transactions
+}
+
+async function postTransactions({
+  type,
+  value,
+  quantity,
+  stockTicker,
+  stockFullName,
+}: IApiCreateTransactionData): Promise<void> {
+  const data = {
+    type,
+    value,
+    quantity,
+    stockTicker,
+    stockFullName,
+  }
+
+  await client.post('transactions', data)
+}
+
+async function getStocks(): Promise<Map<string, IApiStock>> {
+  const response = await client.get<IApiListStocksResponse>('transactions')
+
+  return response.data.stocks
+}
+
 export default function useAPI() {
   return {
-    setClientAuthToken,
+    setClientAuthHeader,
     postAuthRegister,
     postAuthToken,
+    getTransactions,
+    postTransactions,
+    getStocks,
   }
 }
