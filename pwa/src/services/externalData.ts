@@ -21,7 +21,9 @@ interface IExternalInfo {
 }
 
 interface IExternalInfoResponse {
-  data: Map<string, IExternalInfo>
+  data: {
+    [ticker: string]: IExternalInfo
+  }
 }
 
 const client = axios.create({
@@ -49,7 +51,9 @@ async function getInfo(tickers: string[]): Promise<Map<string, IExternalInfo>> {
     params,
   })
 
-  return response.data.data
+  const info = new Map(Object.entries(response.data.data))
+
+  return info
 }
 
 export default function useExternalData() {
