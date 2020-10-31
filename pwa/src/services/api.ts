@@ -58,7 +58,7 @@ interface IApiListStocksResponse {
 }
 
 function setClientAuthHeader(token: string): void {
-  client.defaults.headers.authorization = token
+  client.defaults.headers.authorization = `Bearer ${token}`
 }
 
 async function postAuthRegister({
