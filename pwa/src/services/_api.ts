@@ -52,7 +52,9 @@ interface IApiStock {
 }
 
 interface IApiListStocksResponse {
-  stocks: Map<string, IApiStock>
+  stocks: {
+    [key: string]: IApiStock
+  }
 }
 
 function setClientAuthHeader(token: string): void {
@@ -127,7 +129,9 @@ async function postTransactions({
 async function getStocks(): Promise<Map<string, IApiStock>> {
   const response = await client.get<IApiListStocksResponse>('transactions')
 
-  return response.data.stocks
+  const stocks = new Map(Object.entries(response.data.stocks))
+
+  return stocks
 }
 
 export default function useAPI() {
