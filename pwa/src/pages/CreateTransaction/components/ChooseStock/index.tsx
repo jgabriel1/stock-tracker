@@ -3,11 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useNewTransaction } from '../../../../hooks/newTransaction'
 import useResponseListAnimation from './useResponseListAnimation'
 import useDebounce from '../../../../utils/hooks/useDebounce'
-
-import {
-  getSearchQuery,
-  YahooSearchAnswer,
-} from '../../../../services/yahooFinance/stockSearch'
+import useExternalData from '../../../../services/externalData'
 
 import Input from '../../../../components/Input'
 
@@ -32,10 +28,19 @@ interface TransactionStockInfo {
   fullName: string
 }
 
+interface StockSearchAnswer {
+  exchange: string
+  symbol: string
+  longname?: string
+  typeDisp?: string
+}
+
 const ChooseStock: React.FC = () => {
+  const { getSearch } = useExternalData()
+
   const { transactionStock, setTransactionStock } = useNewTransaction()
 
-  const [answerList, setAnswerList] = useState<YahooSearchAnswer[]>([])
+  const [answerList, setAnswerList] = useState<StockSearchAnswer[]>([])
   const [chosenStock, setChosenStock] = useState<TransactionStockInfo | null>(
     () => {
       if (transactionStock.ticker) {
@@ -54,7 +59,7 @@ const ChooseStock: React.FC = () => {
   const debouncedQuery = useDebounce(
     async (text: string) => {
       if (text.length > 1) {
-        const answers = await getSearchQuery(text)
+        const answers = await getSearch(text)
         setAnswerList(answers)
         fireResponseListDropAnimation('OPEN')
       } else {
