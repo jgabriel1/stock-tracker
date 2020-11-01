@@ -128,7 +128,7 @@ async function postTransactions({
 }
 
 async function getStocks(): Promise<Map<string, IApiStock>> {
-  const response = await client.get<IApiListStocksResponse>('transactions')
+  const response = await client.get<IApiListStocksResponse>('stocks')
 
   const stocks = new Map(Object.entries(response.data.stocks))
 
