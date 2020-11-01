@@ -100,6 +100,7 @@ async function postAuthToken({ username, password }: IApiAuthTokenData) {
 async function getTransactions(ticker: string) {
   const params = {
     ticker: ticker.toUpperCase(),
+    to: new Date().toISOString(),
   }
 
   const response = await client.get<IApiTransactionsResponse>('transactions', {
