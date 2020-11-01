@@ -1,4 +1,5 @@
 import axios from 'axios'
+import queryString from 'query-string'
 
 import { BACKEND_API_URL } from './config'
 
@@ -76,16 +77,16 @@ async function postAuthRegister({
 }
 
 async function postAuthToken({ username, password }: IApiAuthTokenData) {
-  const loginForm = new FormData()
-
-  loginForm.append('username', username)
-  loginForm.append('password', password)
+  const data = queryString.stringify({
+    username,
+    password,
+  })
 
   const headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
 
   const response = await client.post<IApiAuthTokenResponse>(
     'auth/token',
-    loginForm,
+    data,
     { headers },
   )
 
