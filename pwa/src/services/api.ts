@@ -100,6 +100,9 @@ async function postAuthToken({ username, password }: IApiAuthTokenData) {
 async function getTransactions(ticker: string) {
   const params = {
     ticker: ticker.toUpperCase(),
+
+    // This is an issue with the backend. It breaks if I don't pass "to now" on the params.
+    to: new Date().toISOString(),
   }
 
   const response = await client.get<IApiTransactionsResponse>('transactions', {
