@@ -6,11 +6,13 @@ import KeyboardView from '../../components/KeyboardView'
 import ReturnButton from '../../components/ReturnButton'
 import Input from '../../components/Input'
 
-import { api } from '../../services/api'
+import useAPI from '../../services/api'
 
 import { Header, Title, Content, FieldSet } from './styles'
 
 const Register: React.FC = () => {
+  const { postAuthRegister } = useAPI()
+
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -18,16 +20,14 @@ const Register: React.FC = () => {
   const navigation = useNavigation()
 
   const handleSubmitRegistration = useCallback(async () => {
-    const data = {
+    await postAuthRegister({
       username,
       email,
       password,
-    }
-
-    await api.post('register', data)
+    })
 
     navigation.navigate('Login')
-  }, [email, navigation, password, username])
+  }, [email, navigation, password, postAuthRegister, username])
 
   return (
     <KeyboardView>

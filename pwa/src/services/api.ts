@@ -1,4 +1,5 @@
 import axios from 'axios'
+import queryString from 'query-string'
 
 import { BACKEND_API_URL } from './config'
 
@@ -58,7 +59,7 @@ interface IApiListStocksResponse {
 }
 
 function setClientAuthHeader(token: string): void {
-  client.defaults.headers.authorization = token
+  client.defaults.headers.authorization = `Bearer ${token}`
 }
 
 async function postAuthRegister({
@@ -76,16 +77,16 @@ async function postAuthRegister({
 }
 
 async function postAuthToken({ username, password }: IApiAuthTokenData) {
-  const loginForm = new FormData()
-
-  loginForm.append('username', username)
-  loginForm.append('password', password)
+  const data = queryString.stringify({
+    username,
+    password,
+  })
 
   const headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
 
   const response = await client.post<IApiAuthTokenResponse>(
     'auth/token',
-    loginForm,
+    data,
     { headers },
   )
 
@@ -99,6 +100,9 @@ async function postAuthToken({ username, password }: IApiAuthTokenData) {
 async function getTransactions(ticker: string) {
   const params = {
     ticker: ticker.toUpperCase(),
+
+    // This is an issue with the backend. It breaks if I don't pass "to now" on the params.
+    to: new Date().toISOString(),
   }
 
   const response = await client.get<IApiTransactionsResponse>('transactions', {
@@ -127,7 +131,7 @@ async function postTransactions({
 }
 
 async function getStocks(): Promise<Map<string, IApiStock>> {
-  const response = await client.get<IApiListStocksResponse>('transactions')
+  const response = await client.get<IApiListStocksResponse>('stocks')
 
   const stocks = new Map(Object.entries(response.data.stocks))
 

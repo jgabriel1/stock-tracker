@@ -9,20 +9,16 @@ import React, {
 
 import { useAuth } from './auth'
 
-import { api } from '../services/api'
+import useAPI from '../services/api'
 import useExternalData from '../services/externalData'
 
 interface BackendData {
+  stockId: string
   ticker: string
-  fullName?: string
-  currently_owned_shares: number
-  average_bought_price: number
-}
-
-interface BackendResponse {
-  stocks: {
-    [ticker: string]: BackendData
-  }
+  fullName: string
+  totalInvested: number
+  currentlyOwnedShares: number
+  averageBoughtPrice: number
 }
 
 interface ExternalData {
@@ -56,6 +52,7 @@ interface StocksContextData {
 const StocksContext = createContext<StocksContextData>({} as StocksContextData)
 
 export const StocksProvider: React.FC = ({ children }) => {
+  const { getStocks } = useAPI()
   const { getInfo } = useExternalData()
 
   const { token } = useAuth()
@@ -78,19 +75,19 @@ export const StocksProvider: React.FC = ({ children }) => {
       const external = externalData.get(ticker)
 
       const totalInvested =
-        backend.currently_owned_shares * backend.average_bought_price
+        backend.currentlyOwnedShares * backend.averageBoughtPrice
 
       const regularMarketPrice = external ? external.regularMarketPrice : 0
-      const currentWorth = regularMarketPrice * backend.currently_owned_shares
+      const currentWorth = regularMarketPrice * backend.currentlyOwnedShares
 
       return {
         // General backend data:
         ticker,
-        fullName: backend.fullName || ticker,
+        fullName: backend.fullName,
 
         // Backend data only dependent:
-        currently_owned_shares: backend.currently_owned_shares,
-        average_bought_price: backend.average_bought_price,
+        currently_owned_shares: backend.currentlyOwnedShares,
+        average_bought_price: backend.averageBoughtPrice,
         totalInvested,
 
         // External data dependent:
@@ -119,14 +116,10 @@ export const StocksProvider: React.FC = ({ children }) => {
   )
 
   const loadBackendData = useCallback(async () => {
-    const response = await api.get<BackendResponse>('stocks')
+    const stocks = await getStocks()
 
-    const { stocks } = response.data
-
-    const stocksMap = new Map(Object.entries(stocks))
-
-    setBackendData(stocksMap)
-  }, [])
+    setBackendData(stocks)
+  }, [getStocks])
 
   const loadExternalData = useCallback(async () => {
     const data = await getInfo(tickers)
