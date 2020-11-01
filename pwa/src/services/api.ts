@@ -58,6 +58,10 @@ interface IApiListStocksResponse {
   }
 }
 
+async function pingServer(): Promise<void> {
+  await client.get('/')
+}
+
 function setClientAuthHeader(token: string): void {
   client.defaults.headers.authorization = `Bearer ${token}`
 }
@@ -140,6 +144,7 @@ async function getStocks(): Promise<Map<string, IApiStock>> {
 
 export default function useAPI() {
   return {
+    pingServer,
     setClientAuthHeader,
     postAuthRegister,
     postAuthToken,

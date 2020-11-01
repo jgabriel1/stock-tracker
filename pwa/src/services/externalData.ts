@@ -30,6 +30,10 @@ const client = axios.create({
   baseURL: EXTERNAL_DATA_CLIENT,
 })
 
+async function pingServer(): Promise<void> {
+  await client.get('/')
+}
+
 async function getSearch(query: string): Promise<IExternalSearch[]> {
   const params = {
     query,
@@ -58,6 +62,7 @@ async function getInfo(tickers: string[]): Promise<Map<string, IExternalInfo>> {
 
 export default function useExternalData() {
   return {
+    pingServer,
     getSearch,
     getInfo,
   }
