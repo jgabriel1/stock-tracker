@@ -7,7 +7,7 @@ import React, {
   useMemo,
 } from 'react'
 
-import { api } from '../services/api'
+import useAPI from '../services/api'
 
 interface TransactionStock {
   ticker: string
@@ -45,6 +45,8 @@ const NewTransactionContext = createContext<NewTransactionContextData>(
 )
 
 export const NewTransactionProvider: React.FC = ({ children }) => {
+  const { postTransactions } = useAPI()
+
   const [transaction, setTransaction] = useReducer<TransactionReducer>(
     (state, action) => {
       switch (action.type) {
@@ -92,15 +94,15 @@ export const NewTransactionProvider: React.FC = ({ children }) => {
 
   const submitCreateTransaction = useCallback(
     async ({ quantity, totalValue }: CreateTransactionForm) => {
-      const multiplier = transaction.type === 'outcome' ? -1 : 1
-
-      await api.post('transactions', {
-        ticker: transaction.stock.ticker,
-        quantity: multiplier * quantity,
-        total_value: multiplier * totalValue,
+      await postTransactions({
+        quantity,
+        value: totalValue,
+        type: transaction.type,
+        stockTicker: transaction.stock.ticker,
+        stockFullName: transaction.stock.fullName,
       })
     },
-    [transaction],
+    [postTransactions, transaction],
   )
 
   const resetTransactionState = useCallback(() => {

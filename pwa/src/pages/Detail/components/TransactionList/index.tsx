@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react'
 
-import { api } from '../../../../services/api'
+import useAPI from '../../../../services/api'
 
 import formatDate from '../../../../utils/formatDate'
 import formatToReal from '../../../../utils/formatToReal'
@@ -18,54 +18,52 @@ interface TransactionListProps {
 }
 
 interface TransactionResponse {
-  ticker: string
-  timestamp: number
+  value: number
   quantity: number
-  total_value: number
+  type: 'income' | 'outcome'
+  createdAt: string
+  extraCosts?: number
 }
 
 export interface Transaction extends TransactionResponse {
   isEntry: boolean
   formattedPrice: string
-  type: string
   date: string
 }
 
 const TransactionList: React.FC<TransactionListProps> = ({ ticker }) => {
+  const { getTransactions } = useAPI()
+
   const [transactions, setTransactions] = useState<TransactionResponse[]>([])
 
   const parsedTransactions = useMemo(() => {
     return transactions.map(transaction => {
-      const isEntry = transaction.total_value > 0
+      const isEntry = transaction.type === 'income'
 
-      const formattedPrice = `${formatToReal(transaction.total_value)}`
+      const formattedPrice = `${formatToReal(transaction.value)}`
+
+      const date = formatDate(new Date(transaction.createdAt))
 
       return {
         ...transaction,
         isEntry,
         formattedPrice,
+        date,
         type: isEntry ? 'Entrada' : 'Saída',
-        date: formatDate(transaction.timestamp * 1000),
       }
     })
   }, [transactions])
 
   useEffect(() => {
-    const params = {
-      ticker,
-    }
-
-    api.get('transactions', { params }).then(response => {
-      setTransactions(response.data.transactions)
-    })
-  }, [ticker])
+    getTransactions(ticker).then(setTransactions)
+  }, [getTransactions, ticker])
 
   return (
     <Container>
       <Title>Histórico</Title>
 
       {parsedTransactions.map(transaction => (
-        <Item key={transaction.timestamp}>
+        <Item key={transaction.createdAt}>
           <ItemValue>{transaction.type}</ItemValue>
           <ItemValue>
             <ColoredText isPositive={transaction.isEntry}>

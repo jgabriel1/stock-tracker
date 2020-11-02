@@ -8,7 +8,7 @@ import React, {
 import { Alert } from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage'
 
-import { api } from '../services/api'
+import useAPI from '../services/api'
 
 interface SignInCredentials {
   username: string
@@ -25,6 +25,8 @@ interface AuthContextData {
 const AuthContext = createContext<AuthContextData>({} as AuthContextData)
 
 export const AuthProvider: React.FC = ({ children }) => {
+  const { setClientAuthHeader, postAuthToken } = useAPI()
+
   const [token, setToken] = useState('')
   const [loading, setLoading] = useState(true)
 
@@ -33,8 +35,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       const storedToken = await AsyncStorage.getItem('@StockTracker:token')
 
       if (storedToken) {
-        api.defaults.headers.authorization = `Bearer ${storedToken}`
-
+        setClientAuthHeader(storedToken)
         setToken(storedToken)
       }
 
@@ -42,32 +43,26 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
 
     loadStoredToken()
-  }, [])
+  }, [setClientAuthHeader])
 
   const signIn = useCallback(
     async ({ username, password }: SignInCredentials) => {
-      const loginForm = new FormData()
-
-      loginForm.append('username', username)
-      loginForm.append('password', password)
-
-      const headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
-
       try {
-        const response = await api.post('auth/token', loginForm, { headers })
-
-        const { access_token } = response.data
+        const { token: access_token } = await postAuthToken({
+          username,
+          password,
+        })
 
         await AsyncStorage.setItem('@StockTracker:token', access_token)
 
-        api.defaults.headers.authorization = `Bearer ${access_token}`
+        setClientAuthHeader(access_token)
 
         setToken(access_token)
       } catch (error) {
         Alert.alert(`There was an error loggin in: ${error.message}`)
       }
     },
-    [],
+    [postAuthToken, setClientAuthHeader],
   )
 
   const signOut = useCallback(async () => {
