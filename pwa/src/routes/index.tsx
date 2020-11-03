@@ -19,8 +19,7 @@ const Routes: React.FC = () => {
   const [backendsReady, setBackendsReady] = useState(false)
 
   const pingBackends = useCallback(async () => {
-    await pingAPI()
-    await pingExternalData()
+    await Promise.all([pingAPI(), pingExternalData()])
   }, [pingAPI, pingExternalData])
 
   useEffect(() => {

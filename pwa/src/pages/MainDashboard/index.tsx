@@ -4,6 +4,7 @@ import { ActivityIndicator } from 'react-native'
 import { useStocks } from '../../hooks/stocks'
 
 import FourBoxGrid from '../../components/FourBoxGrid'
+import LogoutButton from '../../components/LogoutButton'
 import PlatformAwareVictoryPie from './components/PlatformAwareVictoryPie'
 
 import formatToReal from '../../utils/formatToReal'
@@ -58,6 +59,8 @@ const MainDashboard: React.FC = () => {
     <Container>
       <Header />
 
+      <LogoutButton />
+
       {loadingStocks ? (
         <ActivityIndicator
           style={{
@@ -70,7 +73,7 @@ const MainDashboard: React.FC = () => {
         />
       ) : (
         <PlatformAwareVictoryPie
-          padding={{ top: 80, bottom: 80, left: 80, right: 80 }}
+          padding={{ top: 40, bottom: 40, left: 80, right: 80 }}
           data={currentWorthChartData}
           labels={({ datum }) => `${datum.x}\n${datum.y.toFixed(1)}%`}
           labelRadius={({ radius }) => 1.1 * (radius as number)}
@@ -84,6 +87,8 @@ const MainDashboard: React.FC = () => {
               flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
+              marginTop: 40,
+              marginBottom: 40,
             },
           }}
         />
