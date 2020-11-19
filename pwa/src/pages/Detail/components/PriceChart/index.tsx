@@ -1,6 +1,6 @@
 import React from 'react'
 import { Dimensions } from 'react-native'
-import { VictoryChart, VictoryLine } from 'victory-native'
+import { VictoryAxis, VictoryChart, VictoryLine } from 'victory-native'
 
 import { Container } from './styles'
 
@@ -23,36 +23,78 @@ const PriceChart: React.FC<PriceChartProps> = () => {
       1598932800,
       1601524800,
       1604203200,
-      1605729251,
+      1605733201,
     ],
     close: [
-      73.412,
-      77.378,
-      68.34,
-      63.572,
-      73.45,
-      79.485,
-      91.2,
-      106.26,
-      129.04,
-      115.81,
-      108.86,
-      119.39,
-      119.271,
+      87.92,
+      84.83,
+      78.43,
+      65.74,
+      76.73,
+      77.99,
+      73.59,
+      76.53,
+      84.47,
+      85.92,
+      86.96,
+      98.6,
+      97.91,
     ],
   }
 
   return (
     <Container>
-      <VictoryChart>
+      <VictoryChart
+        width={CHART_WIDTH}
+        padding={{
+          top: 20,
+          bottom: 40,
+          right: 20,
+          left: 50,
+        }}
+        scale={{ x: 'time', y: 'linear' }}
+      >
         <VictoryLine
-          width={CHART_WIDTH}
+          interpolation="basis"
           data={timestamp.map((time, index) => {
             return {
-              x: time,
+              x: new Date(time * 1000),
               y: close[index],
             }
           })}
+        />
+
+        <VictoryAxis
+          tickCount={5}
+          fixLabelOverlap
+          style={{
+            tickLabels: {
+              fontSize: 12,
+            },
+            grid: {
+              stroke: 'rgba(100,100,100,0.20)',
+              strokeWidth: 1,
+            },
+            ticks: {
+              stroke: 'grey',
+              size: 5,
+            } as React.CSSProperties,
+          }}
+        />
+
+        <VictoryAxis
+          dependentAxis
+          tickCount={5}
+          fixLabelOverlap
+          style={{
+            axis: {
+              stroke: 'none',
+            },
+            grid: {
+              stroke: 'rgba(100,100,100,0.20)',
+              strokeWidth: 1,
+            },
+          }}
         />
       </VictoryChart>
     </Container>
