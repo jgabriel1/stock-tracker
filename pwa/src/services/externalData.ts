@@ -26,6 +26,16 @@ interface IExternalInfoResponse {
   }
 }
 
+interface IExternalChartData {
+  symbol: string
+  timestamp: number[]
+  close: number[]
+}
+
+interface IExternalChartDataResponse {
+  data: IExternalChartData
+}
+
 const client = axios.create({
   baseURL: EXTERNAL_DATA_CLIENT,
 })
@@ -60,10 +70,21 @@ async function getInfo(tickers: string[]): Promise<Map<string, IExternalInfo>> {
   return info
 }
 
+async function getChartData(ticker: string): Promise<IExternalChartData> {
+  const response = await client.get<IExternalChartDataResponse>(
+    `chart/${ticker.toUpperCase()}`,
+  )
+
+  const chartData = response.data.data
+
+  return chartData
+}
+
 export default function useExternalData() {
   return {
     pingServer,
     getSearch,
     getInfo,
+    getChartData,
   }
 }
