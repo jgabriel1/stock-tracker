@@ -83,7 +83,7 @@ const Detail: React.FC = () => {
           showsHorizontalScrollIndicator={false}
         >
           <Infos stockData={stockData} />
-          <PriceChart />
+          <PriceChart ticker={ticker} />
         </MainPanel>
 
         <NewTransactionContainer>
