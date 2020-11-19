@@ -1,45 +1,53 @@
-import React from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Dimensions } from 'react-native'
 import { VictoryAxis, VictoryChart, VictoryLine } from 'victory-native'
 
-import { Container } from './styles'
+import useExternalData from '../../../../services/externalData'
 
-interface PriceChartProps {}
+import { Container, PlaceholderText, PlaceholderTextContainer } from './styles'
+
+interface PriceChartProps {
+  ticker: string
+}
+
+interface ChartData {
+  timestamp: number[]
+  close: number[]
+}
 
 const CHART_WIDTH = Dimensions.get('window').width - 60
 
-const PriceChart: React.FC<PriceChartProps> = () => {
-  const { timestamp, close } = {
-    timestamp: [
-      1575176400,
-      1577854800,
-      1580533200,
-      1583038800,
-      1585713600,
-      1588305600,
-      1590984000,
-      1593576000,
-      1596254400,
-      1598932800,
-      1601524800,
-      1604203200,
-      1605733201,
-    ],
-    close: [
-      87.92,
-      84.83,
-      78.43,
-      65.74,
-      76.73,
-      77.99,
-      73.59,
-      76.53,
-      84.47,
-      85.92,
-      86.96,
-      98.6,
-      97.91,
-    ],
+const PriceChart: React.FC<PriceChartProps> = ({ ticker }) => {
+  const [chartData, setChartData] = useState<ChartData | null>(null)
+
+  const { getChartData } = useExternalData()
+
+  const parsedData = useMemo(() => {
+    return (
+      chartData &&
+      chartData.timestamp.map((time, index) => {
+        return {
+          x: new Date(time * 1000),
+          y: chartData.close[index],
+        }
+      })
+    )
+  }, [chartData])
+
+  useEffect(() => {
+    getChartData(ticker).then(setChartData)
+
+    return () => {
+      setChartData(null)
+    }
+  }, [getChartData, ticker])
+
+  if (!chartData) {
+    return (
+      <PlaceholderTextContainer>
+        <PlaceholderText>Loading Chart...</PlaceholderText>
+      </PlaceholderTextContainer>
+    )
   }
 
   return (
@@ -54,15 +62,7 @@ const PriceChart: React.FC<PriceChartProps> = () => {
         }}
         scale={{ x: 'time', y: 'linear' }}
       >
-        <VictoryLine
-          interpolation="basis"
-          data={timestamp.map((time, index) => {
-            return {
-              x: new Date(time * 1000),
-              y: close[index],
-            }
-          })}
-        />
+        <VictoryLine interpolation="basis" data={parsedData || undefined} />
 
         <VictoryAxis
           tickCount={5}
