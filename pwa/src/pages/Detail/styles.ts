@@ -32,6 +32,13 @@ export const FullName = styled.Text`
   margin-bottom: 24px;
 `
 
+export const MainPanel = styled.ScrollView.attrs({
+  contentContainerStyle: {
+    height: '100%',
+    alignItems: 'center',
+  },
+})``
+
 export const NewTransactionContainer = styled.View`
   margin: 16px 0;
 `

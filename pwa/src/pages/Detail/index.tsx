@@ -4,6 +4,8 @@ import { Feather } from '@expo/vector-icons'
 
 import ReturnButton from '../../components/ReturnButton'
 import TransactionList from './components/TransactionList'
+import PriceChart from './components/PriceChart'
+import Infos from './components/Infos'
 
 import { AppStackParamList } from '../../routes/AppStack'
 
@@ -16,6 +18,7 @@ import {
   FullName,
   Header,
   Title,
+  MainPanel,
   NewTransactionContainer,
   NewTransactionTitle,
   NewTransactionButtonsContainer,
@@ -23,7 +26,6 @@ import {
   NewTransactionButtonLeft,
   NewTransactionButtonRight,
 } from './styles'
-import Infos from './components/Infos'
 
 /*
   TODO:
@@ -75,7 +77,14 @@ const Detail: React.FC = () => {
       <Content>
         <FullName>{stockData.fullName}</FullName>
 
-        <Infos stockData={stockData} />
+        <MainPanel
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+        >
+          <Infos stockData={stockData} />
+          <PriceChart />
+        </MainPanel>
 
         <NewTransactionContainer>
           <NewTransactionTitle>Nova transação</NewTransactionTitle>
