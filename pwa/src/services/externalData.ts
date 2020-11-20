@@ -36,6 +36,11 @@ interface IExternalChartDataResponse {
   data: IExternalChartData
 }
 
+interface IExternalChartDataOptions {
+  range?: string
+  numberOfPoints?: number
+}
+
 const client = axios.create({
   baseURL: EXTERNAL_DATA_CLIENT,
 })
@@ -70,9 +75,18 @@ async function getInfo(tickers: string[]): Promise<Map<string, IExternalInfo>> {
   return info
 }
 
-async function getChartData(ticker: string): Promise<IExternalChartData> {
+async function getChartData(
+  ticker: string,
+  { numberOfPoints, range }: IExternalChartDataOptions = {},
+): Promise<IExternalChartData> {
+  const params = {
+    range,
+    numberOfPoints,
+  }
+
   const response = await client.get<IExternalChartDataResponse>(
     `chart/${ticker.toUpperCase()}`,
+    { params },
   )
 
   const chartData = response.data.data
