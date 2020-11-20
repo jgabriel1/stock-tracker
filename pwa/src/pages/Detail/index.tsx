@@ -18,7 +18,6 @@ import {
   FullName,
   Header,
   Title,
-  MainPanel,
   NewTransactionContainer,
   NewTransactionTitle,
   NewTransactionButtonsContainer,
@@ -29,9 +28,9 @@ import {
 
 /*
   TODO:
-  - Make the new transaction buttons into a floating button in the bottom
+  - [ ] Make the new transaction buttons into a floating button in the bottom
   right or middle of the screen.
-  - Make the info block slide to the side with a future chart component. Or
+  - [x] Make the info block slide to the side with a future chart component. Or
   put it below the chart.
 */
 
@@ -77,14 +76,9 @@ const Detail: React.FC = () => {
       <Content>
         <FullName>{stockData.fullName}</FullName>
 
-        <MainPanel
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-        >
-          <Infos stockData={stockData} />
-          <PriceChart ticker={ticker} />
-        </MainPanel>
+        <PriceChart ticker={ticker} />
+
+        <Infos stockData={stockData} />
 
         <NewTransactionContainer>
           <NewTransactionTitle>Nova transação</NewTransactionTitle>

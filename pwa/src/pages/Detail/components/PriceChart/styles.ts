@@ -1,4 +1,3 @@
-import { Dimensions } from 'react-native'
 import { RectButton } from 'react-native-gesture-handler'
 import styled, { css } from 'styled-components/native'
 
@@ -6,10 +5,11 @@ interface RangeButtonProps {
   active: boolean
 }
 
-const CHART_WIDTH = Dimensions.get('window').width - 60
+const CHART_HEIGHT = 320
 
 export const Container = styled.View`
-  width: ${CHART_WIDTH}px;
+  width: 100%;
+  margin-bottom: 24px;
 `
 
 export const RangeButtonsListContainer = styled.View`
@@ -52,7 +52,8 @@ export const PlaceholderTextContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  width: ${CHART_WIDTH}px;
+  width: 100%;
+  height: ${CHART_HEIGHT}px;
 `
 
 export const PlaceholderText = styled.Text`

@@ -1,10 +1,6 @@
 import styled from 'styled-components/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-interface ColoredTextProps {
-  isPositive: boolean
-}
-
 export const Container = styled(SafeAreaView)`
   flex: 1;
 `
@@ -29,15 +25,8 @@ export const Content = styled.ScrollView`
 
 export const FullName = styled.Text`
   font-size: 24px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 `
-
-export const MainPanel = styled.ScrollView.attrs({
-  contentContainerStyle: {
-    height: '100%',
-    alignItems: 'center',
-  },
-})``
 
 export const NewTransactionContainer = styled.View`
   margin: 16px 0;

@@ -1,4 +1,3 @@
-import { Dimensions } from 'react-native'
 import styled from 'styled-components/native'
 
 interface ColoredTextProps {
@@ -6,7 +5,7 @@ interface ColoredTextProps {
 }
 
 export const Container = styled.View`
-  width: ${Dimensions.get('window').width - 60}px;
+  width: 100%;
 `
 
 export const InfosContainer = styled.View`

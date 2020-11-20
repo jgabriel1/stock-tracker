@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Dimensions } from 'react-native'
 import { VictoryAxis, VictoryChart, VictoryLine } from 'victory-native'
 
@@ -31,6 +31,8 @@ type ChartRangeOptions = Array<{
 }>
 
 const CHART_WIDTH = Dimensions.get('window').width - 60
+
+const CHART_HEIGHT = 320
 
 const CHART_RANGE_OPTIONS: ChartRangeOptions = [
   { key: '1d', value: '1d' },
@@ -85,6 +87,7 @@ const PriceChart: React.FC<PriceChartProps> = ({ ticker }) => {
       {chartData ? (
         <VictoryChart
           width={CHART_WIDTH}
+          height={CHART_HEIGHT}
           padding={{
             top: 20,
             bottom: 40,
