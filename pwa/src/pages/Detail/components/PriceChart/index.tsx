@@ -16,6 +16,7 @@ import {
 
 interface PriceChartProps {
   ticker: string
+  average_bought_price: number
 }
 
 interface ChartData {
@@ -42,7 +43,10 @@ const CHART_RANGE_OPTIONS: ChartRangeOptions = [
   { key: 'YTD', value: 'YTD' },
 ]
 
-const PriceChart: React.FC<PriceChartProps> = ({ ticker }) => {
+const PriceChart: React.FC<PriceChartProps> = ({
+  ticker,
+  average_bought_price,
+}) => {
   const [chartData, setChartData] = useState<ChartData | null>(null)
   const [chartRange, setChartRange] = useState<ChartRange>('1d')
 
@@ -52,16 +56,38 @@ const PriceChart: React.FC<PriceChartProps> = ({ ticker }) => {
     return (
       chartData &&
       chartData.timestamp.map((time, index) => {
-        return {
-          x: new Date(time * 1000),
-          y: chartData.close[index],
-        }
+        return { x: time * 1000, y: chartData.close[index] }
       })
     )
   }, [chartData])
 
+  const boughtPriceHorizontalLine = useMemo(() => {
+    const times = chartData?.timestamp || []
+
+    const [firstTime] = times.slice(0, 1)
+    const [lastTime] = times.slice(-1)
+
+    const y = average_bought_price
+
+    return [
+      { x: firstTime * 1000, y },
+      { x: lastTime * 1000, y },
+    ]
+  }, [average_bought_price, chartData])
+
+  const chartDomain = useMemo((): [number, number] => {
+    const chartValues = chartData?.close || [0]
+
+    const max = Math.max(...chartValues)
+    const min = Math.min(...chartValues)
+
+    return [min, max]
+  }, [chartData])
+
   useEffect(() => {
-    getChartData(ticker, { range: chartRange }).then(setChartData)
+    getChartData(ticker, { range: chartRange, numberOfPoints: 30 }).then(
+      setChartData,
+    )
 
     return () => {
       setChartData(null)
@@ -95,8 +121,29 @@ const PriceChart: React.FC<PriceChartProps> = ({ ticker }) => {
             left: 50,
           }}
           scale={{ x: 'time', y: 'linear' }}
+          domain={{ y: chartDomain }}
         >
-          <VictoryLine interpolation="basis" data={parsedData || undefined} />
+          <VictoryLine
+            interpolation="basis"
+            data={parsedData || undefined}
+            style={{
+              data: {
+                stroke: '#2b2b2b',
+                strokeWidth: 2,
+              },
+            }}
+          />
+
+          <VictoryLine
+            data={boughtPriceHorizontalLine}
+            style={{
+              data: {
+                stroke: '#4e4ef3',
+                strokeWidth: 1,
+                strokeDasharray: '8,8',
+              },
+            }}
+          />
 
           <VictoryAxis
             tickCount={5}

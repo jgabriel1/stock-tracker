@@ -76,7 +76,10 @@ const Detail: React.FC = () => {
       <Content>
         <FullName>{stockData.fullName}</FullName>
 
-        <PriceChart ticker={ticker} />
+        <PriceChart
+          ticker={ticker}
+          average_bought_price={stockData.average_bought_price}
+        />
 
         <Infos stockData={stockData} />
 
