@@ -101,7 +101,9 @@ const PriceChart: React.FC<PriceChartProps> = ({
           <RangeButton key={key}>
             <RangeButtonContainer active={chartRange === value}>
               <RangeButtonText
-                onPress={() => setChartRange(value)}
+                onPress={() => {
+                  setChartRange(value)
+                }}
                 active={chartRange === value}
               >
                 {key}
@@ -180,7 +182,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
         </VictoryChart>
       ) : (
         <PlaceholderTextContainer>
-          <PlaceholderText>Loading Chart...</PlaceholderText>
+          <PlaceholderText>Carregando...</PlaceholderText>
         </PlaceholderTextContainer>
       )}
     </Container>
