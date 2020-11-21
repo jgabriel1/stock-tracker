@@ -4,24 +4,19 @@ import { Feather } from '@expo/vector-icons'
 
 import ReturnButton from '../../components/ReturnButton'
 import TransactionList from './components/TransactionList'
+import PriceChart from './components/PriceChart'
+import Infos from './components/Infos'
 
 import { AppStackParamList } from '../../routes/AppStack'
 
 import { useStocks } from '../../hooks/stocks'
 import { useNewTransaction } from '../../hooks/newTransaction'
 
-import formatToReal from '../../utils/formatToReal'
-
 import {
-  ColoredText,
   Container,
   Content,
   FullName,
   Header,
-  InfoItem,
-  InfoLabel,
-  InfosContainer,
-  InfoValue,
   Title,
   NewTransactionContainer,
   NewTransactionTitle,
@@ -33,9 +28,9 @@ import {
 
 /*
   TODO:
-  - Make the new transaction buttons into a floating button in the bottom
+  - [ ] Make the new transaction buttons into a floating button in the bottom
   right or middle of the screen.
-  - Make the info block slide to the side with a future chart component. Or
+  - [x] Make the info block slide to the side with a future chart component. Or
   put it below the chart.
 */
 
@@ -71,20 +66,6 @@ const Detail: React.FC = () => {
     ],
   )
 
-  const variation = useMemo(() => {
-    const { regularMarketPrice, average_bought_price } = stockData
-
-    const value = 100 * (regularMarketPrice / average_bought_price - 1)
-
-    const signal = regularMarketPrice > average_bought_price ? '+' : '-'
-
-    return `${signal}${value.toFixed(2).replace('.', ',')}%`
-  }, [stockData])
-
-  const isPositive = useMemo(() => {
-    return stockData.average_bought_price < stockData.regularMarketPrice
-  }, [stockData])
-
   return (
     <Container>
       <Header>
@@ -95,38 +76,12 @@ const Detail: React.FC = () => {
       <Content>
         <FullName>{stockData.fullName}</FullName>
 
-        <InfosContainer>
-          <InfoItem>
-            <InfoLabel>Valor Atual:</InfoLabel>
-            <InfoValue>{formatToReal(stockData.currentWorth)}</InfoValue>
-          </InfoItem>
+        <PriceChart
+          ticker={ticker}
+          average_bought_price={stockData.average_bought_price}
+        />
 
-          <InfoItem>
-            <InfoLabel>Total investido:</InfoLabel>
-            <InfoValue>{formatToReal(stockData.totalInvested)}</InfoValue>
-          </InfoItem>
-        </InfosContainer>
-
-        <InfosContainer>
-          <InfoItem>
-            <InfoLabel>Valor atual:</InfoLabel>
-            <InfoValue>{formatToReal(stockData.regularMarketPrice)}</InfoValue>
-          </InfoItem>
-
-          <InfoItem>
-            <InfoLabel>Valor médio de compra:</InfoLabel>
-            <InfoValue>
-              {formatToReal(stockData.average_bought_price)}
-            </InfoValue>
-          </InfoItem>
-        </InfosContainer>
-
-        <InfoItem>
-          <InfoLabel>Variação Total:</InfoLabel>
-          <InfoValue>
-            <ColoredText isPositive={isPositive}>{variation}</ColoredText>
-          </InfoValue>
-        </InfoItem>
+        <Infos stockData={stockData} />
 
         <NewTransactionContainer>
           <NewTransactionTitle>Nova transação</NewTransactionTitle>
@@ -151,7 +106,6 @@ const Detail: React.FC = () => {
             </NewTransactionButtonRight>
           </NewTransactionButtonsContainer>
         </NewTransactionContainer>
-
         <TransactionList ticker={ticker} />
       </Content>
     </Container>
