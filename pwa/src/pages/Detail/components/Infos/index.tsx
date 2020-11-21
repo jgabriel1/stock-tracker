@@ -42,13 +42,10 @@ const Infos: React.FC<InfosProps> = ({ stockData }) => {
     <Container>
       <InfosContainer>
         <InfoItem>
-          <InfoLabel>Valor Atual:</InfoLabel>
-          <InfoValue>{formatToReal(stockData.currentWorth)}</InfoValue>
-        </InfoItem>
-
-        <InfoItem>
-          <InfoLabel>Total investido:</InfoLabel>
-          <InfoValue>{formatToReal(stockData.totalInvested)}</InfoValue>
+          <InfoLabel>Variação Total:</InfoLabel>
+          <InfoValue>
+            <ColoredText isPositive={isPositive}>{variation}</ColoredText>
+          </InfoValue>
         </InfoItem>
       </InfosContainer>
 
@@ -64,12 +61,17 @@ const Infos: React.FC<InfosProps> = ({ stockData }) => {
         </InfoItem>
       </InfosContainer>
 
-      <InfoItem>
-        <InfoLabel>Variação Total:</InfoLabel>
-        <InfoValue>
-          <ColoredText isPositive={isPositive}>{variation}</ColoredText>
-        </InfoValue>
-      </InfoItem>
+      <InfosContainer>
+        <InfoItem>
+          <InfoLabel>Total Atual:</InfoLabel>
+          <InfoValue>{formatToReal(stockData.currentWorth)}</InfoValue>
+        </InfoItem>
+
+        <InfoItem>
+          <InfoLabel>Total investido:</InfoLabel>
+          <InfoValue>{formatToReal(stockData.totalInvested)}</InfoValue>
+        </InfoItem>
+      </InfosContainer>
     </Container>
   )
 }
