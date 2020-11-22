@@ -58,7 +58,7 @@ export function useCachedItem<T>(
 ): [T | null | undefined, (data: T) => Promise<void>] {
   const cache = useCache(namespace)
 
-  const [key, setKey] = useState(() => buildKey(...keyDependencies))
+  const [key, setKey] = useState('')
   const [value, setValue] = useState<T | null>()
 
   const loadData = useCallback(async () => {
