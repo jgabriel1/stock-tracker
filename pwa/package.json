@@ -22,6 +22,7 @@
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.3.tar.gz",
     "react-native-action-button": "^2.8.5",
+    "react-native-cache": "^2.0.1",
     "react-native-flip-toggle-button": "^1.0.8",
     "react-native-gesture-handler": "~1.7.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.1",
