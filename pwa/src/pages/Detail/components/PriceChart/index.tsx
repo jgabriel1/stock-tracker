@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Dimensions } from 'react-native'
 import { VictoryAxis, VictoryChart, VictoryLine } from 'victory-native'
 
+import { useCachedItem } from '../../../../hooks/cache'
 import useExternalData from '../../../../services/externalData'
 
 import {
@@ -47,10 +48,24 @@ const PriceChart: React.FC<PriceChartProps> = ({
   ticker,
   average_bought_price,
 }) => {
-  const [chartData, setChartData] = useState<ChartData | null>(null)
   const [chartRange, setChartRange] = useState<ChartRange>('1d')
 
+  const [chartData, saveChartData] = useCachedItem<ChartData>(
+    '@Stocktracker:cache',
+    _chartRange => `${ticker}:${_chartRange}`,
+    [chartRange],
+  )
+
   const { getChartData } = useExternalData()
+
+  const fetchChartData = useCallback(async () => {
+    const fetchedData = await getChartData(ticker, {
+      range: chartRange,
+      numberOfPoints: 30,
+    })
+
+    await saveChartData(fetchedData)
+  }, [chartRange, getChartData, saveChartData, ticker])
 
   const parsedData = useMemo(() => {
     return (
@@ -85,14 +100,10 @@ const PriceChart: React.FC<PriceChartProps> = ({
   }, [chartData])
 
   useEffect(() => {
-    getChartData(ticker, { range: chartRange, numberOfPoints: 30 }).then(
-      setChartData,
-    )
-
-    return () => {
-      setChartData(null)
+    if (chartData === null) {
+      fetchChartData()
     }
-  }, [chartRange, getChartData, ticker])
+  }, [chartData, fetchChartData])
 
   return (
     <Container>
