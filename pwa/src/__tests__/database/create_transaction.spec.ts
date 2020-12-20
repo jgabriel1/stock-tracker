@@ -1,9 +1,9 @@
 import * as path from 'path'
 import { Connection, createConnection, Repository } from 'typeorm'
 
-import { migrations } from '../../src/data/migrations'
-import { StockInfoModel } from '../../src/data/entities/StockInfoModel'
-import { TransactionModel } from '../../src/data/entities/TransactionModel'
+import { migrations } from '../../data/migrations'
+import { StockInfoModel } from '../../data/entities/StockInfoModel'
+import { TransactionModel } from '../../data/entities/TransactionModel'
 
 describe('@Database: Create transaction', () => {
   const pathToDatabase = path.resolve(__dirname, 'test_database.db')
