@@ -11,7 +11,7 @@ export class StockInfoModel {
   @PrimaryGeneratedColumn('increment')
   id: number
 
-  @Column()
+  @Column({ unique: true })
   ticker: string
 
   @Column()

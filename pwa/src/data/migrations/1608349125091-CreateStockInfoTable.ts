@@ -26,10 +26,12 @@ export class CreateStockInfoTable1608349125091 implements MigrationInterface {
           {
             name: 'created_at',
             type: 'datetime',
+            default: "datetime('now')",
           },
           {
             name: 'updated_at',
             type: 'datetime',
+            default: "datetime('now')",
           },
         ],
       }),

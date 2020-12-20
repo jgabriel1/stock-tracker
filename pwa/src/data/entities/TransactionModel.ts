@@ -3,7 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
@@ -33,10 +33,13 @@ export class TransactionModel {
   @UpdateDateColumn()
   updated_at: Date
 
-  @OneToOne(() => StockInfoModel)
+  @Column()
+  stock_id: number
+
+  @ManyToOne(() => StockInfoModel)
   @JoinColumn({
     name: 'stock_id',
     referencedColumnName: 'id',
   })
-  stockInfo: StockInfoModel
+  stock_info: StockInfoModel
 }

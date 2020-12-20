@@ -16,7 +16,7 @@ export class CreateTransactionsTable1608349646829
           },
           {
             name: 'value',
-            type: 'integer',
+            type: 'decimal',
           },
           {
             name: 'quantity',
@@ -29,15 +29,17 @@ export class CreateTransactionsTable1608349646829
           },
           {
             name: 'extra_costs',
-            type: 'integer',
+            type: 'decimal',
           },
           {
             name: 'created_at',
             type: 'datetime',
+            default: "datetime('now')",
           },
           {
             name: 'updated_at',
             type: 'datetime',
+            default: "datetime('now')",
           },
           {
             name: 'stock_id',
