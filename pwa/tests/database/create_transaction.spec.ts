@@ -5,7 +5,7 @@ import { migrations } from '../../src/data/migrations'
 import { StockInfoModel } from '../../src/data/entities/StockInfoModel'
 import { TransactionModel } from '../../src/data/entities/TransactionModel'
 
-describe('Database: Create transaction', () => {
+describe('@Database: Create transaction', () => {
   const pathToDatabase = path.resolve(__dirname, 'test_database.db')
 
   let connection: Connection
@@ -34,7 +34,7 @@ describe('Database: Create transaction', () => {
 
   afterAll(async () => {
     await connection.close()
-  })
+  }, 1000)
 
   it('should be able to create a transaction', async () => {
     const stockInfo = stockInfosRepository.create({

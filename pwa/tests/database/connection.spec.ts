@@ -1,24 +1,26 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { createConnection } from 'typeorm'
+import { Connection, createConnection } from 'typeorm'
 
-const pathToDatabase = path.resolve(__dirname, 'test_database.db')
+describe('@Database: Connection', () => {
+  const pathToDatabase = path.resolve(__dirname, 'test_database.db')
 
-describe('Database: Connection', () => {
-  it('should be able to create an empty database file', async () => {
-    const connection = await createConnection({
+  let connection: Connection
+
+  beforeAll(async () => {
+    connection = await createConnection({
       type: 'sqlite',
       database: pathToDatabase,
     })
+  })
 
+  afterAll(async () => {
+    await connection.close()
+  })
+
+  it('should be able to create an empty database file', async () => {
     const databaseFileExists = fs.existsSync(pathToDatabase)
 
     expect(databaseFileExists).toBe(true)
-
-    if (databaseFileExists) {
-      await connection.close()
-
-      fs.unlinkSync(pathToDatabase)
-    }
   })
 })
