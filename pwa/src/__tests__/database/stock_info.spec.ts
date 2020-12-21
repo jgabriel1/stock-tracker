@@ -10,7 +10,7 @@ import { migrations } from '../../data/migrations'
 import { StockInfoModel } from '../../data/entities/StockInfoModel'
 import { TransactionModel } from '../../data/entities/TransactionModel'
 
-describe('@Database: Create stock info', () => {
+describe('@Database: stock_info table', () => {
   const pathToDatabase = path.resolve(__dirname, 'test_database.db')
 
   let connection: Connection
@@ -22,6 +22,7 @@ describe('@Database: Create stock info', () => {
       database: pathToDatabase,
       migrations,
       entities: [StockInfoModel, TransactionModel],
+      synchronize: false,
     })
   })
 
