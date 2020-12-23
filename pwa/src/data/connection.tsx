@@ -8,7 +8,14 @@ import React, {
 import { ActivityIndicator, View } from 'react-native'
 import { Connection, createConnection } from 'typeorm'
 
-interface DatabaseConnectionContextData {}
+import { migrations } from './migrations'
+import { StockInfoModel, TransactionModel } from './entities'
+import { StockInfosRepository, TransactionsRepository } from './repositories'
+
+interface DatabaseConnectionContextData {
+  transactionsRepository: TransactionsRepository
+  stockInfosRepository: StockInfosRepository
+}
 
 const DatabaseConnectionContext = createContext<DatabaseConnectionContextData>(
   {} as DatabaseConnectionContextData,
@@ -22,7 +29,12 @@ export const DatabaseConnectionProvider: React.FC = ({ children }) => {
       type: 'expo',
       database: 'stock_tracker_dev.db',
       driver: require('expo-sqlite'),
+      migrations,
+      entities: [StockInfoModel, TransactionModel],
+      synchronize: false,
     })
+
+    await createdConnection.runMigrations()
 
     setConnection(createdConnection)
   }, [])
@@ -40,7 +52,12 @@ export const DatabaseConnectionProvider: React.FC = ({ children }) => {
   }
 
   return (
-    <DatabaseConnectionContext.Provider value={{}}>
+    <DatabaseConnectionContext.Provider
+      value={{
+        stockInfosRepository: new StockInfosRepository(connection),
+        transactionsRepository: new TransactionsRepository(connection),
+      }}
+    >
       {children}
     </DatabaseConnectionContext.Provider>
   )
