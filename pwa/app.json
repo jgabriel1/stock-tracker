@@ -24,6 +24,9 @@
     },
     "experiments": {
       "turboModules": true
+    },
+    "packagerOpts": {
+      "config": "metro.config.js"
     }
   }
 }
