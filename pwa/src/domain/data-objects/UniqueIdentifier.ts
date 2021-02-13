@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid'
 export class UniqueIdentifier {
   public readonly value: string
 
-  private constructor(value: string) {
+  public constructor(value: string) {
     this.value = value
   }
 
