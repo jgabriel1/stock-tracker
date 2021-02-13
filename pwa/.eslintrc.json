@@ -1,6 +1,7 @@
 {
   "env": {
-    "es6": true
+    "es6": true,
+    "jest": true
   },
   "extends": [
     "plugin:react/recommended",
@@ -40,6 +41,8 @@
     "react/jsx-props-no-spreading": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "camelcase": "off",
+    "global-require": "off",
+    "class-methods-use-this": "off",
     "react/jsx-filename-extension": [
       1,
       {
