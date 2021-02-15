@@ -1,9 +1,10 @@
+import { Transaction } from './Transaction'
 import { Ticker } from '../value-objects/Ticker'
+import { StockBalance } from '../value-objects/StockBalance'
 import {
   generateUniqueIdentifier,
   UniqueIdentifier,
 } from '../value-objects/UniqueIdentifier'
-import { Transaction } from './Transaction'
 
 interface IStockData {
   ticker: string
@@ -17,6 +18,8 @@ export class Stock {
 
   public readonly full_name: string
 
+  public balance?: StockBalance
+
   public transactions: Transaction[]
 
   private constructor(ticker: Ticker, full_name: string) {
@@ -25,6 +28,14 @@ export class Stock {
 
     this.id = generateUniqueIdentifier()
     this.transactions = []
+  }
+
+  public setBalance(balance: StockBalance): void {
+    this.balance = balance
+  }
+
+  public setTransactions(transactions: Transaction[]): void {
+    this.transactions = transactions
   }
 
   public static create({ ticker, full_name }: IStockData): Stock {
