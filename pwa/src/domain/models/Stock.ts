@@ -1,12 +1,12 @@
-import { contains, isInstance, isUppercase } from 'class-validator'
-
-import { Ticker } from '../data-objects/Ticker'
-import { UniqueIdentifier } from '../data-objects/UniqueIdentifier'
-import { DomainValidationError } from '../errors/DomainValidationError'
+import { Ticker } from '../value-objects/Ticker'
+import {
+  generateUniqueIdentifier,
+  UniqueIdentifier,
+} from '../value-objects/UniqueIdentifier'
 import { Transaction } from './Transaction'
 
 interface IStockData {
-  ticker: Ticker
+  ticker: string
   full_name: string
 }
 
@@ -19,30 +19,19 @@ export class Stock {
 
   public transactions: Transaction[]
 
-  public constructor({ ticker, full_name }: IStockData) {
+  private constructor(ticker: Ticker, full_name: string) {
     this.ticker = ticker
     this.full_name = full_name
+
+    this.id = generateUniqueIdentifier()
     this.transactions = []
-
-    if (!this.isValid()) {
-      throw new DomainValidationError('Validation error.')
-    }
-
-    this.id = UniqueIdentifier.generateNew()
   }
 
-  private isValid(): boolean {
-    return (
-      // Ticker must be an instance of the ticker data object
-      isInstance(this.ticker, Ticker) &&
-      // Ticker name must be upper case
-      isUppercase(this.ticker.value) &&
-      // Ticker name doesn't contain spaces
-      !contains(this.ticker.value, ' ')
-    )
-  }
+  public static create({ ticker, full_name }: IStockData): Stock {
+    const tickerObj = Ticker.create(ticker)
 
-  public addTransaction(transaction: Transaction): void {
-    this.transactions.push(transaction)
+    const stock = new Stock(tickerObj, full_name)
+
+    return stock
   }
 }
