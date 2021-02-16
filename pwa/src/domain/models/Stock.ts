@@ -8,7 +8,7 @@ import {
 
 interface IStockData {
   ticker: string
-  full_name: string
+  fullName: string
 }
 
 export class Stock {
@@ -16,15 +16,15 @@ export class Stock {
 
   public readonly ticker: Ticker
 
-  public readonly full_name: string
+  public readonly fullName: string
 
   public balance?: StockBalance
 
   public transactions: Transaction[]
 
-  private constructor(ticker: Ticker, full_name: string) {
+  private constructor(ticker: Ticker, fullName: string) {
     this.ticker = ticker
-    this.full_name = full_name
+    this.fullName = fullName
 
     this.id = generateUniqueIdentifier()
     this.transactions = []
@@ -38,10 +38,10 @@ export class Stock {
     this.transactions = transactions
   }
 
-  public static create({ ticker, full_name }: IStockData): Stock {
+  public static create({ ticker, fullName }: IStockData): Stock {
     const tickerObj = Ticker.create(ticker)
 
-    const stock = new Stock(tickerObj, full_name)
+    const stock = new Stock(tickerObj, fullName)
 
     return stock
   }

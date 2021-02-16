@@ -9,8 +9,8 @@ interface ITransactionData {
   type: 'IN' | 'OUT'
   value: number
   quantity: number
-  stock_id: string
-  extra_costs?: number
+  stockId: string
+  extraCosts?: number
 }
 
 export class Transaction {
@@ -22,22 +22,22 @@ export class Transaction {
 
   public readonly quantity: Quantity
 
-  public readonly stock_id: UniqueIdentifier
+  public readonly stockId: UniqueIdentifier
 
-  public readonly extra_costs: Amount
+  public readonly extraCosts: Amount
 
   private constructor(
     type: 'IN' | 'OUT',
     value: Amount,
     quantity: Quantity,
-    stock_id: UniqueIdentifier,
-    extra_costs: Amount,
+    stockId: UniqueIdentifier,
+    extraCosts: Amount,
   ) {
     this.type = type
     this.value = value
     this.quantity = quantity
-    this.stock_id = stock_id
-    this.extra_costs = extra_costs
+    this.stockId = stockId
+    this.extraCosts = extraCosts
 
     this.id = generateUniqueIdentifier()
   }
@@ -46,13 +46,13 @@ export class Transaction {
     type,
     value,
     quantity,
-    stock_id,
-    extra_costs,
+    stockId,
+    extraCosts,
   }: ITransactionData): Transaction {
     const valueObj = Amount.create(value)
     const quantityObj = Quantity.create(quantity)
-    const stockIdObj = UniqueIdentifier.create(stock_id)
-    const extraCostsObj = Amount.create(extra_costs || 0)
+    const stockIdObj = UniqueIdentifier.create(stockId)
+    const extraCostsObj = Amount.create(extraCosts || 0)
 
     const transaction = new Transaction(
       type,

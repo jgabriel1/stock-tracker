@@ -5,19 +5,19 @@ import { StockBalance } from './StockBalance'
 describe('StockBalance', () => {
   it('should create a balance value object that will hold the current stock state information', () => {
     const balanceData = {
-      currently_owned_shares: 10,
-      average_bought_price: 100,
-      total_invested: 1000,
+      currentlyOwnedShares: 10,
+      averageBoughtPrice: 100,
+      totalInvested: 1000,
     }
 
     const balanceObj = StockBalance.create(balanceData)
 
-    expect(balanceObj).toHaveProperty('currently_owned_shares')
-    expect(balanceObj).toHaveProperty('average_bought_price')
-    expect(balanceObj).toHaveProperty('total_invested')
+    expect(balanceObj).toHaveProperty('currentlyOwnedShares')
+    expect(balanceObj).toHaveProperty('averageBoughtPrice')
+    expect(balanceObj).toHaveProperty('totalInvested')
 
-    expect(balanceObj.currently_owned_shares).toBeInstanceOf(Quantity)
-    expect(balanceObj.average_bought_price).toBeInstanceOf(Amount)
-    expect(balanceObj.total_invested).toBeInstanceOf(Amount)
+    expect(balanceObj.currentlyOwnedShares).toBeInstanceOf(Quantity)
+    expect(balanceObj.averageBoughtPrice).toBeInstanceOf(Amount)
+    expect(balanceObj.totalInvested).toBeInstanceOf(Amount)
   })
 })

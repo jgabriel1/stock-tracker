@@ -3,26 +3,26 @@ import { Amount } from './Amount'
 import { Quantity } from './Quantity'
 
 interface IStockBalanceData {
-  currently_owned_shares: number
-  average_bought_price: number
-  total_invested: number
+  currentlyOwnedShares: number
+  averageBoughtPrice: number
+  totalInvested: number
 }
 
 export class StockBalance {
-  public readonly currently_owned_shares: Quantity
+  public readonly currentlyOwnedShares: Quantity
 
-  public readonly average_bought_price: Amount
+  public readonly averageBoughtPrice: Amount
 
-  public readonly total_invested: Amount
+  public readonly totalInvested: Amount
 
   private constructor(
-    currently_owned_shares: Quantity,
-    average_bought_price: Amount,
-    total_invested: Amount,
+    currentlyOwnedShares: Quantity,
+    averageBoughtPrice: Amount,
+    totalInvested: Amount,
   ) {
-    this.currently_owned_shares = currently_owned_shares
-    this.average_bought_price = average_bought_price
-    this.total_invested = total_invested
+    this.currentlyOwnedShares = currentlyOwnedShares
+    this.averageBoughtPrice = averageBoughtPrice
+    this.totalInvested = totalInvested
   }
 
   private isValid(): boolean {
@@ -31,14 +31,14 @@ export class StockBalance {
   }
 
   public static create({
-    currently_owned_shares,
-    average_bought_price,
-    total_invested,
+    currentlyOwnedShares,
+    averageBoughtPrice,
+    totalInvested,
   }: IStockBalanceData): StockBalance {
     const balanceObj = new StockBalance(
-      Quantity.create(currently_owned_shares),
-      Amount.create(average_bought_price),
-      Amount.create(total_invested),
+      Quantity.create(currentlyOwnedShares),
+      Amount.create(averageBoughtPrice),
+      Amount.create(totalInvested),
     )
 
     if (!balanceObj.isValid()) {
