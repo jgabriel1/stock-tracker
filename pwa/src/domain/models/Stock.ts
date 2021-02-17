@@ -5,6 +5,7 @@ import {
   generateUniqueIdentifier,
   UniqueIdentifier,
 } from '../value-objects/UniqueIdentifier'
+import { PriceInformation } from '../value-objects/PriceInformation'
 
 interface IStockData {
   ticker: string
@@ -20,6 +21,8 @@ export class Stock {
 
   public balance?: StockBalance
 
+  public priceInfo?: PriceInformation
+
   public transactions: Transaction[]
 
   private constructor(ticker: Ticker, fullName: string) {
@@ -32,6 +35,10 @@ export class Stock {
 
   public setBalance(balance: StockBalance): void {
     this.balance = balance
+  }
+
+  public setPriceInformation(priceInfo: PriceInformation): void {
+    this.priceInfo = priceInfo
   }
 
   public setTransactions(transactions: Transaction[]): void {
