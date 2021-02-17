@@ -19,4 +19,12 @@ describe('Amount', () => {
 
     expect(createInvalidAmount).toThrow(DomainValidationError)
   })
+
+  it('should allow value 0 to be created', () => {
+    const inputAmount = 0
+
+    const amount = Amount.create(inputAmount)
+
+    expect(amount.value).toEqual(0)
+  })
 })

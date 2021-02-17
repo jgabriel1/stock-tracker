@@ -1,4 +1,4 @@
-import { isNumber, isPositive } from 'class-validator'
+import { isNumber, min } from 'class-validator'
 
 import { DomainValidationError } from '../errors/DomainValidationError'
 
@@ -15,8 +15,8 @@ export class Amount {
     return (
       // Must be a numeric value
       isNumber(this.value) &&
-      // Must be positive always
-      isPositive(this.value)
+      // Must be 0 or positive always
+      min(this.value, 0)
     )
   }
 
