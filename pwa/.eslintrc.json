@@ -43,6 +43,12 @@
     "camelcase": "off",
     "global-require": "off",
     "class-methods-use-this": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "_"
+      }
+    ],
     "react/jsx-filename-extension": [
       1,
       {
