@@ -22,8 +22,8 @@ describe('CreateNewTransactionUseCase', () => {
     stocksRepository = {
       save: jest.fn(async (_: Stock) => undefined),
       findByTicker: jest.fn(async () => null),
-      delete: jest.fn(async () => undefined),
       loadBalance: jest.fn(async (_: Stock) => undefined),
+      findAllWithBalance: jest.fn(async () => []),
     }
   })
 
