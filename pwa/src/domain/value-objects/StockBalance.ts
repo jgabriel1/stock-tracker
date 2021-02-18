@@ -1,52 +1,38 @@
-import { DomainValidationError } from '../errors/DomainValidationError'
 import { Amount } from './Amount'
 import { Quantity } from './Quantity'
+import { UniqueIdentifier } from './UniqueIdentifier'
 
 interface IStockBalanceData {
+  stockId: string
   currentlyOwnedShares: number
   averageBoughtPrice: number
   totalInvested: number
 }
 
 export class StockBalance {
-  public readonly currentlyOwnedShares: Quantity
-
-  public readonly averageBoughtPrice: Amount
-
-  public readonly totalInvested: Amount
-
   private constructor(
-    currentlyOwnedShares: Quantity,
-    averageBoughtPrice: Amount,
-    totalInvested: Amount,
-  ) {
-    this.currentlyOwnedShares = currentlyOwnedShares
-    this.averageBoughtPrice = averageBoughtPrice
-    this.totalInvested = totalInvested
-  }
+    public readonly stockId: UniqueIdentifier,
 
-  private isValid(): boolean {
-    // TODO: It's possible that this will have business logic in the future.
-    return true
-  }
+    public readonly currentlyOwnedShares: Quantity,
+
+    public readonly averageBoughtPrice: Amount,
+
+    public readonly totalInvested: Amount,
+  ) {}
 
   public static create({
+    stockId,
     currentlyOwnedShares,
     averageBoughtPrice,
     totalInvested,
   }: IStockBalanceData): StockBalance {
-    const balanceObj = new StockBalance(
+    const balance = new StockBalance(
+      UniqueIdentifier.create(stockId),
       Quantity.create(currentlyOwnedShares),
       Amount.create(averageBoughtPrice),
       Amount.create(totalInvested),
     )
 
-    if (!balanceObj.isValid()) {
-      throw new DomainValidationError(
-        'Invalid balance: It is impossible to have this balance data.',
-      )
-    }
-
-    return balanceObj
+    return balance
   }
 }
