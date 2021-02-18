@@ -2,6 +2,7 @@ import {
   IStockPriceInfoRepository,
   IStocksRepository,
 } from '../../domain/repositories'
+import { CombinedStockDataCalculatorService } from '../../domain/services/CombinedStockDataCalculatorService'
 
 interface IResponse {
   stocks: Array<{
@@ -20,12 +21,15 @@ export class LoadAllStocksWithBalanceUseCase {
 
   private stockPriceInfoRepository: IStockPriceInfoRepository
 
+  private combinedStockDataCalculator: CombinedStockDataCalculatorService
+
   public constructor(
     stocksRepository: IStocksRepository,
     stockPriceInfoRepository: IStockPriceInfoRepository,
   ) {
     this.stocksRepository = stocksRepository
     this.stockPriceInfoRepository = stockPriceInfoRepository
+    this.combinedStockDataCalculator = new CombinedStockDataCalculatorService()
   }
 
   public async execute(): Promise<IResponse> {
@@ -36,30 +40,10 @@ export class LoadAllStocksWithBalanceUseCase {
     )
 
     return {
-      stocks: stocks.map(stock => {
-        const info = stockPriceInfos.find(
-          _info => _info.ticker.value === stock.ticker.value,
-        )
+      stocks: stocks.map((stock, i) => {
+        const info = stockPriceInfos[i]
 
-        const regularMarketPrice = info?.regularMarketPrice.value || 0
-        const currentlyOwnedShares =
-          stock.balance?.currentlyOwnedShares.value || 0
-        const averageBoughtPrice =
-          stock.balance?.currentlyOwnedShares.value || 0
-
-        const totalInvested = currentlyOwnedShares * averageBoughtPrice
-
-        const currentWorth = currentlyOwnedShares * regularMarketPrice
-
-        return {
-          ticker: stock.ticker.value,
-          fullName: stock.fullName,
-          averageBoughtPrice,
-          regularMarketPrice,
-          currentlyOwnedShares,
-          totalInvested,
-          currentWorth,
-        }
+        return this.combinedStockDataCalculator.calculate(stock, info)
       }),
     }
   }
