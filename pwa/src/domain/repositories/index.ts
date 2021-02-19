@@ -1,4 +1,5 @@
-export * from './IStocksRepository'
+export * from './IStockInfoRepository'
+export * from './IStockSearchRepository'
+export * from './IStockBalanceRepository'
 export * from './ITransactionsRepository'
 export * from './IStockPriceInfoRepository'
-export * from './IStockInfoSearchRepository'
