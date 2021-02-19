@@ -1,4 +1,4 @@
-import { StockInfo } from '../value-objects/StockInfo'
+import { StockInfo } from '../models/StockInfo'
 
 // For the sake of simplification, only stocks from the SAO market will be considered
 // in the application. Otherwise, things like currency and the market itself would

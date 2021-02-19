@@ -1,55 +1,61 @@
-import { Transaction } from './Transaction'
-import { Ticker } from '../value-objects/Ticker'
 import { StockBalance } from '../value-objects/StockBalance'
-import {
-  generateUniqueIdentifier,
-  UniqueIdentifier,
-} from '../value-objects/UniqueIdentifier'
 import { PriceInformation } from '../value-objects/PriceInformation'
+import { StockInfo } from './StockInfo'
 
-interface IStockData {
+export interface ICombinedStockData {
   ticker: string
   fullName: string
+  averageBoughtPrice: number
+  currentlyOwnedShares: number
+  regularMarketPrice: number
+  totalApplied: number
+  currentWorth: number
 }
 
 export class Stock {
-  public readonly id: UniqueIdentifier
+  private constructor(
+    public info: StockInfo,
 
-  public readonly ticker: Ticker
+    public balance?: StockBalance,
 
-  public readonly fullName: string
-
-  public balance?: StockBalance
-
-  public priceInfo?: PriceInformation
-
-  public transactions: Transaction[]
-
-  private constructor(ticker: Ticker, fullName: string) {
-    this.ticker = ticker
-    this.fullName = fullName
-
-    this.id = generateUniqueIdentifier()
-    this.transactions = []
-  }
+    public priceData?: PriceInformation,
+  ) {}
 
   public setBalance(balance: StockBalance): void {
     this.balance = balance
   }
 
-  public setPriceInformation(priceInfo: PriceInformation): void {
-    this.priceInfo = priceInfo
+  public setPriceData(priceData: PriceInformation): void {
+    this.priceData = priceData
   }
 
-  public setTransactions(transactions: Transaction[]): void {
-    this.transactions = transactions
+  public calculateCombinedData(): ICombinedStockData {
+    if (!this.balance || !this.priceData) {
+      throw new Error(
+        'Cannot calculate stock data. Both balance and priceData need to be set to stock object.',
+      )
+    }
+
+    const { ticker, fullName } = this.info
+
+    const { averageBoughtPrice, currentlyOwnedShares } = this.balance
+    const { regularMarketPrice } = this.priceData
+
+    const totalApplied = currentlyOwnedShares.value * averageBoughtPrice.value
+    const currentWorth = currentlyOwnedShares.value * regularMarketPrice.value
+
+    return {
+      ticker: ticker.value,
+      fullName,
+      averageBoughtPrice: averageBoughtPrice.value,
+      currentlyOwnedShares: currentlyOwnedShares.value,
+      regularMarketPrice: regularMarketPrice.value,
+      totalApplied,
+      currentWorth,
+    }
   }
 
-  public static create({ ticker, fullName }: IStockData): Stock {
-    const tickerObj = Ticker.create(ticker)
-
-    const stock = new Stock(tickerObj, fullName)
-
-    return stock
+  public static fromStockInfo(info: StockInfo): Stock {
+    return new Stock(info)
   }
 }
