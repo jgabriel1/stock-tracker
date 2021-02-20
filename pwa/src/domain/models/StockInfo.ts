@@ -4,7 +4,7 @@ import {
   UniqueIdentifier,
 } from '../value-objects/UniqueIdentifier'
 
-interface IStockInfoData {
+export interface IStockInfoData {
   id: string
   ticker: string
   fullName: string
