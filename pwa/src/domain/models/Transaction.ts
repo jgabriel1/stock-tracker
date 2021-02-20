@@ -5,7 +5,8 @@ import {
   UniqueIdentifier,
 } from '../value-objects/UniqueIdentifier'
 
-interface ITransactionData {
+export interface ITransactionData {
+  id: string
   type: 'IN' | 'OUT'
   value: number
   quantity: number
@@ -14,33 +15,19 @@ interface ITransactionData {
 }
 
 export class Transaction {
-  public readonly id: UniqueIdentifier
-
-  public readonly type: 'IN' | 'OUT'
-
-  public readonly value: Amount
-
-  public readonly quantity: Quantity
-
-  public readonly stockId: UniqueIdentifier
-
-  public readonly extraCosts: Amount
-
   private constructor(
-    type: 'IN' | 'OUT',
-    value: Amount,
-    quantity: Quantity,
-    stockId: UniqueIdentifier,
-    extraCosts: Amount,
-  ) {
-    this.type = type
-    this.value = value
-    this.quantity = quantity
-    this.stockId = stockId
-    this.extraCosts = extraCosts
+    public readonly id: UniqueIdentifier,
 
-    this.id = generateUniqueIdentifier()
-  }
+    public readonly type: 'IN' | 'OUT',
+
+    public readonly value: Amount,
+
+    public readonly quantity: Quantity,
+
+    public readonly stockId: UniqueIdentifier,
+
+    public readonly extraCosts: Amount,
+  ) {}
 
   public static create({
     type,
@@ -48,18 +35,36 @@ export class Transaction {
     quantity,
     stockId,
     extraCosts,
-  }: ITransactionData): Transaction {
-    const valueObj = Amount.create(value)
-    const quantityObj = Quantity.create(quantity)
-    const stockIdObj = UniqueIdentifier.create(stockId)
-    const extraCostsObj = Amount.create(extraCosts || 0)
+  }: Omit<ITransactionData, 'id'>): Transaction {
+    const id = generateUniqueIdentifier()
 
     const transaction = new Transaction(
+      id,
       type,
-      valueObj,
-      quantityObj,
-      stockIdObj,
-      extraCostsObj,
+      Amount.create(value),
+      Quantity.create(quantity),
+      UniqueIdentifier.create(stockId),
+      Amount.create(extraCosts || 0),
+    )
+
+    return transaction
+  }
+
+  public static parse({
+    id,
+    type,
+    value,
+    quantity,
+    stockId,
+    extraCosts,
+  }: ITransactionData): Transaction {
+    const transaction = new Transaction(
+      UniqueIdentifier.create(id),
+      type,
+      Amount.create(value),
+      Quantity.create(quantity),
+      UniqueIdentifier.create(stockId),
+      Amount.create(extraCosts || 0),
     )
 
     return transaction
