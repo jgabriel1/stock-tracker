@@ -1,9 +1,14 @@
-import { Stock } from '../../domain/models/Stock'
 import { Transaction } from '../../domain/models/Transaction'
 import {
-  IStocksRepository,
+  IStockBalanceRepository,
+  IStockInfoRepository,
   ITransactionsRepository,
 } from '../../domain/repositories'
+import {
+  CreateFirstTransactionForStockService,
+  ValidateOutcomeTransactionService,
+} from '../../domain/services'
+
 import { Ticker } from '../../domain/value-objects/Ticker'
 
 interface IRequest {
@@ -13,20 +18,29 @@ interface IRequest {
   stockInfo: {
     ticker: string
     fullName: string
+    market: string
   }
 }
 
 export class CreateNewTransactionUseCase {
-  private transactionsRepository: ITransactionsRepository
+  private createFirstTransactionForStock: CreateFirstTransactionForStockService
 
-  private stocksRepository: IStocksRepository
+  private validateOutcomeTransaction: ValidateOutcomeTransactionService
 
   public constructor(
-    transactionsRepository: ITransactionsRepository,
-    stocksRepository: IStocksRepository,
+    private stockInfoRepository: IStockInfoRepository,
+    private transactionsRepository: ITransactionsRepository,
+    private stockBalanceRepository: IStockBalanceRepository,
   ) {
-    this.transactionsRepository = transactionsRepository
-    this.stocksRepository = stocksRepository
+    this.createFirstTransactionForStock = new CreateFirstTransactionForStockService(
+      transactionsRepository,
+      stockInfoRepository,
+    )
+
+    this.validateOutcomeTransaction = new ValidateOutcomeTransactionService(
+      transactionsRepository,
+      stockBalanceRepository,
+    )
   }
 
   public async execute({
@@ -35,34 +49,33 @@ export class CreateNewTransactionUseCase {
     quantity,
     stockInfo,
   }: IRequest): Promise<void> {
-    let stock = await this.stocksRepository.findByTicker(
+    const stock = await this.stockInfoRepository.findStockByTicker(
       Ticker.create(stockInfo.ticker),
     )
 
     if (!stock) {
-      stock = Stock.create({
-        ticker: stockInfo.ticker,
-        fullName: stockInfo.fullName,
-      })
+      await this.createFirstTransactionForStock.create(
+        { type, quantity, value },
+        { ...stockInfo },
+      )
 
-      await this.stocksRepository.save(stock)
+      return
     }
 
     const transaction = Transaction.create({
       type,
-      value,
       quantity,
+      value,
       stockId: stock.id.value,
     })
 
-    if (transaction.type === 'OUT') {
-      await this.stocksRepository.loadBalance(stock)
+    if (type === 'OUT') {
+      // TODO: maybe refactor this "service" logic to a specification that will
+      // return a boolean and validate the outcome transaction. Or maybe have a
+      // specific OutcomeTransaction class that will validate it (less likely).
+      await this.validateOutcomeTransaction.validateAndSave(transaction)
 
-      const maxPossibleOutcome = stock.balance?.currentlyOwnedShares.value || 0
-
-      if (transaction.quantity.value > maxPossibleOutcome) {
-        throw new Error('Invalid outcome transaction.')
-      }
+      return
     }
 
     await this.transactionsRepository.save(transaction)
